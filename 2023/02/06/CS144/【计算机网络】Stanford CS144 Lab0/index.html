@@ -18,31 +18,24 @@
   <meta name="author" content="mingzi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="整体设计 TCP FSM接收数据： 如果接收到了带有 RST 标志的段，就要立即进行 unclean_shutdown 如果接收到的段没有 RST 标志，将有 TCPReceiver 来处理这个段的 SYN, payload, FIN 和 seqno 。 若果这个段的 seqno 是无效的，或者 TCPReceiver 接收这个段失败时，要发送一个空的段给对方  发送数据： TCPSender 将">
+    <meta name="description" content="计算机网络CS144 官方镜像 : https:&#x2F;&#x2F;cs144.github.io&#x2F; kangyupl备份的镜像 : https:&#x2F;&#x2F;kangyupl.gitee.io&#x2F;cs144.github.io&#x2F; 实验准备  Ubuntu 18.04.6 LTS x86_64 (实验提供) gcc8 或 clang6 (实验机提供的gcc是7.5, 没有达到实验文档要求)   Writing webget">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【计算机网络】Stanford CS144 Lab4 学习记录">
-<meta property="og:url" content="https://mingzi47.github.io/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab4/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab4/index.html">
+<meta property="og:title" content="【计算机网络】Stanford CS144 Lab0 学习记录">
+<meta property="og:url" content="https://mingzi47.github.io/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab0/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="整体设计 TCP FSM接收数据： 如果接收到了带有 RST 标志的段，就要立即进行 unclean_shutdown 如果接收到的段没有 RST 标志，将有 TCPReceiver 来处理这个段的 SYN, payload, FIN 和 seqno 。 若果这个段的 seqno 是无效的，或者 TCPReceiver 接收这个段失败时，要发送一个空的段给对方  发送数据： TCPSender 将">
+<meta property="og:description" content="计算机网络CS144 官方镜像 : https:&#x2F;&#x2F;cs144.github.io&#x2F; kangyupl备份的镜像 : https:&#x2F;&#x2F;kangyupl.gitee.io&#x2F;cs144.github.io&#x2F; 实验准备  Ubuntu 18.04.6 LTS x86_64 (实验提供) gcc8 或 clang6 (实验机提供的gcc是7.5, 没有达到实验文档要求)   Writing webget">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://mingzi47.github.io/images/CS144/%E5%AE%9E%E9%AA%8C%E6%95%B4%E4%BD%93%E8%AE%BE%E8%AE%A1.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CS144/TCP-FSM.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CS144/receiver.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CS144/sender.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CS144/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CS144/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96.png">
 <meta property="article:published_time" content="2023-02-06T07:45:14.000Z">
-<meta property="article:modified_time" content="2023-03-05T12:22:49.443Z">
+<meta property="article:modified_time" content="2023-02-12T08:41:09.127Z">
 <meta property="article:author" content="mingzi">
 <meta property="article:tag" content="Lab">
 <meta property="article:tag" content="CS144">
 <meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://mingzi47.github.io/images/CS144/%E5%AE%9E%E9%AA%8C%E6%95%B4%E4%BD%93%E8%AE%BE%E8%AE%A1.png">
   
   
   
-  <title>【计算机网络】Stanford CS144 Lab4 学习记录 - Blog</title>
+  <title>【计算机网络】Stanford CS144 Lab0 学习记录 - Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -208,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="【计算机网络】Stanford CS144 Lab4 学习记录"></span>
+            <span id="subtitle" data-typed-text="【计算机网络】Stanford CS144 Lab0 学习记录"></span>
           
         </div>
 
@@ -231,7 +224,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.1k 字
+          2.7k 字
         
       </span>
     
@@ -242,7 +235,7 @@
         
         
         
-          9 分钟
+          23 分钟
         
       </span>
     
@@ -280,49 +273,50 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">【计算机网络】Stanford CS144 Lab4 学习记录</h1>
+            <h1 style="display: none">【计算机网络】Stanford CS144 Lab0 学习记录</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="整体设计"><a href="#整体设计" class="headerlink" title="整体设计"></a>整体设计</h2><p><img src="/images/CS144/%E5%AE%9E%E9%AA%8C%E6%95%B4%E4%BD%93%E8%AE%BE%E8%AE%A1.png" srcset="/img/loading.gif" lazyload alt="实验整体设计"></p>
-<h2 id="TCP-FSM"><a href="#TCP-FSM" class="headerlink" title="TCP FSM"></a>TCP FSM</h2><h3 id="接收数据："><a href="#接收数据：" class="headerlink" title="接收数据："></a><strong>接收数据</strong>：</h3><ul>
-<li>如果接收到了带有 <code>RST</code> 标志的段，就要立即进行 <code>unclean_shutdown</code></li>
-<li>如果接收到的段没有 <code>RST</code> 标志，将有 <code>TCPReceiver</code> 来处理这个段的 <code>SYN</code>, <code>payload</code>, <code>FIN</code> 和 <code>seqno</code> 。</li>
-<li>若果这个段的 <code>seqno</code> 是无效的，或者 <code>TCPReceiver</code> 接收这个段失败时，要发送一个空的段给对方</li>
-</ul>
-<h3 id="发送数据："><a href="#发送数据：" class="headerlink" title="发送数据："></a><strong>发送数据</strong>：</h3><ul>
-<li><code>TCPSender</code> 将段发送到自己的队列时，<code>TCPConnection</code> 就要从 <code>TCPSender</code> 中取出来放到自己的队列中，在这个过程中如果 <code>TCPReceiver</code> 的 <code>ackno</code> 为有效值的话，就要给这些段加上 <code>ACK</code> 标记，自己的<code>ackno</code> 以及 <code>window size</code>。</li>
-<li><code>TCPConnection</code> 通过 <code>tick</code> 函数获得时间，我们要将时间交给 <code>TCPSender</code> 的 <code>tick</code> 函数，让它来进行重传操作。</li>
-<li>重传的次数超过 <code>TCPConfig::MAX_RETX_ATTMPTS</code> 的话就要发送一个 <code>RST</code> 的段。</li>
-<li>如果 <code>TCPConnection</code> 的 <code>active</code> 为真，这时 <code>TCPConnection</code> 析构了，就要立即发送一个 <code>RST</code> 段。</li>
-</ul>
-<h3 id="unclean-shutdown-："><a href="#unclean-shutdown-：" class="headerlink" title="**unclean_shutdown**："></a>**<code>unclean_shutdown</code>**：</h3><ul>
-<li>收到 <code>RST</code> 标志的段，就是 <code>unclear_shutdown</code>.</li>
-</ul>
-<h3 id="clean-shutdown-："><a href="#clean-shutdown-：" class="headerlink" title="**clean_shutdown**："></a>**<code>clean_shutdown</code>**：</h3><p>完成 4 次挥手。</p>
+                <h1 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a>计算机网络</h1><p>CS144 官方镜像 : <a target="_blank" rel="noopener" href="https://cs144.github.io/">https://cs144.github.io/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kangyupl/">kangyupl</a>备份的镜像 : <a target="_blank" rel="noopener" href="https://kangyupl.gitee.io/cs144.github.io/">https://kangyupl.gitee.io/cs144.github.io/</a></p>
+<h2 id="实验准备"><a href="#实验准备" class="headerlink" title="实验准备"></a>实验准备</h2><hr>
 <ul>
-<li><p>先收到 <code>FIN</code> 的一方，在最后发送完不需要进行等待。</p>
-</li>
-<li><p>先发送 <code>FIN</code> 的一方，最后发送 <code>ACK</code> 后需要等待一定时间。</p>
-</li>
-<li><p>先收到 <code>FIN</code> 的一方，在收到对方对自己 发送的 <code>FIN</code> 的确认 <code>ACK</code> 后，就立刻关闭了，不在发送其他数据。</p>
-</li>
-<li><p>先发送 <code>FIN</code> 的一方通过等待 10 $\times$ 初始超时时间限制 时间来确认对方收到了自己的 <code>ACK</code> , 在这段时间里没有重传就结束。 </p>
-</li>
+<li>Ubuntu 18.04.6 LTS x86_64 (<a target="_blank" rel="noopener" href="https://stanford.edu/class/cs144/vm_howto/vm-howto-image.html">实验提供</a>)</li>
+<li>gcc8 或 clang6 (实验机提供的gcc是7.5, 没有达到实验文档要求) </li>
 </ul>
-<p>感觉代码有些难写，多次测试不能完全保证每次测试都通过。</p>
-<h3 id="TCP-有限状态机"><a href="#TCP-有限状态机" class="headerlink" title="TCP 有限状态机"></a><strong>TCP 有限状态机</strong></h3><p><img src="/images/CS144/TCP-FSM.png" srcset="/img/loading.gif" lazyload alt="TCP FSM"></p>
-<h3 id="Receiver"><a href="#Receiver" class="headerlink" title="Receiver"></a><strong>Receiver</strong></h3><p><img src="/images/CS144/receiver.png" srcset="/img/loading.gif" lazyload alt="receiver"></p>
-<h3 id="Sender"><a href="#Sender" class="headerlink" title="Sender"></a><strong>Sender</strong></h3><p><img src="/images/CS144/sender.png" srcset="/img/loading.gif" lazyload alt="sender"></p>
-<h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2><p>使用 <code>gprof</code> 工具分析性能。</p>
-<p><img src="/images/CS144/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90.png" srcset="/img/loading.gif" lazyload alt="优化前"></p>
-<p>可以看到 <code>ByteStream::write</code> , <code>ByteStream::peek_output</code> 和 <code>ByteStream::pop_output</code> 占用了快 90% 的时间，这主要是方法内部实现使用的深拷贝。</p>
-<p>实验在 <code>util</code> 提供了 <code>Buffer</code> , <code>BufferList</code> 和 <code>BufferListView</code> 这样的类。</p>
-<p><code>Buffer</code> 的 <code>remove_prefix</code> 方法是常数级别的删除前 <code>n</code> 个字符。<code>Buffer</code>存放的是智能指针，及 <code>size_t</code> 类型的标记来表示字符的开始位置，删除前 <code>n</code> 个字符只需要变动这个标记即可，智能指针指向的内存会随着 <code>Buffer</code> 的析构而释放，在获得性能的同时保持安全。</p>
-<p>使用 <code>BufferList</code> 重写 <code>ByteStream</code> 后的性能分析。 </p>
-<p><img src="/images/CS144/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96.png" srcset="/img/loading.gif" lazyload alt="优化后"></p>
+<h2 id="Writing-webget"><a href="#Writing-webget" class="headerlink" title="Writing webget"></a>Writing webget</h2><hr>
+<p>要求使用 <a target="_blank" rel="noopener" href="https://kangyupl.gitee.io/cs144.github.io/doc/lab0/class_t_c_p_socket.html"><code>TCPSocket</code></a> 和 <a target="_blank" rel="noopener" href="https://kangyupl.gitee.io/cs144.github.io/doc/lab0/class_address.html"><code>Address</code></a> 来抓取网页内容。</p>
+<p>TCP 套接字编程，实验已经使用 C++ 封装好了 <code>TCPSocket</code> 。</p>
+<p>建立 <code>TCPSocket</code> , 并向目标主机的 <code>80</code> 号端口建立 TCP 连接。</p>
+<p>发送 HTTP 请求报文。</p>
+<p>HTTP 报文格式</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs livescript">GET /somedir/page.html HTTP/<span class="hljs-number">1.1</span><span class="hljs-string">\r\n</span><br>Host: www.someschool.edu<span class="hljs-string">\r\n</span><br>Connection: close<span class="hljs-string">\r\n</span><br>User-agent: Mozilla/<span class="hljs-number">5.0</span><span class="hljs-string">\r\n</span><br>Accept-language: fr<span class="hljs-string">\r\n</span><br><span class="hljs-string">\r\n</span><br></code></pre></td></tr></table></figure>
 
+<p>发送完报文，使用 <code>shutdown(SHUT_WR)</code> 表示请求发送完了。</p>
+<p>之后使用 <code>read()</code> 读取目标主机返回的报文即可。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp">TCPSocket sock&#123;&#125;;<br>sock.<span class="hljs-built_in">connect</span>(Address&#123;host, <span class="hljs-string">&quot;http&quot;</span>&#125;);<br>sock.<span class="hljs-built_in">write</span>(<span class="hljs-string">&quot;GET &quot;</span> + path + <span class="hljs-string">&quot; HTTP/1.1\r\nHost: &quot;</span> + host + <span class="hljs-string">&quot;\r\n\r\n&quot;</span>);<br>sock.<span class="hljs-built_in">shutdown</span>(SHUT_WR);<br><span class="hljs-keyword">while</span> (!sock.<span class="hljs-built_in">eof</span>()) &#123;<br>    cout &lt;&lt; sock.<span class="hljs-built_in">read</span>();<br>&#125;<br>sock.<span class="hljs-built_in">close</span>();<br></code></pre></td></tr></table></figure>
+
+<h2 id="An-in-memory-reliable-byte-stream"><a href="#An-in-memory-reliable-byte-stream" class="headerlink" title="An in-memory reliable byte stream"></a>An in-memory reliable byte stream</h2><hr>
+<p>在内存中实现一个可靠的字节流对象，可以按照写的顺序读出数据。这个字节流是可以边写边读的。字节流读的操作会把数据从数据结构头部位置开始 <code>pop</code> 数据，写的操作会从数据结构的尾部 <code>push</code> 数据，因此我们考虑使用 <code>std::deque</code> 来实现。</p>
+<p>为什么不使用 <code>std::queue</code> ?</p>
+<p>读的操作分为了两步，第一步是从读取长度为 <code>len</code> 的字节流，第二步是将这长度为 <code>len</code> 的字节流从数据结构中删除。</p>
+<p>这两个操作分为了两个函数。对于第一个函数，我们需要一个 <code>iterator</code> 来选取要取出的字节范围，而 <code>std::queue</code> 没有提供一个 <code>iterator</code> 接口。</p>
+<p>当然，也可以使用 <code>std::list</code> 来实现这个数据结构。</p>
+<h3 id="byte-stream-hh"><a href="#byte-stream-hh" class="headerlink" title="byte_stream.hh"></a><code>byte_stream.hh</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ByteStream</span> &#123;<br>  <span class="hljs-keyword">private</span>:<br>    std::deque&lt;<span class="hljs-type">char</span>&gt; _buffer&#123;&#125;;<br>    <span class="hljs-type">size_t</span> _capacity = <span class="hljs-number">0</span>;<br>    <span class="hljs-type">size_t</span> _write_cnt = <span class="hljs-number">0</span>;<br>    <span class="hljs-type">size_t</span> _pop_cnt = <span class="hljs-number">0</span>;<br>    <span class="hljs-type">bool</span> _stream_end = <span class="hljs-literal">false</span>;<br>    <span class="hljs-type">bool</span> _error = <span class="hljs-literal">false</span>; <br>    ...<br></code></pre></td></tr></table></figure>
+
+<h3 id="byte-stream-cc"><a href="#byte-stream-cc" class="headerlink" title="byte_stream.cc"></a><code>byte_stream.cc</code></h3><p>构造函数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">ByteStream::<span class="hljs-built_in">ByteStream</span>(<span class="hljs-type">const</span> <span class="hljs-type">size_t</span> capacity) : _capacity&#123;capacity&#125; &#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>写的操作，因为我们的 <code>_buffer</code> 是有容量限制的，因此要判断要写入的是否超过了容量。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">ByteStream::write</span><span class="hljs-params">(<span class="hljs-type">const</span> string &amp;data)</span> </span>&#123;<br>    <span class="hljs-type">const</span> <span class="hljs-type">size_t</span> res = std::<span class="hljs-built_in">min</span>(data.<span class="hljs-built_in">size</span>(), _capacity - _buffer.<span class="hljs-built_in">size</span>());<br>    _write_cnt += res;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">size_t</span> i = <span class="hljs-number">0</span>; i &lt; res; i++) &#123;<br>        _buffer.<span class="hljs-built_in">push_back</span>(data[i]);<br>    &#125;<br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>读的操作，先 <code>peek_output</code> 再 <code>pop_output</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">string <span class="hljs-title">ByteStream::peek_output</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">size_t</span> len)</span> <span class="hljs-type">const</span> </span>&#123;<br>    <span class="hljs-type">const</span> <span class="hljs-type">size_t</span> peek_len = std::<span class="hljs-built_in">min</span>(len, _buffer.<span class="hljs-built_in">size</span>());<br>    <span class="hljs-keyword">return</span> std::string&#123;&#125;.<span class="hljs-built_in">assign</span>(_buffer.<span class="hljs-built_in">begin</span>(), _buffer.<span class="hljs-built_in">begin</span>() + peek_len);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ByteStream::pop_output</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">size_t</span> len)</span> </span>&#123;<br>    <span class="hljs-type">const</span> <span class="hljs-type">size_t</span> pop_len = std::<span class="hljs-built_in">min</span>(len, _buffer.<span class="hljs-built_in">size</span>());<br>    _pop_cnt += pop_len;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">size_t</span> i = <span class="hljs-number">0</span>; i &lt; pop_len; i++) &#123;<br>        _buffer.<span class="hljs-built_in">pop_front</span>();<br>    &#125;<br>    <span class="hljs-keyword">return</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 输入结束，由使用者调用</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ByteStream::end_input</span><span class="hljs-params">()</span> </span>&#123; _stream_end = <span class="hljs-literal">true</span>; &#125;<br><span class="hljs-comment">// `true` 表示 输入结束</span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">ByteStream::input_ended</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _stream_end; &#125;<br><span class="hljs-comment">// buffer 现在有多少字节</span><br><span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">ByteStream::buffer_size</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _buffer.<span class="hljs-built_in">size</span>(); &#125;<br><span class="hljs-comment">// `true` 表示 buffer 是空的</span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">ByteStream::buffer_empty</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _buffer.<span class="hljs-built_in">empty</span>(); &#125;<br><span class="hljs-comment">// ‘true’ 表示 读 完了数据</span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">ByteStream::eof</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">buffer_empty</span>() &amp;&amp; <span class="hljs-built_in">input_ended</span>(); &#125;<br><span class="hljs-comment">// 写入了多少字节，写入时累积</span><br><span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">ByteStream::bytes_written</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _write_cnt; &#125;<br><span class="hljs-comment">// 弹出 buffer 的数据大小</span><br><span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">ByteStream::bytes_read</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _pop_cnt; &#125;<br><span class="hljs-comment">// 目前空余的容量大小</span><br><span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">ByteStream::remaining_capacity</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _capacity - _buffer.<span class="hljs-built_in">size</span>(); &#125;<br></code></pre></td></tr></table></figure>
                 
               </div>
             
@@ -371,8 +365,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>【计算机网络】Stanford CS144 Lab4 学习记录</div>
-      <div>https://mingzi47.github.io/2023/02/06/CS144/【计算机网络】Stanford CS144 Lab4/【计算机网络】Stanford CS144 Lab4/</div>
+      <div>【计算机网络】Stanford CS144 Lab0 学习记录</div>
+      <div>https://mingzi47.github.io/2023/02/06/CS144/【计算机网络】Stanford CS144 Lab0/</div>
     </div>
     <div class="license-meta">
       
@@ -416,9 +410,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab3/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab3/" title="【计算机网络】Stanford CS144 Lab3 学习记录">
+                      <a href="/2023/02/10/Tools/doxygen%E5%B7%A5%E5%85%B7/" title="文档工具 Doxygen">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【计算机网络】Stanford CS144 Lab3 学习记录</span>
+                        <span class="hidden-mobile">文档工具 Doxygen</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -426,8 +420,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/01/06/hello-hexo/" title="Hello Hexo">
-                        <span class="hidden-mobile">Hello Hexo</span>
+                      <a href="/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab1/" title="【计算机网络】Stanford CS144 Lab1 学习记录">
+                        <span class="hidden-mobile">【计算机网络】Stanford CS144 Lab1 学习记录</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

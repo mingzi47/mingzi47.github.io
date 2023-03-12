@@ -226,13 +226,78 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab4/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab4/" target="_self">
+        <a href="/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab3/" target="_self">
+          【计算机网络】Stanford CS144 Lab3 学习记录
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab3/" target="_self">
+        <div>
+          实现 TCP 协议中的发送器 TCPSender 。 TCP 通过累积确认的方式来标记哪些段不需要跟踪了，发送方收到了一个 ackno ，表示接收方已经接收了 ackno 之前的所有数据。可以使用 queue 来跟踪没被确认的，一旦确认了就出队，同时也方便重传数据。 累积确认类似与 GBN（go back N）协议。在接收方 GBN 机制选择将待确认的全部丢弃了，在这次实验中 (Lab2), 选择
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-02-06 15:45" pubdate>
+              2023-02-06
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/CS144/" class="category-chain-item">CS144</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Lab/">#Lab</a>
+            
+              <a href="/tags/CS144/">#CS144</a>
+            
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab4/" target="_self">
           【计算机网络】Stanford CS144 Lab4 学习记录
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab4/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab4/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab4/" target="_self">
         <div>
           整体设计 TCP FSM接收数据： 如果接收到了带有 RST 标志的段，就要立即进行 unclean_shutdown 如果接收到的段没有 RST 标志，将有 TCPReceiver 来处理这个段的 SYN, payload, FIN 和 seqno 。 若果这个段的 seqno 是无效的，或者 TCPReceiver 接收这个段失败时，要发送一个空的段给对方  发送数据： TCPSender 将
         </div>

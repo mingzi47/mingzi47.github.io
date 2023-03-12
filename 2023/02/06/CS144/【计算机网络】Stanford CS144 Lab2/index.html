@@ -18,39 +18,24 @@
   <meta name="author" content="mingzi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="B+ 树 上图表示的是一颗四阶 B+ 树，四阶表示每个节点最多存四个 K-V 对。 B+ 树的叶子节点分为三类：  根节点 内部节点 叶子节点  根节点可以是内部节点也可使叶子节点。 B+ 树的每个节点不仅有最大容量，也有最小容量(最小容量 &#x3D; 最大容量的一半, 下取整)，低于最小容量的节点会想方法让自己的节点树增加(在 删除 中详细讲解)，根节点没有最小容量限制。 每个节点中的数据是有序的，按照">
+    <meta name="description" content="这次实验的目标为实现一个 TCP协议 的接收器。 Sequence Numbers   Sequence Numbers Absolute Sequence Numbers Stream Indices    Start at the ISN Start at 0 Start at 0   Include SYN&#x2F;FIN Include SYN&#x2F;FIN Omit SYN&#x2F;FIN   32 bits">
 <meta property="og:type" content="article">
-<meta property="og:title" content="B+ 树与高并发">
-<meta property="og:url" content="https://mingzi47.github.io/2023/02/26/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/index.html">
+<meta property="og:title" content="【计算机网络】Stanford CS144 Lab2 学习记录">
+<meta property="og:url" content="https://mingzi47.github.io/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab2/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="B+ 树 上图表示的是一颗四阶 B+ 树，四阶表示每个节点最多存四个 K-V 对。 B+ 树的叶子节点分为三类：  根节点 内部节点 叶子节点  根节点可以是内部节点也可使叶子节点。 B+ 树的每个节点不仅有最大容量，也有最小容量(最小容量 &#x3D; 最大容量的一半, 下取整)，低于最小容量的节点会想方法让自己的节点树增加(在 删除 中详细讲解)，根节点没有最小容量限制。 每个节点中的数据是有序的，按照">
+<meta property="og:description" content="这次实验的目标为实现一个 TCP协议 的接收器。 Sequence Numbers   Sequence Numbers Absolute Sequence Numbers Stream Indices    Start at the ISN Start at 0 Start at 0   Include SYN&#x2F;FIN Include SYN&#x2F;FIN Omit SYN&#x2F;FIN   32 bits">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/BPlusTree.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/insert1.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/insert2.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/insert2.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/erase1.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/erase2.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/erase3.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/erase4.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/2search1.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/2search3.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/2insert1.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/2insert2.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/2insert3.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/2insert4.png">
-<meta property="article:published_time" content="2023-02-26T07:45:14.000Z">
-<meta property="article:modified_time" content="2023-03-05T12:53:47.033Z">
+<meta property="article:published_time" content="2023-02-06T07:45:14.000Z">
+<meta property="article:modified_time" content="2023-03-05T12:21:38.253Z">
 <meta property="article:author" content="mingzi">
-<meta property="article:tag" content="CMU15-445">
 <meta property="article:tag" content="Lab">
-<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="CS144">
+<meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://mingzi47.github.io/images/CMU15-445/BPlusTree.png">
   
   
   
-  <title>B+ 树与高并发 - Blog</title>
+  <title>【计算机网络】Stanford CS144 Lab2 学习记录 - Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -216,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="B+ 树与高并发"></span>
+            <span id="subtitle" data-typed-text="【计算机网络】Stanford CS144 Lab2 学习记录"></span>
           
         </div>
 
@@ -227,8 +212,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-02-26 15:45" pubdate>
-          2023年2月26日 下午
+        <time datetime="2023-02-06 15:45" pubdate>
+          2023年2月6日 下午
         </time>
       </span>
     
@@ -239,7 +224,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.9k 字
+          3.2k 字
         
       </span>
     
@@ -250,7 +235,7 @@
         
         
         
-          16 分钟
+          27 分钟
         
       </span>
     
@@ -288,78 +273,68 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">B+ 树与高并发</h1>
+            <h1 style="display: none">【计算机网络】Stanford CS144 Lab2 学习记录</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="B-树"><a href="#B-树" class="headerlink" title="B+ 树"></a>B+ 树</h2><p><img src="/images/CMU15-445/BPlusTree.png" srcset="/img/loading.gif" lazyload alt="B+ 树"></p>
-<p>上图表示的是一颗四阶 B+ 树，四阶表示每个节点最多存四个 K-V 对。</p>
-<p>B+ 树的叶子节点分为三类：</p>
+                <p>这次实验的目标为实现一个 TCP协议 的接收器。</p>
+<h2 id="Sequence-Numbers"><a href="#Sequence-Numbers" class="headerlink" title="Sequence Numbers"></a>Sequence Numbers</h2><table>
+<thead>
+<tr>
+<th>Sequence Numbers</th>
+<th>Absolute Sequence Numbers</th>
+<th>Stream Indices</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Start at the ISN</td>
+<td>Start at 0</td>
+<td>Start at 0</td>
+</tr>
+<tr>
+<td>Include SYN/FIN</td>
+<td>Include SYN/FIN</td>
+<td>Omit SYN/FIN</td>
+</tr>
+<tr>
+<td>32 bits, wrapping</td>
+<td>64 bits, non-wrapping</td>
+<td>64 bits, non-wrapping</td>
+</tr>
+<tr>
+<td>“seqno”</td>
+<td>“absolute seqno”</td>
+<td>“stream index”</td>
+</tr>
+</tbody></table>
+<p>我们要实现的就是 “seqno” 与 “absolute seqno” 之间的互相转换。</p>
+<p>“seqno” =&gt; “absolute seqno” </p>
+<p>“seqno” 向 “absolute seqno” 的转换可能并不唯一， 因此我们找到离 <code>checkpoint</code> 最近的那一个。</p>
+<p>“seqno” 一定是在 $[max(checkpoint - (1 &lt;&lt; 31), 0), checkpoint + (1 &lt;&lt;31)]$</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">WrappingInt32 <span class="hljs-title">wrap</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> n, WrappingInt32 isn)</span> </span>&#123;<br>    <span class="hljs-type">const</span> <span class="hljs-type">uint64_t</span> max_seqno = <span class="hljs-type">uint64_t</span>&#123;<span class="hljs-number">1</span>&#125; &lt;&lt; <span class="hljs-number">32</span>;<br>    <span class="hljs-keyword">if</span> (n &lt; max_seqno - isn.<span class="hljs-built_in">raw_value</span>()) &#123;<br>        <span class="hljs-keyword">return</span> WrappingInt32&#123;isn + n&#125;;<br>    &#125;<br>    n -= (max_seqno - isn.<span class="hljs-built_in">raw_value</span>());<br>    <span class="hljs-type">const</span> <span class="hljs-type">uint32_t</span> res = n % max_seqno;<br>    <span class="hljs-keyword">return</span> WrappingInt32&#123;res&#125;;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">uint64_t</span> <span class="hljs-title">unwrap</span><span class="hljs-params">(WrappingInt32 n, WrappingInt32 isn, <span class="hljs-type">uint64_t</span> checkpoint)</span> </span>&#123;<br>    <span class="hljs-comment">// DUMMY_CODE(n, isn, checkpoint);</span><br>    <span class="hljs-type">const</span> <span class="hljs-type">uint64_t</span> max_seqno = <span class="hljs-type">uint64_t</span>&#123;<span class="hljs-number">1</span>&#125; &lt;&lt; <span class="hljs-number">32</span>;<br>    <span class="hljs-type">const</span> <span class="hljs-type">int32_t</span> count = (checkpoint &lt; max_seqno ? <span class="hljs-number">0</span> : checkpoint / max_seqno);<br>    <span class="hljs-type">uint64_t</span> res&#123;<span class="hljs-number">0</span>&#125;;<br>    <span class="hljs-keyword">if</span> (n.<span class="hljs-built_in">raw_value</span>() &gt;= isn.<span class="hljs-built_in">raw_value</span>()) &#123;<br>        res = n.<span class="hljs-built_in">raw_value</span>() - isn.<span class="hljs-built_in">raw_value</span>();<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        res = max_seqno - isn.<span class="hljs-built_in">raw_value</span>() + n.<span class="hljs-built_in">raw_value</span>();<br>    &#125;<br>    res += (max_seqno * count);<br>    <span class="hljs-keyword">if</span> (res &gt; checkpoint &amp;&amp; res &gt;= max_seqno) &#123;<br>        <span class="hljs-keyword">if</span> (res - checkpoint &gt; max_seqno / <span class="hljs-number">2</span>) res -= max_seqno;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (res &lt; checkpoint) &#123;<br>        <span class="hljs-keyword">if</span> (checkpoint - res &gt; max_seqno / <span class="hljs-number">2</span>) res += max_seqno;<br>    &#125;<br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="Implementing-the-TCP-receiver"><a href="#Implementing-the-TCP-receiver" class="headerlink" title="Implementing the TCP receiver"></a>Implementing the TCP receiver</h2><p>需要注意：</p>
 <ul>
-<li>根节点</li>
-<li>内部节点</li>
-<li>叶子节点</li>
+<li><p>在接收一个 SYN 前，任何数据段都会被拒绝</p>
+</li>
+<li><p>接收一个 SYN 后，不再接收含有 SYN 的 <code>TCPSegment</code></p>
+</li>
+<li><p>接收一个 FIN 后，不再接收含有 FIN 的 <code>TCPSegment</code></p>
+</li>
+<li><p><code>TCPSegment</code> 的数据与接收窗口没有交集就会被拒绝</p>
+</li>
+<li><p>SYN 和 FIN 都会占用一个序号</p>
+</li>
 </ul>
-<p><strong>根节点</strong>可以是内部节点也可使叶子节点。</p>
-<p>B+ 树的每个节点不仅有最大容量，也有最小容量(最小容量 = 最大容量的一半, 下取整)，低于最小容量的节点会想方法让自己的节点树增加(在 删除 中详细讲解)，<strong>根节点</strong>没有最小容量限制。</p>
-<p>每个节点中的数据是有序的，按照 K 值排序。</p>
-<p><strong>内部节点</strong>是不存储真实数据的，而是存储子树的位置。上图中的 3 号内部节点，他已经存储了 3 个 K-V 对，第一个 K-V 对指向 $K &lt; 4$ 的子树的位置，第二个 K-V 指向 $4 \leq K &lt; 6$ 的子树位置，第三个 K-V 对指向 $ 6 \leq K$ 的子树位置。</p>
-<p>内部节点的 K 实际是一个范围。</p>
-<p><strong>叶子节点</strong>存储了真实的数据(也可以是指向数据的地址)。同时，叶子节点也会指向下一个叶子节点，像链表一样。</p>
-<h3 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h3><p>因为信息存放在叶子节点中，只要找到 <code>key</code> 所在的叶子节点, 递归查找即可。节点中的 <code>key</code> 是有序的，查找下一个节点可以借助二分查找。</p>
-<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>B+ 树的插入是自下而上的。</p>
-<ol>
-<li>根据 <code>key</code> 找到它该插入的叶子节点。</li>
-<li>插入数据到这个叶子节点，判断这个叶子节点是否等于最大容量，若果是的话要进行分裂操作，否则什么也不做(也可以先判断再插入)。</li>
-<li>分裂操作，将这个节点中的一半分到一个新节点，创建了新节点也要向父节点去插入一对 K-V 来确保父节点表示的范围正确, 这对 K-V 是新节点的第一对 K-V, 如果插入后的父节点等于最大容量，同样要进行分裂操作。(如果要分裂的是叶子节点，还需要更新下一个节点)。</li>
-</ol>
-<p>现在考虑在一个 5 阶的 B+ 树上插入一个 (5, V) 。</p>
-<p><img src="/images/CMU15-445/insert1.png" srcset="/img/loading.gif" lazyload></p>
-<p>插入后这个节点的大小就等于最大容量了，要进行分裂操作。</p>
-<p><img src="/images/CMU15-445/insert2.png" srcset="/img/loading.gif" lazyload></p>
-<p>分裂之后，我们需要向它的父节点插入一个 K-V。</p>
-<p>自下而上的插入，当还没有分裂时，根节点是一个叶子节点，同时大小为 1 的节点是不表示的，再没有插入 (5, V) 时，节点 3 是不表示的。</p>
-<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>删除操作也是自下而上的。</p>
-<ol>
-<li>删除一个 K-V 后，如果这个节点的大小严格小于最小容量，需要进行合并操作。</li>
-<li>优先考虑从同一个父亲节点的兄弟节点中拿走一个 K-V，被拿走的节点大小必须是严格大于节点的最小容量的。</li>
-<li>如果不能进行拿走节点的操作，就要考虑把自己的所有 K-V 插入到周围的节点中，这个节点也就被删除了，对于它的父节点也要删除对应的 K-V, 接着考虑父节点是否需要进行合并操作</li>
-</ol>
-<p><img src="/images/CMU15-445/insert2.png" srcset="/img/loading.gif" lazyload></p>
-<p>删除 <code>key</code> 值为 2 的 K-V。</p>
-<p><img src="/images/CMU15-445/erase1.png" srcset="/img/loading.gif" lazyload></p>
-<p>这时节点 1 的大小严格小于最小容量，尝试从节点 2 中拿一个节点，刚好 2 号节点的大小是严格大于最小容量的。</p>
-<p><img src="/images/CMU15-445/erase2.png" srcset="/img/loading.gif" lazyload></p>
-<p>只能拿走 2 号节点的第一个 K-V，因此还需要对父节点中对应的 K-V 进行修改。</p>
-<p>考虑删除 <code>key</code> 值为 3 的 K-V。</p>
-<p><img src="/images/CMU15-445/erase3.png" srcset="/img/loading.gif" lazyload></p>
-<p>节点 1 的又需要进行合并操作，这时的 2 号节点不能提供一个 K-V 给 1 号节点了， 尝试将 2 号节点的 K-V 都移动到 1 号节点 (或者 1 移动到 2)。</p>
-<p><img src="/images/CMU15-445/erase4.png" srcset="/img/loading.gif" lazyload></p>
-<p>2 号节点不存在了，要删除父节点中对应的 K-V。</p>
-<p>父节点 3 只剩一对 K-V 了，如果它可以进行合并操作，就要对他进行这个操作，这里不能进行操作。父节点 3 也没有存在的意义，删除节点 3 只保留节点 1 。</p>
-<h2 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h2><p>最简单的想法是让 插入、删除、搜索 这三个节点共用一把读写锁，这样效率实在太低了。</p>
-<p>采用特殊的加锁方式 “latch crabbing”, 像螃蟹走路一样进行加锁。先锁住父节点，在锁住孩子节点，如果孩子节点，如果孩子节点是安全的，就解开父节点的锁。</p>
-<h3 id="搜索-1"><a href="#搜索-1" class="headerlink" title="搜索"></a>搜索</h3><p>孩子节点一定是安全的，搜索不会改变任何节点的大小。</p>
-<p>搜索 <code>key</code> 值为 12 的 K-V</p>
-<p><img src="/images/CMU15-445/2search1.png" srcset="/img/loading.gif" lazyload></p>
-<p>锁住孩子节点。<br><img src="" srcset="/img/loading.gif" lazyload>/images/CMU15-445/2search2.png)</p>
-<p>释放父节点。</p>
-<p><img src="/images/CMU15-445/2search3.png" srcset="/img/loading.gif" lazyload></p>
-<p>递归进行即可。</p>
-<h3 id="插入-1"><a href="#插入-1" class="headerlink" title="插入"></a>插入</h3><p>插入操作会改变节点的大小，当前节点大小 + 1 等于节点的最大容量，这个节点就是不安全的，如果对这个节点进行插入操作，它的父节点也要进行插入操作，因此不能释放它的父节点的写锁。</p>
-<p>如果在下面遇到了一个安全的节点，之前所有的上锁的节点都可以解锁了，包括之前不安全的节点，因为这个安全的节点保证了上面的节点不会被下面的操作影响。</p>
-<p>插入 (2, V)， 先锁住根节点。</p>
-<p><img src="/images/CMU15-445/2insert1.png" srcset="/img/loading.gif" lazyload></p>
-<p>再锁住子节点 3，并判断他是否安全。</p>
-<p><img src="/images/CMU15-445/2insert2.png" srcset="/img/loading.gif" lazyload></p>
-<p>子节点 3 并不安全，不释放节点 5 的锁，继续递归对节点 1 加锁。</p>
-<p><img src="/images/CMU15-445/2insert3.png" srcset="/img/loading.gif" lazyload></p>
-<p>节点 1 是安全的，释放节点3，5 的锁。</p>
-<p><img src="/images/CMU15-445/2insert4.png" srcset="/img/loading.gif" lazyload></p>
-<h3 id="删除-1"><a href="#删除-1" class="headerlink" title="删除"></a>删除</h3><p>与插入操作类似，虽然它有可能会更改多个节点，但是锁住父节点就没什么影响了。</p>
-<p>判断节点是否安全的条件为，节点大小严格大于最小容量的节点是安全的，否则是不安全的。</p>
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>[B+ 树演示网站/images/CMU15-445/<a target="_blank" rel="noopener" href="https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html">https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html</a>)</p>
+<p><code>stream_reassembler.hh</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">StreamReassembler</span> &#123;<br>  <span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">head_index</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _head_index; &#125;<br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">input_ended</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _output.<span class="hljs-built_in">input_ended</span>(); &#125;<br>    <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>tcp_receiver.hh</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">TCPReceiver</span> &#123;<br>    <span class="hljs-comment">//! Our data structure for re-assembling bytes.</span><br>    StreamReassembler _reassembler;<br><br>    <span class="hljs-comment">//! The maximum number of bytes we&#x27;ll store.</span><br>    <span class="hljs-type">size_t</span> _capacity;<br><br>    <span class="hljs-type">uint64_t</span> _pos&#123;<span class="hljs-number">0</span>&#125;;<br>    <span class="hljs-type">bool</span> _fin&#123;<span class="hljs-literal">false</span>&#125;;<br>    std::optional&lt;WrappingInt32&gt; _isn&#123;std::<span class="hljs-literal">nullopt</span>&#125;;<br>    <span class="hljs-comment">// ...</span><br></code></pre></td></tr></table></figure>
+
+<p><code>tcp_receiver.cc</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">TCPReceiver::segment_received</span><span class="hljs-params">(<span class="hljs-type">const</span> TCPSegment &amp;seg)</span> </span>&#123;<br>    <span class="hljs-type">const</span> <span class="hljs-type">bool</span> issyn = seg.<span class="hljs-built_in">header</span>().syn;<br>    <span class="hljs-type">const</span> <span class="hljs-type">bool</span> isfin = seg.<span class="hljs-built_in">header</span>().fin;<br>    <span class="hljs-type">const</span> <span class="hljs-type">bool</span> refuse = (_isn != <span class="hljs-literal">nullopt</span> &amp;&amp; issyn) || (_fin &amp;&amp; isfin) || (_isn == <span class="hljs-literal">nullopt</span> &amp;&amp; !issyn);<br><br>    <span class="hljs-keyword">if</span> (refuse) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    <span class="hljs-keyword">if</span> (issyn) &#123;<br>        _isn = seg.<span class="hljs-built_in">header</span>().seqno;<br>        _pos = <span class="hljs-number">1</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (isfin) _fin = <span class="hljs-literal">true</span>;<br><br>    <span class="hljs-type">const</span> <span class="hljs-type">uint64_t</span> abs_seqno = <span class="hljs-built_in">unwrap</span>(seg.<span class="hljs-built_in">header</span>().seqno, _isn.<span class="hljs-built_in">value</span>(), _pos);<br>    <span class="hljs-type">const</span> <span class="hljs-type">uint64_t</span> index = abs_seqno + (issyn ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>);<br><br>    <span class="hljs-type">const</span> <span class="hljs-type">bool</span> inbound = abs_seqno + seg.<span class="hljs-built_in">length_in_sequence_space</span>() &lt;= _pos || abs_seqno &gt;= _pos + <span class="hljs-built_in">window_size</span>();<br><br>    <span class="hljs-keyword">if</span> (!issyn &amp;&amp; !isfin &amp;&amp; inbound) <br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    <span class="hljs-comment">// SYN 不被算在 “Stream index” 中，因此index - 1。</span><br>    _reassembler.<span class="hljs-built_in">push_substring</span>(seg.<span class="hljs-built_in">payload</span>().<span class="hljs-built_in">copy</span>(), index - <span class="hljs-number">1</span>, isfin); <br>    _pos = _reassembler.<span class="hljs-built_in">head_pos</span>() + <span class="hljs-number">1</span>;<br>    <span class="hljs-comment">// FIN 会占一个序号</span><br>    <span class="hljs-keyword">if</span> (_reassembler.<span class="hljs-built_in">input_ended</span>()) &#123;  <br>        _pos++;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br><br><span class="hljs-function">optional&lt;WrappingInt32&gt; <span class="hljs-title">TCPReceiver::ackno</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123;<br>    <span class="hljs-keyword">return</span> _pos == <span class="hljs-number">0</span> ? std::<span class="hljs-literal">nullopt</span> : optional&lt;WrappingInt32&gt;&#123;<span class="hljs-built_in">wrap</span>(_pos, _isn.<span class="hljs-built_in">value</span>())&#125;;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">TCPReceiver::window_size</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _reassembler.<span class="hljs-built_in">stream_out</span>().<span class="hljs-built_in">remaining_capacity</span>(); &#125;<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -378,7 +353,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/CMU15-445/" class="category-chain-item">CMU15-445</a>
+  <a href="/categories/CS144/" class="category-chain-item">CS144</a>
   
   
 
@@ -393,11 +368,11 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/CMU15-445/">#CMU15-445</a>
-      
         <a href="/tags/Lab/">#Lab</a>
       
-        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">#数据库</a>
+        <a href="/tags/CS144/">#CS144</a>
+      
+        <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
       
     </div>
   
@@ -409,8 +384,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>B+ 树与高并发</div>
-      <div>https://mingzi47.github.io/2023/02/26/B+树与高并发/B+树与高并发/B+树与高并发/</div>
+      <div>【计算机网络】Stanford CS144 Lab2 学习记录</div>
+      <div>https://mingzi47.github.io/2023/02/06/CS144/【计算机网络】Stanford CS144 Lab2/</div>
     </div>
     <div class="license-meta">
       
@@ -422,7 +397,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年2月26日</div>
+          <div>2023年2月6日</div>
         </div>
       
       
@@ -454,9 +429,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/02/27/Cpp/%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/" title="C++多态: 运行期多态与编译期多态">
+                      <a href="/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab1/" title="【计算机网络】Stanford CS144 Lab1 学习记录">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">C++多态: 运行期多态与编译期多态</span>
+                        <span class="hidden-mobile">【计算机网络】Stanford CS144 Lab1 学习记录</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -464,8 +439,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/02/17/Cpp/RAII%E4%B8%8E%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" title="RAII 与 智能指针">
-                        <span class="hidden-mobile">RAII 与 智能指针</span>
+                      <a href="/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab3/" title="【计算机网络】Stanford CS144 Lab3 学习记录">
+                        <span class="hidden-mobile">【计算机网络】Stanford CS144 Lab3 学习记录</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

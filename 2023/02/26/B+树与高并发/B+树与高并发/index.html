@@ -18,21 +18,39 @@
   <meta name="author" content="mingzi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+    <meta name="description" content="B+ 树 上图表示的是一颗四阶 B+ 树，四阶表示每个节点最多存四个 K-V 对。 B+ 树的叶子节点分为三类：  根节点 内部节点 叶子节点  根节点可以是内部节点也可使叶子节点。 B+ 树的每个节点不仅有最大容量，也有最小容量(最小容量 &#x3D; 最大容量的一半, 下取整)，低于最小容量的节点会想方法让自己的节点树增加(在 删除 中详细讲解)，根节点没有最小容量限制。 每个节点中的数据是有序的，按照">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello Hexo">
-<meta property="og:url" content="https://mingzi47.github.io/2023/01/06/hello-hexo/index.html">
+<meta property="og:title" content="B+ 树与高并发">
+<meta property="og:url" content="https://mingzi47.github.io/2023/02/26/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="B+ 树 上图表示的是一颗四阶 B+ 树，四阶表示每个节点最多存四个 K-V 对。 B+ 树的叶子节点分为三类：  根节点 内部节点 叶子节点  根节点可以是内部节点也可使叶子节点。 B+ 树的每个节点不仅有最大容量，也有最小容量(最小容量 &#x3D; 最大容量的一半, 下取整)，低于最小容量的节点会想方法让自己的节点树增加(在 删除 中详细讲解)，根节点没有最小容量限制。 每个节点中的数据是有序的，按照">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-01-06T07:45:14.000Z">
-<meta property="article:modified_time" content="2023-03-06T04:35:43.358Z">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/BPlusTree.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert1.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert2.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert2.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase1.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase2.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase3.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase4.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2search1.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2search3.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert1.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert2.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert3.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert4.png">
+<meta property="article:published_time" content="2023-02-26T07:45:14.000Z">
+<meta property="article:modified_time" content="2023-03-12T14:01:18.833Z">
 <meta property="article:author" content="mingzi">
+<meta property="article:tag" content="CMU15-445">
+<meta property="article:tag" content="Lab">
+<meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mingzi47.github.io/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/BPlusTree.png">
   
   
   
-  <title>Hello Hexo - Blog</title>
+  <title>B+ 树与高并发 - Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,7 +216,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Hello Hexo"></span>
+            <span id="subtitle" data-typed-text="B+ 树与高并发"></span>
           
         </div>
 
@@ -209,8 +227,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-01-06 15:45" pubdate>
-          2023年1月6日 下午
+        <time datetime="2023-02-26 15:45" pubdate>
+          2023年2月26日 下午
         </time>
       </span>
     
@@ -221,7 +239,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          455 字
+          1.8k 字
         
       </span>
     
@@ -232,7 +250,7 @@
         
         
         
-          4 分钟
+          15 分钟
         
       </span>
     
@@ -270,25 +288,78 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Hello Hexo</h1>
+            <h1 style="display: none">B+ 树与高并发</h1>
             
             
               <div class="markdown-body">
                 
-                <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">&quot;My New Post&quot;</span><br></code></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo server<br></code></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-<h2 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-string">scaffolds</span><br>  <span class="hljs-string">模板.md</span><br><span class="hljs-string">source</span><br>  <span class="hljs-string">_post</span><br>    <span class="hljs-string">文章</span><br>      <span class="hljs-string">文章.md</span><br>  <span class="hljs-string">about</span><br>  <span class="hljs-string">categories</span><br>  <span class="hljs-string">images</span><br>  <span class="hljs-string">search</span><br>  <span class="hljs-string">tags</span><br><span class="hljs-string">themes</span><br></code></pre></td></tr></table></figure>
+                <h2 id="B-树"><a href="#B-树" class="headerlink" title="B+ 树"></a>B+ 树</h2><p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/BPlusTree.png" srcset="/img/loading.gif" lazyload alt="B+ 树"></p>
+<p>上图表示的是一颗四阶 B+ 树，四阶表示每个节点最多存四个 K-V 对。</p>
+<p>B+ 树的叶子节点分为三类：</p>
+<ul>
+<li>根节点</li>
+<li>内部节点</li>
+<li>叶子节点</li>
+</ul>
+<p><strong>根节点</strong>可以是内部节点也可使叶子节点。</p>
+<p>B+ 树的每个节点不仅有最大容量，也有最小容量(最小容量 = 最大容量的一半, 下取整)，低于最小容量的节点会想方法让自己的节点树增加(在 删除 中详细讲解)，<strong>根节点</strong>没有最小容量限制。</p>
+<p>每个节点中的数据是有序的，按照 K 值排序。</p>
+<p><strong>内部节点</strong>是不存储真实数据的，而是存储子树的位置。上图中的 3 号内部节点，他已经存储了 3 个 K-V 对，第一个 K-V 对指向 $K &lt; 4$ 的子树的位置，第二个 K-V 指向 $4 \leq K &lt; 6$ 的子树位置，第三个 K-V 对指向 $ 6 \leq K$ 的子树位置。</p>
+<p>内部节点的 K 实际是一个范围。</p>
+<p><strong>叶子节点</strong>存储了真实的数据(也可以是指向数据的地址)。同时，叶子节点也会指向下一个叶子节点，像链表一样。</p>
+<h3 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h3><p>因为信息存放在叶子节点中，只要找到 <code>key</code> 所在的叶子节点, 递归查找即可。节点中的 <code>key</code> 是有序的，查找下一个节点可以借助二分查找。</p>
+<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>B+ 树的插入是自下而上的。</p>
+<ol>
+<li>根据 <code>key</code> 找到它该插入的叶子节点。</li>
+<li>插入数据到这个叶子节点，判断这个叶子节点是否等于最大容量，若果是的话要进行分裂操作，否则什么也不做(也可以先判断再插入)。</li>
+<li>分裂操作，将这个节点中的一半分到一个新节点，创建了新节点也要向父节点去插入一对 K-V 来确保父节点表示的范围正确, 这对 K-V 是新节点的第一对 K-V, 如果插入后的父节点等于最大容量，同样要进行分裂操作。(如果要分裂的是叶子节点，还需要更新下一个节点)。</li>
+</ol>
+<p>现在考虑在一个 5 阶的 B+ 树上插入一个 (5, V) 。</p>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert1.png" srcset="/img/loading.gif" lazyload></p>
+<p>插入后这个节点的大小就等于最大容量了，要进行分裂操作。</p>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert2.png" srcset="/img/loading.gif" lazyload></p>
+<p>分裂之后，我们需要向它的父节点插入一个 K-V。</p>
+<p>自下而上的插入，当还没有分裂时，根节点是一个叶子节点，同时大小为 1 的节点是不表示的，再没有插入 (5, V) 时，节点 3 是不表示的。</p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>删除操作也是自下而上的。</p>
+<ol>
+<li>删除一个 K-V 后，如果这个节点的大小严格小于最小容量，需要进行合并操作。</li>
+<li>优先考虑从同一个父亲节点的兄弟节点中拿走一个 K-V，被拿走的节点大小必须是严格大于节点的最小容量的。</li>
+<li>如果不能进行拿走节点的操作，就要考虑把自己的所有 K-V 插入到周围的节点中，这个节点也就被删除了，对于它的父节点也要删除对应的 K-V, 接着考虑父节点是否需要进行合并操作</li>
+</ol>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert2.png" srcset="/img/loading.gif" lazyload></p>
+<p>删除 <code>key</code> 值为 2 的 K-V。</p>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase1.png" srcset="/img/loading.gif" lazyload></p>
+<p>这时节点 1 的大小严格小于最小容量，尝试从节点 2 中拿一个节点，刚好 2 号节点的大小是严格大于最小容量的。</p>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase2.png" srcset="/img/loading.gif" lazyload></p>
+<p>只能拿走 2 号节点的第一个 K-V，因此还需要对父节点中对应的 K-V 进行修改。</p>
+<p>考虑删除 <code>key</code> 值为 3 的 K-V。</p>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase3.png" srcset="/img/loading.gif" lazyload></p>
+<p>节点 1 的又需要进行合并操作，这时的 2 号节点不能提供一个 K-V 给 1 号节点了， 尝试将 2 号节点的 K-V 都移动到 1 号节点 (或者 1 移动到 2)。</p>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase4.png" srcset="/img/loading.gif" lazyload></p>
+<p>2 号节点不存在了，要删除父节点中对应的 K-V。</p>
+<p>父节点 3 只剩一对 K-V 了，如果它可以进行合并操作，就要对他进行这个操作，这里不能进行操作。父节点 3 也没有存在的意义，删除节点 3 只保留节点 1 。</p>
+<h2 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h2><p>最简单的想法是让 插入、删除、搜索 这三个节点共用一把读写锁，这样效率实在太低了。</p>
+<p>采用特殊的加锁方式 “latch crabbing”, 像螃蟹走路一样进行加锁。先锁住父节点，在锁住孩子节点，如果孩子节点，如果孩子节点是安全的，就解开父节点的锁。</p>
+<h3 id="搜索-1"><a href="#搜索-1" class="headerlink" title="搜索"></a>搜索</h3><p>孩子节点一定是安全的，搜索不会改变任何节点的大小。</p>
+<p>搜索 <code>key</code> 值为 12 的 K-V</p>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2search1.png" srcset="/img/loading.gif" lazyload></p>
+<p>锁住孩子节点。<br><img src="" srcset="/img/loading.gif" lazyload>/images/CMU15-445/B+树与高并发/2search2.png)</p>
+<p>释放父节点。</p>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2search3.png" srcset="/img/loading.gif" lazyload></p>
+<p>递归进行即可。</p>
+<h3 id="插入-1"><a href="#插入-1" class="headerlink" title="插入"></a>插入</h3><p>插入操作会改变节点的大小，当前节点大小 + 1 等于节点的最大容量，这个节点就是不安全的，如果对这个节点进行插入操作，它的父节点也要进行插入操作，因此不能释放它的父节点的写锁。</p>
+<p>如果在下面遇到了一个安全的节点，之前所有的上锁的节点都可以解锁了，包括之前不安全的节点，因为这个安全的节点保证了上面的节点不会被下面的操作影响。</p>
+<p>插入 (2, V)， 先锁住根节点。</p>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert1.png" srcset="/img/loading.gif" lazyload></p>
+<p>再锁住子节点 3，并判断他是否安全。</p>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert2.png" srcset="/img/loading.gif" lazyload></p>
+<p>子节点 3 并不安全，不释放节点 5 的锁，继续递归对节点 1 加锁。</p>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert3.png" srcset="/img/loading.gif" lazyload></p>
+<p>节点 1 是安全的，释放节点3，5 的锁。</p>
+<p><img src="/images/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert4.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="删除-1"><a href="#删除-1" class="headerlink" title="删除"></a>删除</h3><p>与插入操作类似，虽然它有可能会更改多个节点，但是锁住父节点就没什么影响了。</p>
+<p>判断节点是否安全的条件为，节点大小严格大于最小容量的节点是安全的，否则是不安全的。</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p><a target="_blank" rel="noopener" href="https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html">B+ 树演示网站</a></p>
 
                 
               </div>
@@ -297,6 +368,38 @@
             <div>
               <div class="post-metas my-3">
   
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/CMU15-445/" class="category-chain-item">CMU15-445</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CMU15-445/">#CMU15-445</a>
+      
+        <a href="/tags/Lab/">#Lab</a>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">#数据库</a>
+      
+    </div>
   
 </div>
 
@@ -306,8 +409,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Hello Hexo</div>
-      <div>https://mingzi47.github.io/2023/01/06/hello-hexo/</div>
+      <div>B+ 树与高并发</div>
+      <div>https://mingzi47.github.io/2023/02/26/B+树与高并发/B+树与高并发/</div>
     </div>
     <div class="license-meta">
       
@@ -319,7 +422,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年1月6日</div>
+          <div>2023年2月26日</div>
         </div>
       
       
@@ -351,15 +454,21 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab4/" title="【计算机网络】Stanford CS144 Lab4 学习记录">
+                      <a href="/2023/02/27/Cpp/%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/" title="C++多态: 运行期多态与编译期多态">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【计算机网络】Stanford CS144 Lab4 学习记录</span>
+                        <span class="hidden-mobile">C++多态: 运行期多态与编译期多态</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2023/02/17/Cpp/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" title="RAII 与 智能指针">
+                        <span class="hidden-mobile">RAII 与 智能指针</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>
