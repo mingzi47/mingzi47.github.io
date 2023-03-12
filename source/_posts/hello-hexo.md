@@ -37,3 +37,20 @@ $ hexo deploy
 ```
 
 More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
+
+## 文件结构
+
+```yml
+scaffolds
+  模板.md
+source
+  _post
+    文章
+      文章.md
+  about
+  categories
+  images
+  search
+  tags
+themes
+```

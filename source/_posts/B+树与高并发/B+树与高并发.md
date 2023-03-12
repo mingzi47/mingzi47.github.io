@@ -14,7 +14,7 @@ keywords : [
 
 ## B+ 树
 
-![B+ 树](/images/CMU15-445/BPlusTree.png)
+![B+ 树](/images/CMU15-445/B+树与高并发/BPlusTree.png)
 
 上图表示的是一颗四阶 B+ 树，四阶表示每个节点最多存四个 K-V 对。
 
@@ -50,11 +50,11 @@ B+ 树的插入是自下而上的。
 
 现在考虑在一个 5 阶的 B+ 树上插入一个 (5, V) 。
 
-![](/images/CMU15-445/insert1.png)
+![](/images/CMU15-445/B+树与高并发/insert1.png)
 
 插入后这个节点的大小就等于最大容量了，要进行分裂操作。
 
-![](/images/CMU15-445/insert2.png)
+![](/images/CMU15-445/B+树与高并发/insert2.png)
 
 分裂之后，我们需要向它的父节点插入一个 K-V。
 
@@ -68,25 +68,25 @@ B+ 树的插入是自下而上的。
 2. 优先考虑从同一个父亲节点的兄弟节点中拿走一个 K-V，被拿走的节点大小必须是严格大于节点的最小容量的。
 3. 如果不能进行拿走节点的操作，就要考虑把自己的所有 K-V 插入到周围的节点中，这个节点也就被删除了，对于它的父节点也要删除对应的 K-V, 接着考虑父节点是否需要进行合并操作
 
-![](/images/CMU15-445/insert2.png)
+![](/images/CMU15-445/B+树与高并发/insert2.png)
 
 删除 `key` 值为 2 的 K-V。
 
-![](/images/CMU15-445/erase1.png)
+![](/images/CMU15-445/B+树与高并发/erase1.png)
 
 这时节点 1 的大小严格小于最小容量，尝试从节点 2 中拿一个节点，刚好 2 号节点的大小是严格大于最小容量的。
 
-![](/images/CMU15-445/erase2.png)
+![](/images/CMU15-445/B+树与高并发/erase2.png)
 
 只能拿走 2 号节点的第一个 K-V，因此还需要对父节点中对应的 K-V 进行修改。
 
 考虑删除 `key` 值为 3 的 K-V。
 
-![](/images/CMU15-445/erase3.png)
+![](/images/CMU15-445/B+树与高并发/erase3.png)
 
 节点 1 的又需要进行合并操作，这时的 2 号节点不能提供一个 K-V 给 1 号节点了， 尝试将 2 号节点的 K-V 都移动到 1 号节点 (或者 1 移动到 2)。
 
-![](/images/CMU15-445/erase4.png)
+![](/images/CMU15-445/B+树与高并发/erase4.png)
 
 2 号节点不存在了，要删除父节点中对应的 K-V。
 
@@ -103,14 +103,14 @@ B+ 树的插入是自下而上的。
 
 搜索 `key` 值为 12 的 K-V
 
-![](/images/CMU15-445/2search1.png)
+![](/images/CMU15-445/B+树与高并发/2search1.png)
 
 锁住孩子节点。
-![]()/images/CMU15-445/2search2.png)
+![]()/images/CMU15-445/B+树与高并发/2search2.png)
 
 释放父节点。
 
-![](/images/CMU15-445/2search3.png)
+![](/images/CMU15-445/B+树与高并发/2search3.png)
 
 递归进行即可。
 
@@ -122,19 +122,19 @@ B+ 树的插入是自下而上的。
 
 插入 (2, V)， 先锁住根节点。
 
-![](/images/CMU15-445/2insert1.png)
+![](/images/CMU15-445/B+树与高并发/2insert1.png)
 
 再锁住子节点 3，并判断他是否安全。
 
-![](/images/CMU15-445/2insert2.png)
+![](/images/CMU15-445/B+树与高并发/2insert2.png)
 
 子节点 3 并不安全，不释放节点 5 的锁，继续递归对节点 1 加锁。
 
-![](/images/CMU15-445/2insert3.png)
+![](/images/CMU15-445/B+树与高并发/2insert3.png)
 
 节点 1 是安全的，释放节点3，5 的锁。
 
-![](/images/CMU15-445/2insert4.png)
+![](/images/CMU15-445/B+树与高并发/2insert4.png)
 ### 删除
 
 与插入操作类似，虽然它有可能会更改多个节点，但是锁住父节点就没什么影响了。
@@ -143,4 +143,4 @@ B+ 树的插入是自下而上的。
 
 ## 其他
 
-[B+ 树演示网站/images/CMU15-445/https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html)
+[B+ 树演示网站](https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html)
