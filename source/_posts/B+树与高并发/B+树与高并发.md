@@ -3,12 +3,10 @@ title: "B+ 树与高并发"
 date: 2023-02-26T23:45:14+08:00
 draft: true
 tags : [ 
-"CMU15-445","Lab","数据库"                                   
+"CMU15-445","Lab"
 ]
 categories : [
-"CMU15-445"                              
-]
-keywords : [                                
+"数据库"
 ]
 ---
 

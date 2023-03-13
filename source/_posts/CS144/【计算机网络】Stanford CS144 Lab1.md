@@ -3,10 +3,10 @@ title: "【计算机网络】Stanford CS144 Lab1 学习记录"
 date: 2023-02-06T23:45:14+08:00
 draft: true
 tags : [ 
-"CS144","Lab","计算机网络"                                   
+"CS144","Lab"                                   
 ]
 categories : [
-"CS144"                              
+"计算机网络"
 ]
 keywords : [                                
 ]
