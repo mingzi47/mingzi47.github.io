@@ -18,24 +18,24 @@
   <meta name="author" content="mingzi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Doxygen生成配置使用 doxygen -g 生成默认配置 或者 使用 doxygen -g &lt;config_file&gt; 通过模板来生成配置。 运行使用 doxygen &lt;config_file&gt; 来运行，也可以与构建工具 CMake 相结合使用。 语法有多种方法可以将注释标记为文档, 具体可以查看官方文档 C++ 风格 1&#x2F;&#x2F;! ...text...  or 1&#x2F;&#x2F;&#x2F;">
+    <meta name="description" content="题目P3188 [HNOI2007]梦幻岛宝珠   在 $n(0\leq n \leq 100)$ 个物品中，选择重量不超过 $W(1\leq W \leq 2^{30})$ 的物品，是所选物品的总价值最大.  物品的重量 $w_i$ 可以写成 $a \times 2^{b} (1\leq a \leq 10,0\leq b \leq 30)$.  物品的价值 $v_i(1\leq v_i \le">
 <meta property="og:type" content="article">
-<meta property="og:title" content="文档工具 Doxygen">
-<meta property="og:url" content="https://mingzi47.github.io/2023/02/10/Tools/doxygen%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:title" content="数位背包-梦幻岛宝珠">
+<meta property="og:url" content="https://mingzi47.github.io/2022/11/26/CP/%E6%95%B0%E4%BD%8D%E8%83%8C%E5%8C%85-%E6%A2%A6%E5%B9%BB%E5%B2%9B%E5%AE%9D%E7%8F%A0/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="Doxygen生成配置使用 doxygen -g 生成默认配置 或者 使用 doxygen -g &lt;config_file&gt; 通过模板来生成配置。 运行使用 doxygen &lt;config_file&gt; 来运行，也可以与构建工具 CMake 相结合使用。 语法有多种方法可以将注释标记为文档, 具体可以查看官方文档 C++ 风格 1&#x2F;&#x2F;! ...text...  or 1&#x2F;&#x2F;&#x2F;">
+<meta property="og:description" content="题目P3188 [HNOI2007]梦幻岛宝珠   在 $n(0\leq n \leq 100)$ 个物品中，选择重量不超过 $W(1\leq W \leq 2^{30})$ 的物品，是所选物品的总价值最大.  物品的重量 $w_i$ 可以写成 $a \times 2^{b} (1\leq a \leq 10,0\leq b \leq 30)$.  物品的价值 $v_i(1\leq v_i \le">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-02-10T07:45:14.000Z">
-<meta property="article:modified_time" content="2023-02-11T14:34:48.000Z">
+<meta property="article:published_time" content="2022-11-26T07:45:14.000Z">
+<meta property="article:modified_time" content="2023-03-13T02:59:28.608Z">
 <meta property="article:author" content="mingzi">
-<meta property="article:tag" content="工具">
-<meta property="article:tag" content="Doxygen">
-<meta property="article:tag" content="CMake">
+<meta property="article:tag" content="AtCoder">
+<meta property="article:tag" content="动态规划">
+<meta property="article:tag" content="数位背包">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>文档工具 Doxygen - Blog</title>
+  <title>数位背包-梦幻岛宝珠 - Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -189,7 +189,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="文档工具 Doxygen"></span>
+            <span id="subtitle" data-typed-text="数位背包-梦幻岛宝珠"></span>
           
         </div>
 
@@ -200,8 +200,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-02-10 15:45" pubdate>
-          2023年2月10日 下午
+        <time datetime="2022-11-26 15:45" pubdate>
+          2022年11月26日 下午
         </time>
       </span>
     
@@ -212,7 +212,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.6k 字
+          1.8k 字
         
       </span>
     
@@ -223,7 +223,7 @@
         
         
         
-          30 分钟
+          15 分钟
         
       </span>
     
@@ -261,33 +261,17 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">文档工具 Doxygen</h1>
+            <h1 style="display: none">数位背包-梦幻岛宝珠</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="Doxygen"><a href="#Doxygen" class="headerlink" title="Doxygen"></a>Doxygen</h2><h3 id="生成配置"><a href="#生成配置" class="headerlink" title="生成配置"></a>生成配置</h3><p>使用 <code>doxygen -g</code> 生成默认配置 或者 使用 <code>doxygen -g &lt;config_file&gt;</code> 通过模板来生成配置。</p>
-<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>使用 <code>doxygen &lt;config_file&gt;</code> 来运行，也可以与构建工具 <code>CMake</code> 相结合使用。</p>
-<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><p>有多种方法可以将注释标记为文档, 具体可以查看<a target="_blank" rel="noopener" href="https://doxygen.nl/manual/docblocks.html">官方文档</a></p>
-<p>C++ 风格</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">//! ...text...</span><br></code></pre></td></tr></table></figure>
-
-<p>or</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/// ...text...</span><br></code></pre></td></tr></table></figure>
-
-<p>常用指令：<br>|指令|解释|<br>|—|—|<br>|\file |档案的批注说明。|<br>|\author|作者的信息|<br>|\brief|用于class 或function的批注中，后面为class 或function的简易说明。|<br>|\param|格式为\param arg_name 参数说明主要用于函式说明中，后面接参数的名字，然后再接关于该参数的说明。|<br>|\return|后面接函数传回值的说明。用于function的批注中。说明该函数的传回值。|<br>|\retval|格式为\retval value 传回值说明.主要用于函式说明中，说明特定传回值的意义。所以后面要先接一个传回值。然后在放该传回值的说明。|</p>
-<p>更多指令参考<a target="_blank" rel="noopener" href="https://doxygen.nl/manual/commands.html">官方文档</a></p>
-<h2 id="在-CMake-中使用-Doxygen"><a href="#在-CMake-中使用-Doxygen" class="headerlink" title="在 CMake 中使用 Doxygen"></a>在 CMake 中使用 Doxygen</h2><h3 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">project<br>├── CMakeLists.txt<br>└── docs<br>    ├── Doxyfile.in<br>    └── doxyfile.cmake<br></code></pre></td></tr></table></figure>
-
-<h3 id="Doxyfile"><a href="#Doxyfile" class="headerlink" title="Doxyfile"></a>Doxyfile</h3><p>使用 <code>doxygen -g</code> 命令可以在当前位置生成一份 <code>Doxyfile</code> 的默认配置。</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/mingzi47/ejson"><code>ejson</code></a> 中的 <code>Doxyfile.in</code> （使用了 <code>graphviz</code>）:</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><code class="hljs cpp"># Doxyfile <span class="hljs-number">1.9</span><span class="hljs-number">.6</span><br># 编码<br>DOXYFILE_ENCODING      = UTF<span class="hljs-number">-8</span><br># 项目名<br>PROJECT_NAME           = <span class="hljs-string">&quot;ejson&quot;</span><br># 项目描述<br>PROJECT_BRIEF          = <span class="hljs-string">&quot;A recursive descent-based JSON interpreter and generator implemented using C++17.&quot;</span><br># 版本号<br>PROJECT_NUMBER         = <span class="hljs-number">0.0</span><span class="hljs-number">.1</span><br>PROJECT_LOGO           = <br># 程序文档输入目录<br>INPUT                  = @PROJECT_SOURCE_DIR@<br># 递归遍历当前子目录<br>RECURSIVE              = YES<br># 排除的文档<br>EXCLUDE                = @PROJECT_SOURCE_DIR@/docs @PROJECT_SOURCE_DIR@/build @PROJECT_SOURCE_DIR@/test<br># 文档输出目录<br>OUTPUT_DIRECTORY       = <span class="hljs-string">&quot;@PROJECT_BINARY_DIR@/doc&quot;</span><br># 是否关注大小写名称，注意，如果开启了，那么所有的名称都将被小写。<br>CASE_SENSE_NAMES       = NO<br># 按字母顺序排序, 否则按文件中的顺序<br>SORT_BRIEF_DOCS        = YES<br># 构造函数和析构函数列在最前面。如果设置为 NO，则构造函数将显示在<br># 由SORT_BRIEF_DOCS和SORT_MEMBER_DOCS定义的相应顺序。<br># 注意：如果SORT_BRIEF_DOCS设置为 NO 此选项将忽略以进行排序简报<br># 成员文档。<br># 注意：如果SORT_MEMBER_DOCS设置为 NO 则忽略此选项进行排序<br>SORT_MEMBERS_CTORS_1ST = YES<br># 将 SHOW_NAMESPACES 标记设置为 NO 以禁用命名空间的生成页面。<br>SHOW_NAMESPACES        = NO<br># 如果 USE_MDFILE_AS_MAINPAGE 标记引用 markdown 文档的名称是输入的一部分，其内容将放置在主页上<br>USE_MDFILE_AS_MAINPAGE = @PROJECT_SOURCE_DIR@/README.md<br># 在最后生成的文档中，把所有的源代码包含在其中<br>SOURCE_BROWSER         = YES<br># 如果EXT_LINKS_IN_WINDOW选项设置为 YES，doxygen 将打开指向通过标签文档在单独窗口中导入的外部符号。<br>EXT_LINKS_IN_WINDOW    = YES<br># INCLUDE_PATH 标签可用于指定一个或多个目录<br>INCLUDE_PATH           = @PROJECT_SOURCE_DIR@/ejsonlib<br># 添加外部文档<br># TAGFILES               = <span class="hljs-string">&quot;@PROJECT_SOURCE_DIR@/etc/cppreference-doxygen-web.tag.xml=https://en.cppreference.com/w/&quot;</span><br># TAGFILES              += <span class="hljs-string">&quot;@PROJECT_SOURCE_DIR@/etc/linux-man-doxygen-web.tag.xml=http://man7.org/linux/man-pages/&quot;</span><br># TAGFILES              += <span class="hljs-string">&quot;@PROJECT_SOURCE_DIR@/etc/rfc-doxygen-web.tag.xml=https://tools.ietf.org/html/&quot;</span><br># 那些没有使用doxygen格式描述的文档（函数或类等）就不显示了 （YES 显示， 如果EXTRACT_ALL被启用，那么这个标志其实是被忽略的。）<br>HIDE_UNDOC_RELATIONS   = NO<br># 当 INLINE_GROUPED_CLASSES 标记设置为 YES、类、结构和联合时,显示在包含它们的组中（例如使用 \ingroup）<br>INLINE_GROUPED_CLASSES = YES<br>INLINE_SIMPLE_STRUCTS  = YES<br>HTML_COLORSTYLE_HUE    = <span class="hljs-number">204</span><br>HTML_COLORSTYLE_SAT    = <span class="hljs-number">120</span><br>HTML_COLORSTYLE_GAMMA  = <span class="hljs-number">60</span><br># HTML_EXTRA_STYLESHEET  = <span class="hljs-string">&quot;@PROJECT_SOURCE_DIR@/docs/style.css&quot;</span><br># 是否生成 LaTex 格式文档<br>GENERATE_LATEX         = NO<br>EXAMPLE_PATH           = <span class="hljs-string">&quot;@PROJECT_SOURCE_DIR@/doctests&quot;</span><br><br># 在程序文档中允许以图例形式显示函数调用关系，前提是你已经安装了 graphviz 软件包<br>HAVE_DOT               = @DOXYGEN_DOT_FOUND@<br>CLASS_GRAPH            = YES<br>TEMPLATE_RELATIONS     = YES<br>DOT_IMAGE_FORMAT       = png<br>INTERACTIVE_SVG        = NO<br>COLLABORATION_GRAPH    = NO<br><br># 提取信息，包含类的私有数据成员和静态成员<br>EXTRACT_ALL            = YES<br>EXTRACT_PRIVATE        = YES<br>EXTRACT_STATIC         = YES<br>EXTRACT_ANON_NSPACES   = YES<br><br><span class="hljs-meta"># do u liek eclips</span><br>GENERATE_ECLIPSEHELP   = NO<br></code></pre></td></tr></table></figure>
-<h3 id="doxygen-cmake"><a href="#doxygen-cmake" class="headerlink" title="doxygen.cmake"></a>doxygen.cmake</h3><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">find_package</span> (Doxygen)<br><span class="hljs-keyword">if</span> (DOXYGEN_FOUND)<br>    <span class="hljs-keyword">if</span> (Doxygen_dot_FOUND)<br>        <span class="hljs-keyword">set</span> (DOXYGEN_DOT_FOUND YES)<br>    <span class="hljs-keyword">else</span> (<span class="hljs-keyword">NOT</span> Doxygen_dot_FOUND)<br>        <span class="hljs-keyword">set</span> (DOXYGEN_DOT_FOUND NO)<br>    <span class="hljs-keyword">endif</span> (Doxygen_dot_FOUND)<br>    <span class="hljs-keyword">configure_file</span> (<span class="hljs-string">&quot;$&#123;PROJECT_SOURCE_DIR&#125;/docs/Doxyfile.in&quot;</span> <span class="hljs-string">&quot;$&#123;PROJECT_BINARY_DIR&#125;/Doxyfile&quot;</span> @ONLY)<br>    <span class="hljs-keyword">add_custom_target</span> (doc <span class="hljs-string">&quot;$&#123;DOXYGEN_EXECUTABLE&#125;&quot;</span> <span class="hljs-string">&quot;$&#123;PROJECT_BINARY_DIR&#125;/Doxyfile&quot;</span><br>                           WORKING_DIRECTORY <span class="hljs-string">&quot;$&#123;PROJECT_BINARY_DIR&#125;&quot;</span><br>                           COMMENT <span class="hljs-string">&quot;Generate docs using Doxygen&quot;</span> VERBATIM)<br><span class="hljs-keyword">endif</span> ()<br></code></pre></td></tr></table></figure>
-<p>在更目录的 <code>CMakeLists.txt</code> 中 使用 <code>include(docs/doxygen.cmake)</code> 来引入。</p>
-<p>在 <code>build</code> 文件夹下使用</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">cmake ..</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">make doc</span><br></code></pre></td></tr></table></figure>
-
-<p>文档生成在 <code>build/doc</code> 目录下。</p>
+                <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P3188">P3188 [HNOI2007]梦幻岛宝珠</a></p>
+<p>  在 $n(0\leq n \leq 100)$ 个物品中，选择重量不超过 $W(1\leq W \leq 2^{30})$ 的物品，是所选物品的总价值最大.<br>  物品的重量 $w_i$ 可以写成 $a \times 2^{b} (1\leq a \leq 10,0\leq b \leq 30)$.<br>  物品的价值 $v_i(1\leq v_i \leq 2^{30})$.</p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>  通过 <strong>$w_i$ 可以写成 $a \times 2^{b} (1\leq a \leq 10,0\leq b \leq 30)$</strong> ,很容易想到通过 $b$ 分层做, 同一层之间的合并是非常简单的01背包.<br>  当前层转移到下一层是这道题的难点.<br>  定义 $f_{ij}$ 表示背包剩余的容量为 $j \times 2^i$ 时的最大价值.<br>  观察 $a \times 2^{i+1}$ 与 $a \times 2^ i$ 它们属于不同的两层, $a \times 2^{i+1}$ 可以写成 $2 \times a \times 2^i$ 这表示了 $f[i][2a] = f[i+1][a]$ 它们表示的容量相同.<br>  接下来考虑总重量 $W$ 在层与层之间转移的限制.<br>  我们从高位枚举 $W$ 时, $W$ 的第 $i$ 位为 1 时,转移到第 $i$ 层的状态为 $2 \times a + 1$ ,第 $i$ 位为 0 时, 转移到第 $i$ 层的状态为 $2 \times a + 0$.<br>  第 $i$ 层 从第 $i+1$ 层转移过来要加上 $W$ 自身的容量, $W$ 的第 $i$ 位为 1 时要加上 $2^i$.<br>  每一层在最坏情况下物品重量和不超过 1000 ,当转移过来的容量大于 1000 时就没必要保存了，因为剩余 $1000 \times 2^i$是可以把剩下的物品都取完的.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">int</span> d = (W &gt;&gt; i) &amp; <span class="hljs-number">1</span>;<br>f[i][<span class="hljs-built_in">min</span>(<span class="hljs-number">2</span> * j + d,<span class="hljs-number">1000</span>)] = std::<span class="hljs-built_in">max</span>(f[i][<span class="hljs-built_in">min</span>(<span class="hljs-number">2</span> * j + d,<span class="hljs-number">1000</span>)],f[i+<span class="hljs-number">1</span>][j]);<br></code></pre></td></tr></table></figure>
+<p>  因为是从高位开始枚举的，会存在许多不合法的状态，令初值全部为负无穷，f[31][0] = 0.<br>  答案为f[0][0]，背包没有剩余空间的最大值.<br>  可以通过滚动数组优化掉 $i$ .</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-type">const</span> i64 inf = <span class="hljs-number">1LL</span> &lt;&lt; <span class="hljs-number">60</span>;<br><span class="hljs-type">int</span> n;<br>std::vector&lt;std::pair&lt;<span class="hljs-type">int</span>,<span class="hljs-type">int</span>&gt;&gt; item[<span class="hljs-number">32</span>];<br>i64 W,f[<span class="hljs-number">2010</span>],g[<span class="hljs-number">2010</span>];<br><span class="hljs-function"><span class="hljs-keyword">inline</span> std::pair&lt;<span class="hljs-type">int</span>,<span class="hljs-type">int</span>&gt; <span class="hljs-title">count0</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span></span>&#123;<br>    <span class="hljs-type">int</span> lev = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(;!(x &amp; <span class="hljs-number">1</span>);)&#123;<br>        lev++;<br>        x&gt;&gt;=<span class="hljs-number">1</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> &#123;lev,x&#125;;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">solve</span><span class="hljs-params">()</span></span>&#123;<br>    <span class="hljs-type">int</span> s = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>;i&lt;=<span class="hljs-number">30</span>;++i) item[i].<span class="hljs-built_in">clear</span>();<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>;i&lt;=n;++i)&#123;<br>        <span class="hljs-type">int</span> w,v;<br>        std::cin&gt;&gt;w&gt;&gt;v;<br>       <br>        <span class="hljs-keyword">auto</span> [lev,x] = <span class="hljs-built_in">count0</span>(w);<br>        <br>        item[lev].<span class="hljs-built_in">push_back</span>(&#123;x,v&#125;);<br>        s+=x;<br>    &#125;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>;i&lt;=s;i++) f[i] = -inf;<br>    f[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">30</span>;i&gt;=<span class="hljs-number">0</span>;--i)&#123;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j = <span class="hljs-number">0</span>;j&lt;=s;j++)<br>            g[j] = f[j],f[j] = -inf;<br>        <span class="hljs-type">int</span> d = (W &gt;&gt; i) &amp; <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j = <span class="hljs-number">0</span>;j&lt;=s;j++)&#123;<br>            f[std::<span class="hljs-built_in">min</span>(s,<span class="hljs-number">2</span> * j + d)] = std::<span class="hljs-built_in">max</span>(f[std::<span class="hljs-built_in">min</span>(s,<span class="hljs-number">2</span> * j +d)],g[j]);<br>        &#125;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span> [w,v]:item[i])&#123;<br>	<span class="hljs-comment">// 一般背包求用了多少空间的最大值</span><br>	<span class="hljs-comment">// 这里表示剩余多少空间的最大值</span><br>            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j = w;j&lt;=s;j++)<br>                f[j-w] = std::<span class="hljs-built_in">max</span>(f[j-w],f[j]+v);<br>        &#125;<br>       <br>    &#125;<br>    std::cout&lt;&lt;f[<span class="hljs-number">0</span>]&lt;&lt;<span class="hljs-string">&quot;\n&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -306,7 +290,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E5%B7%A5%E5%85%B7/" class="category-chain-item">工具</a>
+  <a href="/categories/CP/" class="category-chain-item">CP</a>
   
   
 
@@ -321,11 +305,11 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E5%B7%A5%E5%85%B7/">#工具</a>
+        <a href="/tags/AtCoder/">#AtCoder</a>
       
-        <a href="/tags/Doxygen/">#Doxygen</a>
+        <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">#动态规划</a>
       
-        <a href="/tags/CMake/">#CMake</a>
+        <a href="/tags/%E6%95%B0%E4%BD%8D%E8%83%8C%E5%8C%85/">#数位背包</a>
       
     </div>
   
@@ -337,8 +321,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>文档工具 Doxygen</div>
-      <div>https://mingzi47.github.io/2023/02/10/Tools/doxygen工具/</div>
+      <div>数位背包-梦幻岛宝珠</div>
+      <div>https://mingzi47.github.io/2022/11/26/CP/数位背包-梦幻岛宝珠/</div>
     </div>
     <div class="license-meta">
       
@@ -350,7 +334,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年2月10日</div>
+          <div>2022年11月26日</div>
         </div>
       
       
@@ -382,9 +366,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/02/17/Cpp/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" title="RAII 与 智能指针">
+                      <a href="/2022/12/26/CP/AtCoder%20Beginner%20Contest%20282%20G%20-%20Similar%20Permutation/" title="AtCoder Beginner Contest 282 G - Similar Permutation">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">RAII 与 智能指针</span>
+                        <span class="hidden-mobile">AtCoder Beginner Contest 282 G - Similar Permutation</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -392,8 +376,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/02/06/CS144/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91Stanford%20CS144%20Lab0/" title="【计算机网络】Stanford CS144 Lab0 学习记录">
-                        <span class="hidden-mobile">【计算机网络】Stanford CS144 Lab0 学习记录</span>
+                      <a href="/2021/01/06/hello-hexo/" title="Hello Hexo">
+                        <span class="hidden-mobile">Hello Hexo</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

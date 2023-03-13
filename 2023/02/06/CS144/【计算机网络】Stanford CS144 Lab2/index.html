@@ -26,11 +26,10 @@
 <meta property="og:description" content="这次实验的目标为实现一个 TCP协议 的接收器。 Sequence Numbers   Sequence Numbers Absolute Sequence Numbers Stream Indices    Start at the ISN Start at 0 Start at 0   Include SYN&#x2F;FIN Include SYN&#x2F;FIN Omit SYN&#x2F;FIN   32 bits">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-02-06T07:45:14.000Z">
-<meta property="article:modified_time" content="2023-03-05T12:21:38.253Z">
+<meta property="article:modified_time" content="2023-03-13T02:39:21.668Z">
 <meta property="article:author" content="mingzi">
 <meta property="article:tag" content="Lab">
 <meta property="article:tag" content="CS144">
-<meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -341,7 +340,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/CS144/" class="category-chain-item">CS144</a>
+  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="category-chain-item">计算机网络</a>
   
   
 
@@ -359,8 +358,6 @@
         <a href="/tags/Lab/">#Lab</a>
       
         <a href="/tags/CS144/">#CS144</a>
-      
-        <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
       
     </div>
   
@@ -486,6 +483,25 @@
 
   
 
+
+  
+  
+
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('mermaid' in window) {
+        mermaid.init();
+      }
+    });
+  });
+</script>
 
 
 
@@ -678,6 +694,49 @@
 
 
   <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
 
   <script  src="/js/local-search.js" ></script>
 

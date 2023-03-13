@@ -26,11 +26,10 @@
 <meta property="og:description" content="计算机网络CS144 官方镜像 : https:&#x2F;&#x2F;cs144.github.io&#x2F; kangyupl备份的镜像 : https:&#x2F;&#x2F;kangyupl.gitee.io&#x2F;cs144.github.io&#x2F; 实验准备  Ubuntu 18.04.6 LTS x86_64 (实验提供) gcc8 或 clang6 (实验机提供的gcc是7.5, 没有达到实验文档要求)   Writing webget">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-02-06T07:45:14.000Z">
-<meta property="article:modified_time" content="2023-02-12T08:41:09.127Z">
+<meta property="article:modified_time" content="2023-03-13T02:38:38.698Z">
 <meta property="article:author" content="mingzi">
 <meta property="article:tag" content="Lab">
 <meta property="article:tag" content="CS144">
-<meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -305,6 +304,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ByteStream::pop_output</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">size_t</span> len)</span> </span>&#123;<br>    <span class="hljs-type">const</span> <span class="hljs-type">size_t</span> pop_len = std::<span class="hljs-built_in">min</span>(len, _buffer.<span class="hljs-built_in">size</span>());<br>    _pop_cnt += pop_len;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">size_t</span> i = <span class="hljs-number">0</span>; i &lt; pop_len; i++) &#123;<br>        _buffer.<span class="hljs-built_in">pop_front</span>();<br>    &#125;<br>    <span class="hljs-keyword">return</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 输入结束，由使用者调用</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ByteStream::end_input</span><span class="hljs-params">()</span> </span>&#123; _stream_end = <span class="hljs-literal">true</span>; &#125;<br><span class="hljs-comment">// `true` 表示 输入结束</span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">ByteStream::input_ended</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _stream_end; &#125;<br><span class="hljs-comment">// buffer 现在有多少字节</span><br><span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">ByteStream::buffer_size</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _buffer.<span class="hljs-built_in">size</span>(); &#125;<br><span class="hljs-comment">// `true` 表示 buffer 是空的</span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">ByteStream::buffer_empty</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _buffer.<span class="hljs-built_in">empty</span>(); &#125;<br><span class="hljs-comment">// ‘true’ 表示 读 完了数据</span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">ByteStream::eof</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">buffer_empty</span>() &amp;&amp; <span class="hljs-built_in">input_ended</span>(); &#125;<br><span class="hljs-comment">// 写入了多少字节，写入时累积</span><br><span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">ByteStream::bytes_written</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _write_cnt; &#125;<br><span class="hljs-comment">// 弹出 buffer 的数据大小</span><br><span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">ByteStream::bytes_read</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _pop_cnt; &#125;<br><span class="hljs-comment">// 目前空余的容量大小</span><br><span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">ByteStream::remaining_capacity</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> _capacity - _buffer.<span class="hljs-built_in">size</span>(); &#125;<br></code></pre></td></tr></table></figure>
+
                 
               </div>
             
@@ -322,7 +322,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/CS144/" class="category-chain-item">CS144</a>
+  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="category-chain-item">计算机网络</a>
   
   
 
@@ -340,8 +340,6 @@
         <a href="/tags/Lab/">#Lab</a>
       
         <a href="/tags/CS144/">#CS144</a>
-      
-        <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
       
     </div>
   
@@ -467,6 +465,25 @@
 
   
 
+
+  
+  
+
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('mermaid' in window) {
+        mermaid.init();
+      }
+    });
+  });
+</script>
 
 
 
@@ -659,6 +676,49 @@
 
 
   <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
 
   <script  src="/js/local-search.js" ></script>
 

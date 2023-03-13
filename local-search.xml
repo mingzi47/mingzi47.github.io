@@ -71,7 +71,7 @@
     
     <categories>
       
-      <category>CMU15-445</category>
+      <category>数据库</category>
       
     </categories>
     
@@ -81,8 +81,6 @@
       <tag>CMU15-445</tag>
       
       <tag>Lab</tag>
-      
-      <tag>数据库</tag>
       
     </tags>
     
@@ -158,7 +156,7 @@
     
     <categories>
       
-      <category>CS144</category>
+      <category>计算机网络</category>
       
     </categories>
     
@@ -168,8 +166,6 @@
       <tag>Lab</tag>
       
       <tag>CS144</tag>
-      
-      <tag>计算机网络</tag>
       
     </tags>
     
@@ -187,7 +183,7 @@
     
     <categories>
       
-      <category>CS144</category>
+      <category>计算机网络</category>
       
     </categories>
     
@@ -197,8 +193,6 @@
       <tag>Lab</tag>
       
       <tag>CS144</tag>
-      
-      <tag>计算机网络</tag>
       
     </tags>
     
@@ -216,7 +210,7 @@
     
     <categories>
       
-      <category>CS144</category>
+      <category>计算机网络</category>
       
     </categories>
     
@@ -226,8 +220,6 @@
       <tag>Lab</tag>
       
       <tag>CS144</tag>
-      
-      <tag>计算机网络</tag>
       
     </tags>
     
@@ -245,7 +237,7 @@
     
     <categories>
       
-      <category>CS144</category>
+      <category>计算机网络</category>
       
     </categories>
     
@@ -255,8 +247,6 @@
       <tag>Lab</tag>
       
       <tag>CS144</tag>
-      
-      <tag>计算机网络</tag>
       
     </tags>
     
@@ -274,7 +264,7 @@
     
     <categories>
       
-      <category>CS144</category>
+      <category>计算机网络</category>
       
     </categories>
     
@@ -285,7 +275,61 @@
       
       <tag>CS144</tag>
       
-      <tag>计算机网络</tag>
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>AtCoder Beginner Contest 282 G - Similar Permutation</title>
+    <link href="/2022/12/26/CP/AtCoder%20Beginner%20Contest%20282%20G%20-%20Similar%20Permutation/"/>
+    <url>/2022/12/26/CP/AtCoder%20Beginner%20Contest%20282%20G%20-%20Similar%20Permutation/</url>
+    
+    <content type="html"><![CDATA[<h2 id="套路题"><a href="#套路题" class="headerlink" title="套路题"></a>套路题</h2><h3 id="题意"><a href="#题意" class="headerlink" title="题意"></a>题意</h3><p>求有多少个 $1$ 到 $n$ 的排列满足恰有 $k$ 对在排列中相邻的数满足前小于后</p><p>$2 \leq n \leq 500, 0 \leq k \leq (n - 1)$</p><h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p><code>f[i][j][k]</code> 表示已经放置了前 <code>i</code> 个数， 放置的第<code>i</code>个数是前<code>i</code>个数中第<code>j</code>大的($ 1\leq$<code>j</code>$\leq$<code>i</code>)，已放置的前<code>i</code>个数形成的所有排列满足恰有 <code>k</code> 对在排列中相邻的数满足前小于后的排列数量。</p><p>放置第<code>i+1</code>个数时，第<code>i+1</code>个数是前<code>i+1</code>个数中第<code>j</code>大的，第<code>i</code>个数是严格小于前<code>i</code>个数中第<code>j</code>大的，会为排列增加一对相邻的数满足前小于后，第<code>i</code>个数是大于等于前<code>i</code>个数中第<code>j</code>大的，不会为排列增加一对相邻的数满足前小于后，转移方程为：<br>$$<br>f_{(i + 1) j k} = \sum_{x = 1}^{j - 1}f_{i x (k-1)} + \sum_{x=j}^{i}f_{ixk}<br>$$<br>显然，后面的和式可以通过前缀和优化的。</p><p>时间复杂度为$O(n^2k)$。</p><h2 id="G-Similar-Permutation"><a href="#G-Similar-Permutation" class="headerlink" title="G - Similar Permutation"></a>G - Similar Permutation</h2><p><a href="https://atcoder.jp/contests/abc282/tasks/abc282_g">传送门</a></p><h3 id="题意-1"><a href="#题意-1" class="headerlink" title="题意"></a>题意</h3><p>求$1$到$n$的排列$A$ 和 $B$的相似度为$k$的数量。</p><p>相似度计算：$k = \sum_{i = 2}^{n}[(A_i - A_{i-1})(B_i - B_{i-1}) &gt; 0]$ ($[X] = 1, X 为真，[X] = 0, X为假$)。</p><p>$2 \leq n \leq 100, 0 \leq k \leq (n - 1)$。</p><h3 id="思路-1"><a href="#思路-1" class="headerlink" title="思路"></a>思路</h3><p>与前一道题相比，这一题只是增加了一维状态。</p><p><code>f[i][a][b][k]</code> 表示排列$A$,$B$已经放置了前 <code>i</code> 个数, 排列$A$放置的第<code>i</code>个数在排列$A$中是第<code>a</code>大的，排列$B$放置的第<code>i</code>个数在排列$B$中是第<code>b</code>大的，此时相似度为$k$的排列数量。</p><p>转移方程为：<br>$$<br>f_{(i+1)abk} = \sum_{x = 1}^{a - 1}\sum_{y = 1}^{b - 1} f_{ixy(k-1)} +<br>\sum_{x = a}^{i}\sum_{y = b}^{i} f_{ixy(k-1)} +<br>\sum_{x = 1}^{a - 1}\sum_{y = b}^{i} f_{ixyk} +<br>\sum_{x = a}^{i}\sum_{y = 1}^{b - 1} f_{ixyk}<br>$$</p><p>和式同样可以使用前缀和来优化。</p><p>时间复杂度为$O(n^4)$。</p><h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">int</span> pre[<span class="hljs-number">107</span>][<span class="hljs-number">107</span>][<span class="hljs-number">107</span>], f[<span class="hljs-number">107</span>][<span class="hljs-number">107</span>][<span class="hljs-number">107</span>];<br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">solve_problem</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-type">int</span> n, m, P;<br><br>    std::cin &gt;&gt; n &gt;&gt; m &gt;&gt; P;<br><br>    <span class="hljs-keyword">auto</span> add = [&amp;](<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b) -&gt; <span class="hljs-type">int</span> &#123;<br>        a += b;<br>        <span class="hljs-keyword">if</span> ( a &gt;= P ) a -= P;<br>        <span class="hljs-keyword">return</span> a;<br>    &#125;;<br>    <span class="hljs-keyword">auto</span> sub = [&amp;](<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b) -&gt; <span class="hljs-type">int</span> &#123;<br>        a -= b;<br>        <span class="hljs-keyword">if</span> ( a &lt; <span class="hljs-number">0</span> ) a += P;<br>        <span class="hljs-keyword">return</span> a;<br>    &#125;;<br>    <span class="hljs-keyword">auto</span> sum = [&amp;](<span class="hljs-type">int</span> n, <span class="hljs-type">int</span> x1, <span class="hljs-type">int</span> y1, <span class="hljs-type">int</span> x2, <span class="hljs-type">int</span> y2) -&gt; <span class="hljs-type">int</span> &#123;<br>        <span class="hljs-keyword">if</span> (n &lt; <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">add</span>(<span class="hljs-built_in">sub</span>(<span class="hljs-built_in">sub</span>(pre[n][x2][y2], pre[n][x2][y1 - <span class="hljs-number">1</span>]), pre[n][x1 - <span class="hljs-number">1</span>][y2]), pre[n][x1 - <span class="hljs-number">1</span>][y1 - <span class="hljs-number">1</span>]);<br>    &#125;;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt;= n; i++) <br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> j = <span class="hljs-number">0</span>; j &lt;= n; j++) <br>            <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> h = <span class="hljs-number">0</span>; h &lt;= n; h++) <br>                pre[i][j][h] = f[i][j][h] = <span class="hljs-number">0</span>;<br>    <br>    f[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>][<span class="hljs-number">1</span>] = <span class="hljs-number">1</span>;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= n; i++) &#123;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> k = <span class="hljs-number">0</span>; k &lt;= i + <span class="hljs-number">1</span>; k++) &#123;<br>            <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> a = <span class="hljs-number">1</span>; a &lt;= i; a++) &#123;<br>                <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> b = <span class="hljs-number">1</span>; b &lt;= i; b++) &#123;<br>                    pre[k][a][b] = <span class="hljs-built_in">add</span>(pre[k][a][b - <span class="hljs-number">1</span>], f[k][a][b]);<br>                &#125;<br>            &#125;<br>            <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> b = <span class="hljs-number">1</span>; b &lt;= i; b++) &#123;<br>                <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> a = <span class="hljs-number">1</span>; a &lt;= i; a++) &#123;<br>                    pre[k][a][b] = <span class="hljs-built_in">add</span>(pre[k][a][b], pre[k][a - <span class="hljs-number">1</span>][b]);<br>                &#125;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> k = <span class="hljs-number">0</span>; k &lt;= i + <span class="hljs-number">1</span>; k++) &#123;<br>            <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> a = <span class="hljs-number">1</span>; a &lt;= i + <span class="hljs-number">1</span>; a++) &#123;<br>                <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> b = <span class="hljs-number">1</span>; b &lt;= i + <span class="hljs-number">1</span>; b++) &#123;<br>                    f[k][a][b] = <span class="hljs-built_in">add</span>(<br>                                    <span class="hljs-built_in">add</span>(<span class="hljs-built_in">sum</span>(k - <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, a - <span class="hljs-number">1</span>, b - <span class="hljs-number">1</span>), <span class="hljs-built_in">sum</span>(k - <span class="hljs-number">1</span>, a, b, i, i)), <br>                                    <span class="hljs-built_in">add</span>(<span class="hljs-built_in">sum</span>(k, <span class="hljs-number">1</span>, b, a - <span class="hljs-number">1</span>, i), <span class="hljs-built_in">sum</span>(k, a, <span class="hljs-number">1</span>, i, b - <span class="hljs-number">1</span>))<br>                                    );<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>    std::cout &lt;&lt; <span class="hljs-built_in">sum</span>(m, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, n, n) &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>CP</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>AtCoder</tag>
+      
+      <tag>动态规划</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>数位背包-梦幻岛宝珠</title>
+    <link href="/2022/11/26/CP/%E6%95%B0%E4%BD%8D%E8%83%8C%E5%8C%85-%E6%A2%A6%E5%B9%BB%E5%B2%9B%E5%AE%9D%E7%8F%A0/"/>
+    <url>/2022/11/26/CP/%E6%95%B0%E4%BD%8D%E8%83%8C%E5%8C%85-%E6%A2%A6%E5%B9%BB%E5%B2%9B%E5%AE%9D%E7%8F%A0/</url>
+    
+    <content type="html"><![CDATA[<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p><a href="https://www.luogu.com.cn/problem/P3188">P3188 [HNOI2007]梦幻岛宝珠</a></p><p>  在 $n(0\leq n \leq 100)$ 个物品中，选择重量不超过 $W(1\leq W \leq 2^{30})$ 的物品，是所选物品的总价值最大.<br>  物品的重量 $w_i$ 可以写成 $a \times 2^{b} (1\leq a \leq 10,0\leq b \leq 30)$.<br>  物品的价值 $v_i(1\leq v_i \leq 2^{30})$.</p><h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>  通过 <strong>$w_i$ 可以写成 $a \times 2^{b} (1\leq a \leq 10,0\leq b \leq 30)$</strong> ,很容易想到通过 $b$ 分层做, 同一层之间的合并是非常简单的01背包.<br>  当前层转移到下一层是这道题的难点.<br>  定义 $f_{ij}$ 表示背包剩余的容量为 $j \times 2^i$ 时的最大价值.<br>  观察 $a \times 2^{i+1}$ 与 $a \times 2^ i$ 它们属于不同的两层, $a \times 2^{i+1}$ 可以写成 $2 \times a \times 2^i$ 这表示了 $f[i][2a] = f[i+1][a]$ 它们表示的容量相同.<br>  接下来考虑总重量 $W$ 在层与层之间转移的限制.<br>  我们从高位枚举 $W$ 时, $W$ 的第 $i$ 位为 1 时,转移到第 $i$ 层的状态为 $2 \times a + 1$ ,第 $i$ 位为 0 时, 转移到第 $i$ 层的状态为 $2 \times a + 0$.<br>  第 $i$ 层 从第 $i+1$ 层转移过来要加上 $W$ 自身的容量, $W$ 的第 $i$ 位为 1 时要加上 $2^i$.<br>  每一层在最坏情况下物品重量和不超过 1000 ,当转移过来的容量大于 1000 时就没必要保存了，因为剩余 $1000 \times 2^i$是可以把剩下的物品都取完的.</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">int</span> d = (W &gt;&gt; i) &amp; <span class="hljs-number">1</span>;<br>f[i][<span class="hljs-built_in">min</span>(<span class="hljs-number">2</span> * j + d,<span class="hljs-number">1000</span>)] = std::<span class="hljs-built_in">max</span>(f[i][<span class="hljs-built_in">min</span>(<span class="hljs-number">2</span> * j + d,<span class="hljs-number">1000</span>)],f[i+<span class="hljs-number">1</span>][j]);<br></code></pre></td></tr></table></figure><p>  因为是从高位开始枚举的，会存在许多不合法的状态，令初值全部为负无穷，f[31][0] = 0.<br>  答案为f[0][0]，背包没有剩余空间的最大值.<br>  可以通过滚动数组优化掉 $i$ .</p><h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-type">const</span> i64 inf = <span class="hljs-number">1LL</span> &lt;&lt; <span class="hljs-number">60</span>;<br><span class="hljs-type">int</span> n;<br>std::vector&lt;std::pair&lt;<span class="hljs-type">int</span>,<span class="hljs-type">int</span>&gt;&gt; item[<span class="hljs-number">32</span>];<br>i64 W,f[<span class="hljs-number">2010</span>],g[<span class="hljs-number">2010</span>];<br><span class="hljs-function"><span class="hljs-keyword">inline</span> std::pair&lt;<span class="hljs-type">int</span>,<span class="hljs-type">int</span>&gt; <span class="hljs-title">count0</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span></span>&#123;<br>    <span class="hljs-type">int</span> lev = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(;!(x &amp; <span class="hljs-number">1</span>);)&#123;<br>        lev++;<br>        x&gt;&gt;=<span class="hljs-number">1</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> &#123;lev,x&#125;;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">solve</span><span class="hljs-params">()</span></span>&#123;<br>    <span class="hljs-type">int</span> s = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>;i&lt;=<span class="hljs-number">30</span>;++i) item[i].<span class="hljs-built_in">clear</span>();<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>;i&lt;=n;++i)&#123;<br>        <span class="hljs-type">int</span> w,v;<br>        std::cin&gt;&gt;w&gt;&gt;v;<br>       <br>        <span class="hljs-keyword">auto</span> [lev,x] = <span class="hljs-built_in">count0</span>(w);<br>        <br>        item[lev].<span class="hljs-built_in">push_back</span>(&#123;x,v&#125;);<br>        s+=x;<br>    &#125;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>;i&lt;=s;i++) f[i] = -inf;<br>    f[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">30</span>;i&gt;=<span class="hljs-number">0</span>;--i)&#123;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j = <span class="hljs-number">0</span>;j&lt;=s;j++)<br>            g[j] = f[j],f[j] = -inf;<br>        <span class="hljs-type">int</span> d = (W &gt;&gt; i) &amp; <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j = <span class="hljs-number">0</span>;j&lt;=s;j++)&#123;<br>            f[std::<span class="hljs-built_in">min</span>(s,<span class="hljs-number">2</span> * j + d)] = std::<span class="hljs-built_in">max</span>(f[std::<span class="hljs-built_in">min</span>(s,<span class="hljs-number">2</span> * j +d)],g[j]);<br>        &#125;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span> [w,v]:item[i])&#123;<br><span class="hljs-comment">// 一般背包求用了多少空间的最大值</span><br><span class="hljs-comment">// 这里表示剩余多少空间的最大值</span><br>            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j = w;j&lt;=s;j++)<br>                f[j-w] = std::<span class="hljs-built_in">max</span>(f[j-w],f[j]+v);<br>        &#125;<br>       <br>    &#125;<br>    std::cout&lt;&lt;f[<span class="hljs-number">0</span>]&lt;&lt;<span class="hljs-string">&quot;\n&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>CP</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>AtCoder</tag>
+      
+      <tag>动态规划</tag>
+      
+      <tag>数位背包</tag>
       
     </tags>
     
@@ -295,8 +339,8 @@
   
   <entry>
     <title>Hello Hexo</title>
-    <link href="/2023/01/06/hello-hexo/"/>
-    <url>/2023/01/06/hello-hexo/</url>
+    <link href="/2021/01/06/hello-hexo/"/>
+    <url>/2021/01/06/hello-hexo/</url>
     
     <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">&quot;My New Post&quot;</span><br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo server<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p><h2 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-string">scaffolds</span><br>  <span class="hljs-string">模板.md</span><br><span class="hljs-string">source</span><br>  <span class="hljs-string">_post</span><br>    <span class="hljs-string">文章</span><br>      <span class="hljs-string">文章.md</span><br>  <span class="hljs-string">about</span><br>  <span class="hljs-string">categories</span><br>  <span class="hljs-string">images</span><br>  <span class="hljs-string">search</span><br>  <span class="hljs-string">tags</span><br><span class="hljs-string">themes</span><br></code></pre></td></tr></table></figure>]]></content>
     
