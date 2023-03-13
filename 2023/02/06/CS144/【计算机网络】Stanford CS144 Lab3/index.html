@@ -25,15 +25,15 @@
 <meta property="og:site_name" content="Blog">
 <meta property="og:description" content="实现 TCP 协议中的发送器 TCPSender 。 TCP 通过累积确认的方式来标记哪些段不需要跟踪了，发送方收到了一个 ackno ，表示接收方已经接收了 ackno 之前的所有数据。可以使用 queue 来跟踪没被确认的，一旦确认了就出队，同时也方便重传数据。 累积确认类似与 GBN（go back N）协议。在接收方 GBN 机制选择将待确认的全部丢弃了，在这次实验中 (Lab2), 选择">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://mingzi47.github.io/images/CS144/Lab3/%E5%AE%9A%E6%97%B6%E5%99%A8%E5%90%AF%E5%8A%A8%E6%97%B6%E6%9C%BA.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab3/%E5%AE%9A%E6%97%B6%E5%99%A8%E5%90%AF%E5%8A%A8%E6%97%B6%E6%9C%BA.png">
 <meta property="article:published_time" content="2023-02-06T07:45:14.000Z">
-<meta property="article:modified_time" content="2023-03-12T14:04:15.813Z">
+<meta property="article:modified_time" content="2023-03-13T02:32:23.318Z">
 <meta property="article:author" content="mingzi">
 <meta property="article:tag" content="Lab">
 <meta property="article:tag" content="CS144">
 <meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://mingzi47.github.io/images/CS144/Lab3/%E5%AE%9A%E6%97%B6%E5%99%A8%E5%90%AF%E5%8A%A8%E6%97%B6%E6%9C%BA.png">
+<meta name="twitter:image" content="https://mingzi47.github.io/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab3/%E5%AE%9A%E6%97%B6%E5%99%A8%E5%90%AF%E5%8A%A8%E6%97%B6%E6%9C%BA.png">
   
   
   
@@ -122,18 +122,6 @@
               <a class="nav-link" href="/">
                 <i class="iconfont icon-home-fill"></i>
                 <span>首页</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                <span>归档</span>
               </a>
             </li>
           
@@ -288,7 +276,7 @@
 <li>定时器超时，这是就要重传还没有被确认的序号最小的段，同时，超时时间限制要扩大两倍，定时器重新计时。</li>
 <li>收到一个合法的 <code>ackno</code> 时（严格大于已经被确认的最大的序号），定时器的超时时间限制回到初始值，并且不再跟踪已经确认的段，如果还有跟踪的段，开启定时器。</li>
 </ul>
-<p><img src="/images/CS144/Lab3/%E5%AE%9A%E6%97%B6%E5%99%A8%E5%90%AF%E5%8A%A8%E6%97%B6%E6%9C%BA.png" srcset="/img/loading.gif" lazyload alt="定时器启动时机"></p>
+<p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab3/%E5%AE%9A%E6%97%B6%E5%99%A8%E5%90%AF%E5%8A%A8%E6%97%B6%E6%9C%BA.png" srcset="/img/loading.gif" lazyload alt="定时器启动时机"></p>
 <p><strong>如果一个段的一部分被确认了，这个段仍然被认为是没有被确认的</strong>，事实上，TCP的实现上可以认为它是被确认的。作为实验，这里简化了操作。</p>
 <p>需要注意的是，第一次握手时发送的段只包含 <code>SYN</code> 不包含其他数据。 </p>
 <p>在 Lab3 中 我们有一个发送空段的函数 <code>send_empty_segment</code> 可以用来探测接收方容量窗口大小，但是在 Lab2 中，并没处理接收一个空段会怎样。</p>

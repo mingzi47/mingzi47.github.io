@@ -116,18 +116,6 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                <span>归档</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
               <a class="nav-link" href="/categories/">
                 <i class="iconfont icon-category-fill"></i>
                 <span>分类</span>
@@ -234,7 +222,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/03/12/Cpp/Cpp%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%AE%9E%E7%8E%B0/" target="_self">
         <div>
-          整体设计 线程池由两部分组成 存放线程的容器(ThreadPool) 和 一个任务队列(Tasks queue)。 容器中的线程都做相同的事情：  从任务队列中获取一个任务。 执行这个任务。  这些线程会一直重复这两个动作。 例如, 图中 id 为 1，4 的线程已经获得了一个任务，接下来它们要执行这个任务, 然后继续从任务队列中获取任务… id 为 2, 3, 5 的线程正在从任务队列获得一个任
+          基于生产者-消费者模型的线程池。 整体设计 线程池由两部分组成 存放线程的容器(ThreadPool) 和 一个任务队列(Tasks queue)。 容器中的线程都做相同的事情：  从任务队列中获取一个任务。 执行这个任务。  这些线程会一直重复这两个动作。 例如, 图中 id 为 1，4 的线程已经获得了一个任务，接下来它们要执行这个任务, 然后继续从任务队列中获取任务… id 为 2, 3,
         </div>
       </a>
 
