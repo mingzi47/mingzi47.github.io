@@ -9,6 +9,8 @@ tags:
 - Cpp
 ---
 
+基于生产者-消费者模型的线程池。
+
 ## 整体设计
 
 ![线程池整体设计](/images/Cpp/Cpp线程池实现/ThreadPool.png)
@@ -118,30 +120,6 @@ public:
   auto submit(F &&f, Arg &&...args) -> std::future<decltype(f(args...))>;
 };
 ```
-### ThreadWorker
-
-使用一个仿函数来模拟一直在运行的线程。
-
-在这里实现了生产者-消费者模型中消费者取产品的过程。
-
-```cpp
-void ThreadPool::ThreadWorker::operator()() {
-  std::function<void()> func;
-  for (;;) {
-    {
-      std::unique_lock lock(pool_->mutex_);
-      pool_->condition_.wait(lock, [this] {
-        return pool_->shutdown_ || pool_->tasks_.size() > 0;
-      });
-      if (pool_->shutdown_ && pool_->tasks_.size() == 0) {
-        return;
-      }
-      func = std::move(pool_->tasks_.pop());
-    }
-    func();
-  }
-}
-```
 
 ### 初始化
 
@@ -163,7 +141,23 @@ void ThreadPool::init(size_t threads) {
   works_.reserve(threads_);
   works_.resize(threads_);
   for (size_t i = 0; i < threads_; ++i) {
-    works_[i] = std::thread(ThreadWorker(this, i));
+    works_[i] = std::thread([this] {
+      std::function<void()> func;
+      for (;;) {
+        {
+          std::unique_lock lock(mutex_);
+          condition_.wait(lock, [this] {
+            return shutdown_ || tasks_.size() > 0;
+          });
+          // 当线程池已关闭且任务都完成了才真正关闭
+          if (shutdown_ && tasks_.size() == 0) {
+            return;
+          }
+          func = std::move(tasks_.pop());
+        }
+        func();
+      }
+    });
   }
 }
 ```

@@ -13,7 +13,7 @@ keywords : [
 ---
 ## 整体设计
 
-![实验整体设计](/images/CS144/Lab4/实验整体设计.png)
+![实验整体设计](/images/计算机网络/CS144/Lab4/实验整体设计.png)
 
 ## TCP FSM
 
@@ -50,23 +50,23 @@ keywords : [
 
 ### **TCP 有限状态机**
 
-![TCP FSM](/images/CS144/Lab4/TCP-FSM.png)
+![TCP FSM](/images/计算机网络/CS144/Lab4/TCP-FSM.png)
 
 ### **Receiver**
 
-![receiver](/images/CS144/Lab4/receiver.png)
+![receiver](/images/计算机网络/CS144/Lab4/receiver.png)
 
 
 ### **Sender**
 
-![sender](/images/CS144/Lab4/sender.png)
+![sender](/images/计算机网络/CS144/Lab4/sender.png)
 
 ## 性能优化
 
 使用 `gprof` 工具分析性能。
 
 
-![优化前](/images/CS144/Lab4/性能分析.png)
+![优化前](/images/计算机网络/CS144/Lab4/性能分析.png)
 
 可以看到 `ByteStream::write` , `ByteStream::peek_output` 和 `ByteStream::pop_output` 占用了快 90% 的时间，这主要是方法内部实现使用的深拷贝。
 
@@ -76,4 +76,4 @@ keywords : [
 
 使用 `BufferList` 重写 `ByteStream` 后的性能分析。 
 
-![优化后](/images/CS144/Lab4/性能优化.png)
+![优化后](/images/计算机网络/CS144/Lab4/性能优化.png)
