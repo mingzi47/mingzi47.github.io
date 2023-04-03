@@ -1,16 +1,13 @@
 ---
-title: "【计算机网络】Stanford CS144 Lab2 学习记录"
-date: 2023-02-06T23:45:14+08:00
-draft: true
-tags : [ 
-"CS144","Lab"                                   
-]
-categories : [
-"计算机网络"
-]
-keywords : [                                
-]
+title: "CS144 Lab2 : TCPReceiver"
+date: 2023-01-09T23:45:14+08:00
+tags:
+- "CS144"
+- "Lab"                                   
+categories:
+- "计算机网络"
 ---
+
 这次实验的目标为实现一个 TCP协议 的接收器。
 
 ## Sequence Numbers

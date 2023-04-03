@@ -1,16 +1,13 @@
 ---
-title: "【计算机网络】Stanford CS144 Lab3 学习记录"
-date: 2023-02-06T23:45:14+08:00
-draft: true
-tags : [ 
-"CS144","Lab"                                   
-]
-categories : [
-"计算机网络"                              
-]
-keywords : [                                
-]
+title: "CS144 Lab3 : TCPSender"
+date: 2023-01-16T23:45:14+08:00
+tags:
+- "CS144"
+- "Lab"                                   
+categories:
+- "计算机网络"                              
 ---
+
 实现 TCP 协议中的发送器 `TCPSender` 。
 
 TCP 通过累积确认的方式来标记哪些段不需要跟踪了，发送方收到了一个 `ackno` ，表示接收方已经接收了 `ackno` 之前的所有数据。可以使用 `queue` 来跟踪没被确认的，一旦确认了就出队，同时也方便重传数据。

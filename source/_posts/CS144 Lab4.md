@@ -1,16 +1,13 @@
 ---
-title: "【计算机网络】Stanford CS144 Lab4 学习记录"
-date: 2023-02-06T23:45:14+08:00
-draft: true
-tags : [ 
-"CS144","Lab"                                   
-]
-categories : [
-"计算机网络"                              
-]
-keywords : [                                
-]
+title: "CS144 Lab4 : 组装模块"
+date: 2023-01-26T23:45:14+08:00
+tags:
+- "CS144"
+- "Lab"                                   
+categories:
+- "计算机网络"
 ---
+
 ## 整体设计
 
 ![实验整体设计](/images/计算机网络/CS144/Lab4/实验整体设计.png)

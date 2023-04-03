@@ -1,15 +1,11 @@
 ---
-title: "【计算机网络】Stanford CS144 Lab0 学习记录"
-date: 2023-02-06T23:45:14+08:00
-draft: true
-tags : [ 
-"CS144","Lab"                                   
-]
-categories : [
-"计算机网络"                              
-]
-keywords : [                                
-]
+title: "CS144 Lab0 : 环境搭建"
+date: 2023-01-06T23:45:14+08:00
+tags:
+- "CS144"
+- "Lab"                                   
+categories:
+- "计算机网络"                              
 ---
 # 计算机网络
 
