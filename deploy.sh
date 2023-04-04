@@ -1,61 +1,64 @@
-#!/bin/bash
+#!/bin/zsh
+echo -e "\e[032m START ... \e[0m"
 
 message=$(date)
-hexo clean && hexo g && hexo d && git add . && git commit -m "$message" && git push
 
-hexoclean() {
-  hexo clean > Temp/hexoclean.log
-  return $?
-}
-
-hexogenerate() {
-  hexo g > Temp/hexog.log
-  return $?
-}
-
-gitadd() {
-  git add . > Temp/gitadd.log
-  return $?
-}
-
-gitcommit() {
-  git commit -m "$message" > Temp/gitcommit.log
-  return $?
-}
-
-gitpush() {
-  git push > Temp/gitpush.log
-  return $?
-}
-
-deploy() {
-  if hexoclean; then
-    echo "\032[32m !!success : hexo clean \033[0m"
-    if hexogenerate; then
-      echo "\032[32m !!success : hexo g \033[0m"
-      if gitadd; then
-        echo "\032[32m !!success : git add \033[0m"
-        if gitcommit; then
-          echo "\032[32m !!success : git commit \033[0m"
-          if gitpush; then
-            echo "\032[32m !!success : git push \033[0m"
-          else
-            echo "\033[31m !!ERROR : git push : Temp/gitpush.log\033[0m"
-          fi
-        else
-          echo "\033[31m !!ERROR : git commit : Temp/gitcommit.log\033[0m"
-        fi
-      else
-        echo "\033[31m !!ERROR : git add : Temp/gitadd.log\033[0m"
-      fi
-    else
-      echo "\033[31m !!ERROR : hexo g , Log : Temp/hexog.log\033[0m"
-    fi
-  else
-    echo "\033[31m !!ERROR : hexo clean , Log : Temp/hexoclean.log\033[0m"
+checkcommit() {
+  lastmessage="git status | tail -n 2"
+  if [[ $lastmessage =~ "nothing to commit" ]]; then
+    return 0
   fi
-} 
+  return 1
+}
 
-deploy
+check() {
+  if [[ $? != 0 ]]; then
+    echo -e "\e[031m ERROR : $1 , Log : Temp/deploy.log \e[0m"
+    exit 1
+  fi
+  echo -e "\e[032m SUCESS : $1 ! \e[0m"
+}
 
+if [[ ! -d "Temp/" ]]; then
+  mkdir -p Temp
+  if [[ $? != 0 ]]; then
+    echo -e "\e[031m mkdir Temp failed ! \e[0m"
+  fi
+fi
 
+if [[ ! -f ".gitignore" ]]; then
+  touch .gitignore
+  check "touch .gitignore"
+fi
+
+grep Temp .gitignore > Temp/deploy.log 2>&1
+
+if [[ $? != 0 ]]; then
+  echo '\nTemp/' >> .gitignore
+fi
+
+hexo clean > Temp/deploy.log 2>&1
+
+check "hexo clean"
+
+hexo g > Temp/deploy.log 2>&1
+
+check "hexo g"
+
+hexo d > Temp/deploy.log 2>&1
+
+check "hexo d"
+
+git add . > Temp/deploy.log 2>&1
+
+check "git add . "
+
+if [[ checkcommit == 1 ]]; then
+  git commit -m "$message" > Temp/deploy.log 2>&1
+  check "git commit"
+else
+  echo -e "\e[33m SKIP : git commit, nothing to commit\e[0m"
+
+git push > Temp/gitpush.log  2>&1
+
+check "git push"
