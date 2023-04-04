@@ -4,11 +4,8 @@ echo -e "\e[032m START ... \e[0m"
 message=$(date)
 
 checkcommit() {
-  lastmessage="git status ""$1"" | tail -n 2"
-  if [[ $lastmessage =~ "nothing to commit" ]]; then
-    return 0
-  fi
-  return 1
+  lastmessage="git status ""$1"" | tail -n 2 | grep 'nothing to commit'"
+  return $?
 }
 
 check() {
@@ -45,7 +42,9 @@ hexo g > Temp/deploy.log 2>&1
 
 check "hexo g"
 
-if [[ $(checkcommit '.deploy_git') == 1 ]]; then
+git status ".deploy_git" | tail -n 2 | grep 'nothing to commit'
+
+if [[ $? != 0 ]]; then
   hexo d > Temp/deploy.log 2>&1
   check "hexo d"
 else
@@ -56,7 +55,9 @@ git add . > Temp/deploy.log 2>&1
 
 check "git add . "
 
-if [[ $(checkcommit '.') == 1 ]]; then
+git status | tail -n 2 | grep 'nothing to commit'
+
+if [[ $? != 0 ]]; then
   git commit -m "$message" > Temp/deploy.log 2>&1
   check "git commit"
 else
