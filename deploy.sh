@@ -42,14 +42,14 @@ hexo g > Temp/deploy.log 2>&1
 
 check "hexo g"
 
-git status ".deploy_git" | tail -n 2 | grep 'nothing to commit' > Temp/deploy.log 2>&1
+# git status ".deploy_git" | tail -n 2 | grep 'nothing to commit' > Temp/deploy.log 2>&1
 
-if [[ $? != 0 ]]; then
-  hexo d > Temp/deploy.log 2>&1
-  check "hexo d"
-else
-  echo -e "\e[33m SKIP : hexo d, nothing to commit\e[0m"
-fi
+# if [[ $? != 0 ]]; then
+hexo d
+check "hexo d"
+# else
+#   echo -e "\e[33m SKIP : hexo d, nothing to commit\e[0m"
+# fi
 
 git add . > Temp/deploy.log 2>&1
 

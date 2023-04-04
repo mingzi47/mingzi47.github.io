@@ -1,0 +1,785 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/apple-touch-icon.png">
+  <link rel="icon" href="/images/favicon-192x192.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingzi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="运行期多态实例运行期多态是关于面向对象的。 当类之间存在层次结构，并且类之间是通过继承关联时，就会用到多态。调用成员函数时，会根据调用函数的对象的类型来执行不同的函数。 12345678910111213141516171819202122232425262728293031class Animal &amp;#123;  public:    virtual void speak() &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++多态: 运行期多态与编译期多态">
+<meta property="og:url" content="https://mingzi47.github.io/2023/02/27/%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="运行期多态实例运行期多态是关于面向对象的。 当类之间存在层次结构，并且类之间是通过继承关联时，就会用到多态。调用成员函数时，会根据调用函数的对象的类型来执行不同的函数。 12345678910111213141516171819202122232425262728293031class Animal &amp;#123;  public:    virtual void speak() &amp;#123;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/Cpp%E5%A4%9A%E6%80%81:%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/%E5%A4%9A%E6%80%81-%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8%E6%A8%A1%E5%9E%8B0.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/Cpp%E5%A4%9A%E6%80%81:%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/%E5%A4%9A%E6%80%81-%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8%E6%A8%A1%E5%9E%8B1.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/Cpp%E5%A4%9A%E6%80%81:%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/%E5%A4%9A%E6%80%81-%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8%E6%A8%A1%E5%9E%8B2.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/Cpp%E5%A4%9A%E6%80%81:%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/%E5%A4%9A%E6%80%81-%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8%E6%A8%A1%E5%9E%8B3.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/Cpp%E5%A4%9A%E6%80%81:%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/%E5%A4%9A%E6%80%81-%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8%E6%A8%A1%E5%9E%8B4.png">
+<meta property="article:published_time" content="2023-02-27T07:45:14.000Z">
+<meta property="article:modified_time" content="2023-04-03T08:06:32.846Z">
+<meta property="article:author" content="mingzi">
+<meta property="article:tag" content="多态">
+<meta property="article:tag" content="面向对象">
+<meta property="article:tag" content="模板">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mingzi47.github.io/images/Cpp/Cpp%E5%A4%9A%E6%80%81:%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/%E5%A4%9A%E6%80%81-%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8%E6%A8%A1%E5%9E%8B0.png">
+  
+  
+  
+  <title>C++多态: 运行期多态与编译期多态 - Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mingzi47.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/banner/post.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="C++多态: 运行期多态与编译期多态"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-02-27 15:45" pubdate>
+          2023年2月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          69 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">C++多态: 运行期多态与编译期多态</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="运行期多态"><a href="#运行期多态" class="headerlink" title="运行期多态"></a>运行期多态</h2><h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><p>运行期多态是关于面向对象的。</p>
+<p>当类之间存在层次结构，并且类之间是通过继承关联时，就会用到多态。调用成员函数时，会根据调用函数的对象的类型来执行不同的函数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Animal</span> &#123;<br>  <span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">()</span> </span>&#123;<br>      std::cout &lt;&lt; <span class="hljs-string">&quot;Animal\n&quot;</span>;<br>    &#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Dog</span> : <span class="hljs-keyword">public</span> Animal &#123;<br>  <span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">()</span> </span>&#123;<br>      std::cout &lt;&lt; <span class="hljs-string">&quot;Dog\n&quot;</span>;<br>    &#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Cat</span> : <span class="hljs-keyword">public</span> Animal &#123;<br>  <span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">()</span> </span>&#123;<br>      std::cout &lt;&lt; <span class="hljs-string">&quot;Cat\n&quot;</span>;<br>    &#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">(Animal* p)</span> </span>&#123;<br>  p-&gt;<span class="hljs-built_in">speak</span>();<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>  Cat p1;<br>  Dog p2;<br>  <span class="hljs-built_in">speak</span>(&amp;p1);<br>  <span class="hljs-built_in">speak</span>(&amp;p2);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>上面代码运行结果为：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">Cat</span><br><span class="hljs-attribute">Dog</span><br></code></pre></td></tr></table></figure>
+
+<p>函数 <code>speak</code> 中基类指针 <code>Animal *p</code> 没有调用自己的 <code>speak</code> 函数, 而是调用实参对象的 <code>speak</code> 函数。</p>
+<p>普通函数并不会存放于类中，但是虚函数会以<strong>虚函数表指针</strong>的形式存放与类中。</p>
+<p>即使派生类指针转换为了基类指针，指针指向的内容并没有改变，其虚函数表还是指向原来的位置，因此在调用虚函数时，通过虚函数表来查找该调用哪个函数。</p>
+<h3 id="多态实现的原理"><a href="#多态实现的原理" class="headerlink" title="多态实现的原理"></a>多态实现的原理</h3><h4 id="虚函数表"><a href="#虚函数表" class="headerlink" title="虚函数表"></a>虚函数表</h4><p>对类使用 <code>sizeof</code> 是不显示类中普通函数的大小的，但是虚函数是可以被显示的，不管有多少个虚函数，它们的大小都是 8 。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">B</span> &#123;<br>  <span class="hljs-type">int</span> a&#123;&#125;;<br>  <span class="hljs-type">int</span> b&#123;&#125;;<br>  <span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">vf1</span><span class="hljs-params">()</span> </span>&#123;<br>      std::cout &lt;&lt; <span class="hljs-string">&quot;virtual function 1\n&quot;</span>;<br>    &#125;<br>    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">vf2</span><span class="hljs-params">()</span> </span>&#123;<br>      std::cout &lt;&lt; <span class="hljs-string">&quot;virtual function 2\n&quot;</span>;<br>    &#125;<br>    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">vf3</span><span class="hljs-params">()</span> </span>&#123;<br>      std::cout &lt;&lt; <span class="hljs-string">&quot;virtual function 3\n&quot;</span>;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+<p><code>sizeof(B)</code> 是等于 16 (32 位操作系统是 12)。 </p>
+<p>使用 <code>MSVC</code> 工具链查看对象模型： </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">## cl /d1 reportSingleClassLayout类名 文件名</span><br>cl /d1 reportSingleClassLayoutB main.cpp<br></code></pre></td></tr></table></figure>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs 1c">class B size(<span class="hljs-number">16</span>):<br>        +---<br> <span class="hljs-number">0</span>      <span class="hljs-string">| &#123;vfptr&#125;</span><br> <span class="hljs-number">8</span>      <span class="hljs-string">| a</span><br><span class="hljs-number">12</span>      <span class="hljs-string">| b</span><br>        +---<br><br>B::$vftable@:<br>        <span class="hljs-string">| &amp;B_meta</span><br>        <span class="hljs-string">|  0</span><br> <span class="hljs-number">0</span>      <span class="hljs-string">| &amp;B::vf1</span><br> <span class="hljs-number">1</span>      <span class="hljs-string">| &amp;B::vf2</span><br> <span class="hljs-number">2</span>      <span class="hljs-string">| &amp;B::vf3</span><br></code></pre></td></tr></table></figure>
+
+<p>结果很清晰，下面表示的是虚函数表的结构，虚函数表以指针形式存放在类中, 虚函数表中存放的也是指针。</p>
+<p>尝试使用指针调用虚函数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">using</span> i64 = <span class="hljs-type">int64_t</span>;<br><span class="hljs-keyword">using</span> vf = <span class="hljs-built_in">void</span>(*)();<br>B b&#123;&#125;;<br>i64 *vfptr = (i64*)&amp;b;  <span class="hljs-comment">// 类地址就是虚函数指针的地址</span><br>i64* vftable = (i64*)*vfptr; <br>((vf)vftable[<span class="hljs-number">0</span>])(); <span class="hljs-comment">// B::vf1</span><br>((vf)vftable[<span class="hljs-number">1</span>])(); <span class="hljs-comment">// B::vf2</span><br>((vf)vftable[<span class="hljs-number">2</span>])(); <span class="hljs-comment">// B::vf3</span><br></code></pre></td></tr></table></figure>
+<p>输出为</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs ada">virtual <span class="hljs-keyword">function</span> <span class="hljs-title">1</span><br>virtual <span class="hljs-keyword">function</span> <span class="hljs-title">2</span><br>virtual <span class="hljs-keyword">function</span> <span class="hljs-title">3</span><br></code></pre></td></tr></table></figure>
+<p><img src="/images/Cpp/Cpp%E5%A4%9A%E6%80%81:%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/%E5%A4%9A%E6%80%81-%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8%E6%A8%A1%E5%9E%8B0.png" srcset="/img/loading.gif" lazyload></p>
+<p>是否会为每一个对象都创建一个虚表 ？</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">using</span> i64 = <span class="hljs-type">int64_t</span>;<br><span class="hljs-keyword">using</span> vf = <span class="hljs-built_in">void</span>(*)();<br>B b&#123;&#125;, b1&#123;&#125;;<br>i64 *vfptr = (i64*)&amp;b;  <span class="hljs-comment">// 类地址就是虚函数指针的地址</span><br>std::cout &lt;&lt; <span class="hljs-string">&quot;b vfptr = &quot;</span> &lt;&lt; *vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;b1 vfptr = &quot;</span> &lt;&lt; *((i64*)&amp;b1) &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>输出相同，<code>b</code> 和 <code>b1</code> 都指向了同一张虚表。</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs abnf">b vfptr <span class="hljs-operator">=</span> <span class="hljs-number">140697380241528</span><br>b1 vfptr <span class="hljs-operator">=</span> <span class="hljs-number">140697380241528</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/images/Cpp/Cpp%E5%A4%9A%E6%80%81:%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/%E5%A4%9A%E6%80%81-%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8%E6%A8%A1%E5%9E%8B1.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="单继承时的虚函数表"><a href="#单继承时的虚函数表" class="headerlink" title="单继承时的虚函数表"></a>单继承时的虚函数表</h4><p>查看实例代码中的虚函数表的内存地址。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">using</span> i64 = <span class="hljs-type">int64_t</span>;<br><span class="hljs-keyword">using</span> vf = <span class="hljs-built_in">void</span>(*)();<br>Animal p1;<br>Cat p2;<br>Dog p3;<br>i64 *p1_vfptr = (i64*)&amp;p1;<br>i64 *p2_vfptr = (i64*)&amp;p2;<br>i64 *p3_vfptr = (i64*)&amp;p3;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Animal vtable address = &quot;</span> &lt;&lt; *p1_vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Cat vtable address = &quot;</span> &lt;&lt; *p2_vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Dog vtable address = &quot;</span> &lt;&lt; *p3_vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>vf p1_speak_ptr = (vf)((i64*)*p1_vfptr)[<span class="hljs-number">0</span>];<br>vf p2_speak_ptr = (vf)((i64*)*p2_vfptr)[<span class="hljs-number">0</span>];<br>vf p3_speak_ptr = (vf)((i64*)*p3_vfptr)[<span class="hljs-number">0</span>];<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Animal speak address = &quot;</span> &lt;&lt; p1_speak_ptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Cat speak address = &quot;</span> &lt;&lt; p2_speak_ptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Dog speak address = &quot;</span> &lt;&lt; p3_speak_ptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br></code></pre></td></tr></table></figure>
+
+<p><code>Animal</code>、<code>Cat</code> 和 <code>Dog</code> 的虚函数表位置各不相同，函数的地址也各不相同。</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs abnf">Animal vtable address <span class="hljs-operator">=</span> <span class="hljs-number">140702687674488</span><br>Cat vtable address <span class="hljs-operator">=</span> <span class="hljs-number">140702687673376</span><br>Dog vtable address <span class="hljs-operator">=</span> <span class="hljs-number">140702687674176</span><br>Animal speak address <span class="hljs-operator">=</span> <span class="hljs-number">00007</span>FF7E5B71555<br>Cat speak address <span class="hljs-operator">=</span> <span class="hljs-number">00007</span>FF7E5B71564<br>Dog speak address <span class="hljs-operator">=</span> <span class="hljs-number">00007</span>FF7E5B71569<br></code></pre></td></tr></table></figure>
+<p>内存结构为：</p>
+<p><img src="/images/Cpp/Cpp%E5%A4%9A%E6%80%81:%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/%E5%A4%9A%E6%80%81-%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8%E6%A8%A1%E5%9E%8B2.png" srcset="/img/loading.gif" lazyload></p>
+<p>但是这里使用了<strong>重写</strong>，重写会对内存结构产生影响吗?</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Animal</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">()</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;Animal\n&quot;</span>;<br>    &#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Dog</span> : <span class="hljs-keyword">public</span> Animal &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">()</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;Dog\n&quot;</span>;<br>    &#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Cat</span> : <span class="hljs-keyword">public</span> Animal &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-comment">/*void speak() &#123;</span><br><span class="hljs-comment">        std::cout &lt;&lt; &quot;Cat\n&quot;;</span><br><span class="hljs-comment">    &#125;*/</span><br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">(Animal* p)</span> </span>&#123;<br>    p-&gt;<span class="hljs-built_in">speak</span>();<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-comment">/*Cat p1;</span><br><span class="hljs-comment">    Dog p2;</span><br><span class="hljs-comment">    speak(&amp;p1);</span><br><span class="hljs-comment">    speak(&amp;p2);*/</span><br>    <span class="hljs-keyword">using</span> i64 = <span class="hljs-type">int64_t</span>;<br>    <span class="hljs-keyword">using</span> vf = <span class="hljs-built_in">void</span>(*)();<br>    Animal p1;<br>    Cat p2;<br>    Dog p3;<br>    i64 *p1_vfptr = (i64*)&amp;p1;<br>    i64 *p2_vfptr = (i64*)&amp;p2;<br>    i64 *p3_vfptr = (i64*)&amp;p3;<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Animal vtable address = &quot;</span> &lt;&lt; *p1_vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Cat vtable address = &quot;</span> &lt;&lt; *p2_vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Dog vtable address = &quot;</span> &lt;&lt; *p3_vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>    vf p1_speak_ptr = (vf)((i64*)*p1_vfptr)[<span class="hljs-number">0</span>];<br>    vf p2_speak_ptr = (vf)((i64*)*p2_vfptr)[<span class="hljs-number">0</span>];<br>    vf p3_speak_ptr = (vf)((i64*)*p3_vfptr)[<span class="hljs-number">0</span>];<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Animal speak address = &quot;</span> &lt;&lt; p1_speak_ptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Cat speak address = &quot;</span> &lt;&lt; p2_speak_ptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Dog speak address = &quot;</span> &lt;&lt; p3_speak_ptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs abnf">Animal vtable address <span class="hljs-operator">=</span> <span class="hljs-number">140700141011064</span><br>Cat vtable address <span class="hljs-operator">=</span> <span class="hljs-number">140700141009952</span><br>Dog vtable address <span class="hljs-operator">=</span> <span class="hljs-number">140700141010752</span><br>Animal speak address <span class="hljs-operator">=</span> <span class="hljs-number">00007</span>FF74DEC1555<br>Cat speak address <span class="hljs-operator">=</span> <span class="hljs-number">00007</span>FF74DEC1555<br>Dog speak address <span class="hljs-operator">=</span> <span class="hljs-number">00007</span>FF74DEC1569<br></code></pre></td></tr></table></figure>
+
+<p><code>Cat</code> 与 <code>Animal</code> 都指向了同一个函数，但是这三个类都有自己的<strong>虚函数表</strong>。</p>
+<p><code>Cat</code> 的对象模型为：</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs gherkin">class Cat       size(8):<br>        +---<br> 0      |<span class="hljs-string"> +--- (base class Animal)</span><br><span class="hljs-string"> 0      </span>|<span class="hljs-string"> </span>|<span class="hljs-string"> &#123;vfptr&#125;</span><br><span class="hljs-string">        </span>|<span class="hljs-string"> +---</span><br><span class="hljs-string">        +---</span><br><span class="hljs-string"></span><br><span class="hljs-string">Cat::$vftable@:</span><br><span class="hljs-string">        </span>|<span class="hljs-string"> &amp;Cat_meta</span><br><span class="hljs-string">        </span>|<span class="hljs-string">  0</span><br><span class="hljs-string"> 0      </span>|<span class="hljs-string"> &amp;Animal::speak</span><br></code></pre></td></tr></table></figure>
+
+<p>此时的内存模型为:</p>
+<p><img src="/images/Cpp/Cpp%E5%A4%9A%E6%80%81:%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/%E5%A4%9A%E6%80%81-%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8%E6%A8%A1%E5%9E%8B3.png" srcset="/img/loading.gif" lazyload></p>
+<p>创建多个对象时的内存结构会发生改变吗？</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// Cat 的 speak 没有重写。</span><br><span class="hljs-keyword">using</span> i64 = <span class="hljs-type">int64_t</span>;<br><span class="hljs-keyword">using</span> vf = <span class="hljs-built_in">void</span>(*)();<br>Animal p1;<br>Cat p2;<br>Dog p3;<br>Animal p11;<br>Cat p22;<br>Dog p33;<br>i64 *p1_vfptr = (i64*)&amp;p1;<br>i64 *p2_vfptr = (i64*)&amp;p2;<br>i64 *p3_vfptr = (i64*)&amp;p3;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Animal p1 vtable address = &quot;</span> &lt;&lt; *p1_vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Cat p2 vtable address = &quot;</span> &lt;&lt; *p2_vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Dog p3 vtable address = &quot;</span> &lt;&lt; *p3_vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>vf p1_speak_ptr = (vf)((i64*)*p1_vfptr)[<span class="hljs-number">0</span>];<br>vf p2_speak_ptr = (vf)((i64*)*p2_vfptr)[<span class="hljs-number">0</span>];<br>vf p3_speak_ptr = (vf)((i64*)*p3_vfptr)[<span class="hljs-number">0</span>];<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Animal p1 speak address = &quot;</span> &lt;&lt; p1_speak_ptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Cat p2 speak address = &quot;</span> &lt;&lt; p2_speak_ptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Dog p3 speak address = &quot;</span> &lt;&lt; p3_speak_ptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>i64* p11_vfptr = (i64*)&amp;p11;<br>i64* p22_vfptr = (i64*)&amp;p22;<br>i64* p33_vfptr = (i64*)&amp;p33;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Animal p11 vtable address = &quot;</span> &lt;&lt; *p11_vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Cat p22 vtable address = &quot;</span> &lt;&lt; *p22_vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Dog p33 vtable address = &quot;</span> &lt;&lt; *p33_vfptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>vf p11_speak_ptr = (vf)((i64*)*p11_vfptr)[<span class="hljs-number">0</span>];<br>vf p22_speak_ptr = (vf)((i64*)*p22_vfptr)[<span class="hljs-number">0</span>];<br>vf p33_speak_ptr = (vf)((i64*)*p33_vfptr)[<span class="hljs-number">0</span>];<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Animal p11 speak address = &quot;</span> &lt;&lt; p11_speak_ptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Cat p22 speak address = &quot;</span> &lt;&lt; p22_speak_ptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;Dog p33 speak address = &quot;</span> &lt;&lt; p33_speak_ptr &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br></code></pre></td></tr></table></figure>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs abnf">Animal p1 vtable address <span class="hljs-operator">=</span> <span class="hljs-number">140702695145024</span><br>Cat p2 vtable address <span class="hljs-operator">=</span> <span class="hljs-number">140702695145096</span><br>Dog p3 vtable address <span class="hljs-operator">=</span> <span class="hljs-number">140702695145064</span><br>Animal p1 speak address <span class="hljs-operator">=</span> <span class="hljs-number">00007</span>FF7E629123A<br>Cat p2 speak address <span class="hljs-operator">=</span> <span class="hljs-number">00007</span>FF7E629123A<br>Dog p3 speak address <span class="hljs-operator">=</span> <span class="hljs-number">00007</span>FF7E62910B4<br>Animal p11 vtable address <span class="hljs-operator">=</span> <span class="hljs-number">140702695145024</span><br>Cat p22 vtable address <span class="hljs-operator">=</span> <span class="hljs-number">140702695145096</span><br>Dog p33 vtable address <span class="hljs-operator">=</span> <span class="hljs-number">140702695145064</span><br>Animal p11 speak address <span class="hljs-operator">=</span> <span class="hljs-number">00007</span>FF7E629123A<br>Cat p22 speak address <span class="hljs-operator">=</span> <span class="hljs-number">00007</span>FF7E629123A<br>Dog p33 speak address <span class="hljs-operator">=</span> <span class="hljs-number">00007</span>FF7E62910B4<br></code></pre></td></tr></table></figure>
+<p>同一个类还是共用一张虚函数表，此时的内存结构为：</p>
+<p><img src="/images/Cpp/Cpp%E5%A4%9A%E6%80%81:%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/%E5%A4%9A%E6%80%81-%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8%E6%A8%A1%E5%9E%8B4.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="虚函数表的总结"><a href="#虚函数表的总结" class="headerlink" title="虚函数表的总结"></a>虚函数表的总结</h4><ol>
+<li>同一个类只会创建一张虚函数表。</li>
+<li>存在继承关系时，派生类没有<strong>重写</strong>虚函数，虚函数表中的指针指向基类的函数。重写后，会指向一个新的函数。</li>
+</ol>
+<h2 id="编译期多态"><a href="#编译期多态" class="headerlink" title="编译期多态"></a>编译期多态</h2><p>CRTP 全称是curious recurring template pattern, 可以用来在基类暴露接口且派生类实现对应接口时实现“编译期多态”。</p>
+<p>之前的代码可以被更改为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt; <span class="hljs-keyword">class</span> <span class="hljs-title class_">Animal</span> &#123;<br><span class="hljs-keyword">public</span>:<br>  <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">()</span> </span>&#123; <span class="hljs-built_in">static_cast</span>&lt;T*&gt;(<span class="hljs-keyword">this</span>)-&gt;<span class="hljs-built_in">speak</span>(); &#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Dog</span> : <span class="hljs-keyword">public</span> Animal&lt;Dog&gt; &#123;<br><span class="hljs-keyword">public</span>:<br>  <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">()</span> </span>&#123; std::cout &lt;&lt; <span class="hljs-string">&quot;Dog\n&quot;</span>; &#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Cat</span> : <span class="hljs-keyword">public</span> Animal&lt;Cat&gt; &#123;<br><span class="hljs-keyword">public</span>:<br>  <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">()</span> </span>&#123; std::cout &lt;&lt; <span class="hljs-string">&quot;Cat\n&quot;</span>; &#125;<br>&#125;;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt; <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">(Animal&lt;T&gt; *p)</span> </span>&#123; p-&gt;<span class="hljs-built_in">speak</span>(); &#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>  Cat p1&#123;&#125;;<br>  Dog p2&#123;&#125;;<br>  <span class="hljs-built_in">speak</span>(&amp;p1);<br>  <span class="hljs-built_in">speak</span>(&amp;p2);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>派生类必须要实现这个函数才行，看起来 CRTP 并不是很有用。</p>
+<p>当需要返回一个 指向 <code>this</code> 的 <code>shared_ptr</code> 时, 才应该使用 CRTP 。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">A</span> &#123;<br>  <span class="hljs-function">std::shared_ptr&lt;A&gt; <span class="hljs-title">get</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">return</span> std::<span class="hljs-built_in">shared_ptr</span>&lt;A&gt;(<span class="hljs-keyword">this</span>);<br>  &#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>  std::shared_ptr&lt;A&gt; a = std::<span class="hljs-built_in">make_shared</span>&lt;A&gt;();<br>  <span class="hljs-keyword">auto</span> b = a-&gt;<span class="hljs-built_in">get</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>运行结果为：</p>
+<figure class="highlight irpf90"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs irpf90"><span class="hljs-keyword">double</span> <span class="hljs-keyword">free</span> or corruption (<span class="hljs-keyword">out</span>)<br></code></pre></td></tr></table></figure>
+
+<p>多次释放了 <code>A</code>, 通过使用 <code>use_count()</code> 查看引用计数个数发现，计数并没有增加，仍为 1，但是有两个指针指向了同一个对象。</p>
+<p>将类改为 ：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">A</span> : std::enable_shared_from_this&lt;A&gt; &#123;<br>  <span class="hljs-function">std::shared_ptr&lt;A&gt; <span class="hljs-title">get</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">shared_from_this</span>();<br>  &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+<p>这时就可以正常运行了。</p>
+<p><strong>参考</strong></p>
+<p><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/crtp">CRTP cppreference</a></p>
+<p><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/memory/enable_shared_from_this">std::enable_shared_from_this cppreference</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Cpp/" class="category-chain-item">Cpp</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%A4%9A%E6%80%81/">#多态</a>
+      
+        <a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">#面向对象</a>
+      
+        <a href="/tags/%E6%A8%A1%E6%9D%BF/">#模板</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>C++多态: 运行期多态与编译期多态</div>
+      <div>https://mingzi47.github.io/2023/02/27/运行期多态与编译期多态/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingzi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年2月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/12/Cpp%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%AE%9E%E7%8E%B0/" title="Cpp线程池实现">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Cpp线程池实现</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/02/26/CMU15-445%20Lab2/" title="CMU15-445 Lab2 : 可高并发的 B+ 树索引">
+                        <span class="hidden-mobile">CMU15-445 Lab2 : 可高并发的 B+ 树索引</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('mermaid' in window) {
+        mermaid.init();
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
