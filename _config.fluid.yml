@@ -795,13 +795,13 @@ valine:
   path: window.location.pathname
   placeholder: 写一条评论
   avatar: 'retro'
-  meta: ['nick', 'mail', 'link']
+  meta: ['nick', 'mail']
   requiredFields: []
   pageSize: 10
   lang: 'zh-CN'
   highlight: true
   recordIP: false
-  serverURLs:
+  serverURLs: 'https://cfclts8v.api.lncldglobal.com'
   emojiCDN:
   emojiMaps:
   enableQQ: true
