@@ -49,6 +49,8 @@ npm install hexo-generator-baidu-sitemap --save
 
 [Waline Docs](https://waline.js.org/guide/get-started/)
 
+[LeanCloud](https://console.leancloud.app/login) + [Vercel](https://vercel.com/dashboard)
+
 ## 文件结构
 
 ```yml

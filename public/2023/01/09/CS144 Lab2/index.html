@@ -456,20 +456,21 @@
   
     <article id="comments" lazyload>
       
-  <div id="valine"></div>
+  <div id="waline"></div>
   <script type="text/javascript">
-    Fluid.utils.loadComments('#valine', function() {
-      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.14.1/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.14.1/waline.min.js', function() {
         var options = Object.assign(
-          {"appId":"CfclTS8vPc5zgmPs2YgVE7pJ-MdYXbMMI","appKey":"QplCeEcLiXLZiGQR9V94CIrs","path":"window.location.pathname","placeholder":"写一条评论","avatar":"retro","meta":["nick","mail"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":true,"recordIP":false,"serverURLs":"https://cfclts8v.api.lncldglobal.com","emojiCDN":null,"emojiMaps":null,"enableQQ":true},
+          {"serverURL":"https://waline-o3hv.vercel.app/","path":"window.location.pathname","meta":[],"requiredMeta":[],"lang":["zh-CN","en"],"emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":2000,"pageSize":10,"placeholder":"可以随便发评论"},
           {
-            el: "#valine",
+            el: '#waline',
             path: window.location.pathname
           }
         )
-        new Valine(options);
-        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
-          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
           Fluid.plugins.imageCaption(imgSelector);
           Fluid.plugins.fancyBox(imgSelector);
         })
