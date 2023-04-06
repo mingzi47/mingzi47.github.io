@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://mingzi47.github.io/about/index.html</loc>
+    
+    <lastmod>2023-04-06</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://mingzi47.github.io/google4d9f9fb922087a20.html</loc>
     
     <lastmod>2023-04-06</lastmod>
@@ -77,15 +86,6 @@
     <loc>https://mingzi47.github.io/2023/04/01/CMU15-445%20Lab3/</loc>
     
     <lastmod>2023-04-05</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://mingzi47.github.io/about/index.html</loc>
-    
-    <lastmod>2023-04-03</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -198,14 +198,21 @@
   </url>
   
   <url>
-    <loc>https://mingzi47.github.io/tags/CMU15-445/</loc>
+    <loc>https://mingzi47.github.io/tags/AtCoder/</loc>
     <lastmod>2023-04-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://mingzi47.github.io/tags/B-%E6%A0%91/</loc>
+    <loc>https://mingzi47.github.io/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</loc>
+    <lastmod>2023-04-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://mingzi47.github.io/tags/CMU15-445/</loc>
     <lastmod>2023-04-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -219,7 +226,7 @@
   </url>
   
   <url>
-    <loc>https://mingzi47.github.io/tags/CS144/</loc>
+    <loc>https://mingzi47.github.io/tags/B-%E6%A0%91/</loc>
     <lastmod>2023-04-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -233,14 +240,7 @@
   </url>
   
   <url>
-    <loc>https://mingzi47.github.io/tags/AtCoder/</loc>
-    <lastmod>2023-04-06</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://mingzi47.github.io/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</loc>
+    <loc>https://mingzi47.github.io/tags/CS144/</loc>
     <lastmod>2023-04-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -268,6 +268,20 @@
   </url>
   
   <url>
+    <loc>https://mingzi47.github.io/tags/RAII/</loc>
+    <lastmod>2023-04-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://mingzi47.github.io/tags/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/</loc>
+    <lastmod>2023-04-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://mingzi47.github.io/tags/%E5%B7%A5%E5%85%B7/</loc>
     <lastmod>2023-04-06</lastmod>
     <changefreq>weekly</changefreq>
@@ -283,20 +297,6 @@
   
   <url>
     <loc>https://mingzi47.github.io/tags/CMake/</loc>
-    <lastmod>2023-04-06</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://mingzi47.github.io/tags/RAII/</loc>
-    <lastmod>2023-04-06</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://mingzi47.github.io/tags/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/</loc>
     <lastmod>2023-04-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -333,6 +333,13 @@
 
   
   <url>
+    <loc>https://mingzi47.github.io/categories/CP/</loc>
+    <lastmod>2023-04-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://mingzi47.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
     <lastmod>2023-04-06</lastmod>
     <changefreq>weekly</changefreq>
@@ -341,13 +348,6 @@
   
   <url>
     <loc>https://mingzi47.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
-    <lastmod>2023-04-06</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://mingzi47.github.io/categories/CP/</loc>
     <lastmod>2023-04-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

@@ -351,7 +351,7 @@ navbar:
     - { key: "category", link: "/categories/", icon: "iconfont icon-category-fill" }
     - { key: "tag", link: "/tags/", icon: "iconfont icon-tags-fill" }
     - { key: "about", link: "/about/", icon: "iconfont icon-user-fill"}
-    #- { key: "links", link: "/links/", icon: "iconfont icon-link-fill" }
+    - { key: 'links', link: '/links/', icon: 'iconfont icon-link-fill' }
 
 # 搜索功能，基于 hexo-generator-search 插件，若已安装其他搜索插件请关闭此功能，以避免生成多余的索引文件
 # Search feature, based on hexo-generator-search. If you have installed other search plugins, please disable this feature to avoid generating redundant index files
@@ -534,7 +534,7 @@ index:
 #---------------------------
 post:
   banner_img: /images/banner/post.png
-  banner_img_height: 70
+  banner_img_height: 80
   banner_mask_alpha: 0.3
 
   # 文章在首页的默认封面图，当没有指定 index_img 时会使用该图片，若两者都为空则不显示任何图片
@@ -725,11 +725,11 @@ post:
   # 评论插件
   # Comment plugin
   comments:
-    enable: false
+    enable: true
     # 指定的插件，需要同时设置对应插件的必要参数
     # The specified plugin needs to set the necessary parameters at the same time
     # Options: utterances | disqus | gitalk | valine | waline | changyan | livere | remark42 | twikoo | cusdis | giscus
-    type: disqus
+    type: gitalk
 
 
 #---------------------------
@@ -768,10 +768,10 @@ disqus:
 # Based on GitHub Issues
 # See: https://github.com/gitalk/gitalk#options
 gitalk:
-  clientID:
-  clientSecret:
-  repo:
-  owner:
+  clientID: 71f84c8b505977d25168
+  clientSecret: 91b5a7bd468ab04ecc9141d736e7c05613fa0071
+  repo: mingzi47.github.io
+  owner: mingzi47
   admin: ['name']
   language: zh-CN
   labels: ['Gitalk']
@@ -994,29 +994,23 @@ page404:
 #---------------------------
 links:
   enable: true
-  banner_img: /images/banner.png
+  banner_img: /images/banner/links.png
   banner_img_height: 80
   banner_mask_alpha: 0.3
   # 友链的成员项
   # Member item of page
   items:
     - {
-      title: "Fluid Blog",
-      intro: "主题博客",
-      link: "https://hexo.fluid-dev.com/",
-      avatar: "/img/favicon.png"
-    }
-    - {
       title: "Fluid Docs",
       intro: "主题使用指南",
       link: "https://hexo.fluid-dev.com/docs/",
-      avatar: "/img/favicon.png"
+      avatar: "/img/avatar.png"
     }
     - {
-      title: "Fluid Repo",
-      intro: "主题 GitHub 仓库",
-      link: "https://github.com/fluid-dev/hexo-theme-fluid",
-      avatar: "/img/favicon.png"
+      title: "mingzi",
+      intro: "测试一下",
+      link: "https://mingzi47.github.io",
+      avatar: "/images/logo.png"
     }
 
   # 当成员头像加载失败时，替换为指定图片
