@@ -38,6 +38,12 @@ $ hexo deploy
 
 More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
 
+### Sitemap
+
+```bash
+npm install hexo-generator-sitemap --save
+npm install hexo-generator-baidu-sitemap --save
+```
 ## 文件结构
 
 ```yml
