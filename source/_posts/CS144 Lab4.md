@@ -6,6 +6,7 @@ tags:
 - "Lab"                                   
 categories:
 - "计算机网络"
+index_img: /images/计算机网络/CS144/Lab4/实验整体设计.png
 ---
 
 ## 整体设计

@@ -26,25 +26,11 @@
 <meta property="og:description" content="B+ 树 上图表示的是一颗四阶 B+ 树，四阶表示每个节点最多存四个 K-V 对。 B+ 树的叶子节点分为三类：  根节点 内部节点 叶子节点  根节点可以是内部节点也可使叶子节点。 B+ 树的每个节点不仅有最大容量，也有最小容量(最小容量 &#x3D; 最大容量的一半, 下取整)，低于最小容量的节点会想方法让自己的节点树增加(在 删除 中详细讲解)，根节点没有最小容量限制。 每个节点中的数据是有序的，按照">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/BPlusTree.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert1.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert2.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert2.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase1.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase2.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase3.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase4.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2search1.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2search3.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert1.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert2.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert3.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert4.png">
-<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/lock-latch.png">
 <meta property="article:published_time" content="2023-02-26T07:45:14.000Z">
-<meta property="article:modified_time" content="2023-04-03T08:06:33.233Z">
+<meta property="article:modified_time" content="2023-04-06T03:05:36.881Z">
 <meta property="article:author" content="mingzi">
-<meta property="article:tag" content="Lab">
 <meta property="article:tag" content="CMU15-445">
+<meta property="article:tag" content="Lab">
 <meta property="article:tag" content="B+树">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/BPlusTree.png">
@@ -386,9 +372,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Lab/">#Lab</a>
-      
         <a href="/tags/CMU15-445/">#CMU15-445</a>
+      
+        <a href="/tags/Lab/">#Lab</a>
       
         <a href="/tags/B-%E6%A0%91/">#B+树</a>
       

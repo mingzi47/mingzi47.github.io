@@ -7,6 +7,7 @@ tags:
 - 线程池
 - 并发
 - Cpp
+index_img: /images/Cpp/Cpp线程池实现/ThreadPool.png
 ---
 
 基于生产者-消费者模型的线程池。

@@ -6,6 +6,7 @@ tags:
 - "Lab"                                   
 categories:
 - "计算机网络"                              
+index_img: /images/计算机网络/CS144/Lab3/定时器启动时机.png
 ---
 
 实现 TCP 协议中的发送器 `TCPSender` 。

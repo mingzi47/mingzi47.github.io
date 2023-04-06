@@ -18,20 +18,23 @@
   <meta name="author" content="mingzi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Task1 - System CatalogTask2 - Executors火山模型">
+    <meta name="description" content="Task1 - System Catalog维护一个内部的目录来跟踪数据库内的元数据。 Schema (class)表的结构信息，不包含表的实际数据。 1234567CREATE TABLE &#96;t_user&#96; (  &#96;id&#96; int(11) NOT NULL,  &#96;name&#96; VARCHAR(20) DEFAULT NULL,  &#96;phone&#96; VARCHAR(20) DEFAULT NULL,">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CMU15-445 Lab3 : 支持查询">
 <meta property="og:url" content="https://mingzi47.github.io/2023/04/01/CMU15-445%20Lab3/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="Task1 - System CatalogTask2 - Executors火山模型">
+<meta property="og:description" content="Task1 - System Catalog维护一个内部的目录来跟踪数据库内的元数据。 Schema (class)表的结构信息，不包含表的实际数据。 1234567CREATE TABLE &#96;t_user&#96; (  &#96;id&#96; int(11) NOT NULL,  &#96;name&#96; VARCHAR(20) DEFAULT NULL,  &#96;phone&#96; VARCHAR(20) DEFAULT NULL,">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/Lab3/format.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/Lab3/tuple_format.png">
 <meta property="article:published_time" content="2023-04-01T07:45:14.000Z">
-<meta property="article:modified_time" content="2023-04-03T08:06:33.361Z">
+<meta property="article:modified_time" content="2023-04-05T16:05:50.099Z">
 <meta property="article:author" content="mingzi">
-<meta property="article:tag" content="Lab">
 <meta property="article:tag" content="CMU15-445">
+<meta property="article:tag" content="Lab">
 <meta property="article:tag" content="火山模型">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/Lab3/format.png">
   
   
   
@@ -212,7 +215,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          38 字
+          3k 字
         
       </span>
     
@@ -223,7 +226,7 @@
         
         
         
-          1 分钟
+          26 分钟
         
       </span>
     
@@ -266,7 +269,49 @@
             
               <div class="markdown-body">
                 
-                <h2 id="Task1-System-Catalog"><a href="#Task1-System-Catalog" class="headerlink" title="Task1 - System Catalog"></a>Task1 - System Catalog</h2><h2 id="Task2-Executors"><a href="#Task2-Executors" class="headerlink" title="Task2 - Executors"></a>Task2 - Executors</h2><h3 id="火山模型"><a href="#火山模型" class="headerlink" title="火山模型"></a>火山模型</h3>
+                <h2 id="Task1-System-Catalog"><a href="#Task1-System-Catalog" class="headerlink" title="Task1 - System Catalog"></a>Task1 - System Catalog</h2><p>维护一个内部的目录来跟踪数据库内的元数据。</p>
+<h3 id="Schema-class"><a href="#Schema-class" class="headerlink" title="Schema (class)"></a>Schema (class)</h3><p>表的结构信息，不包含表的实际数据。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> `t_user` (<br>  `id` <span class="hljs-type">int</span>(<span class="hljs-number">11</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">NULL</span>,<br>  `name` <span class="hljs-type">VARCHAR</span>(<span class="hljs-number">20</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `phone` <span class="hljs-type">VARCHAR</span>(<span class="hljs-number">20</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  `age` <span class="hljs-type">int</span>(<span class="hljs-number">11</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span>,<br>  <span class="hljs-keyword">PRIMARY</span> KEY (`id`) <span class="hljs-keyword">USING</span> BTREE<br>) ENGINE <span class="hljs-operator">=</span> InnoDB <span class="hljs-keyword">DEFAULT</span> <span class="hljs-type">CHARACTER</span> <span class="hljs-keyword">SET</span> <span class="hljs-operator">=</span> ascii ROW_FORMAT <span class="hljs-operator">=</span> COMPACT;<br></code></pre></td></tr></table></figure>
+
+<p>这些信息就由 <code>Schema</code> 来储存，真实数据数据会通过 <code>Tuple</code>  来储存。</p>
+<p><code>TableHeap</code> 与 <code>Schema</code> 结合才是完整的表。</p>
+<h4 id="Column-class"><a href="#Column-class" class="headerlink" title="Column (class)"></a>Column (class)</h4><p>表示列的信息。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 例如： column_name_ = &#x27;id&#x27; column_type_ = INTEGER ...</span><br>std::string column_name_;      <span class="hljs-comment">// column 名字</span><br>TypeId column_type_;           <span class="hljs-comment">// column 类型  INVALID, BOOLEAN, TINYINT, SMALLINT, INTEGER, BIGINT, DECIMAL, VARCHAR, TIMESTAMP </span><br><span class="hljs-type">uint32_t</span> variable_length_&#123;<span class="hljs-number">0</span>&#125;;  <span class="hljs-comment">// 变量长度</span><br><span class="hljs-type">uint32_t</span> column_offset_&#123;<span class="hljs-number">0</span>&#125;;    <span class="hljs-comment">// 这一列在 `Tuple` 中的偏移量</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="TableHeap-class"><a href="#TableHeap-class" class="headerlink" title="TableHeap (class)"></a>TableHeap (class)</h3><p>表示磁盘上的物理表。</p>
+<p>由多个 <code>TablePage</code> 组成，插入时从第一张 <code>TablePage</code> 开始，不能插入就尝试下一张，或者新建一张（没有下一张时），只到由空余的位置插入 <code>Tuple</code>。</p>
+<p>更新，删除，查找通过  <code>Rid::GetPageId()</code> 可以轻松在 <code>BufferPoolManger</code> 中找到对应的 <code>TablePage</code>，并且通过 <code>Rid::GetSlotNum()</code> 在  <code>TablePage</code> 中找到对应的 <code>Tuple</code>。 </p>
+<h4 id="TablePage-class"><a href="#TablePage-class" class="headerlink" title="TablePage (class)"></a>TablePage (class)</h4><p>继承 <code>Page</code> </p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/Lab3/format.png" srcset="/img/loading.gif" lazyload alt="format"></p>
+<p>Header 的大小是 24 ，使用偏移量来获得 <code>Page</code> 中的每个值。</p>
+<p><strong>插入 Tuple</strong></p>
+<p>使用 <code>memcpy</code> 将 <code>Tuple::Data</code> 拷贝一份到<code>TablePage::Data</code> 对应的位置上。</p>
+<p>同时会修改参数 <code>Rid</code> 做为这条 <code>Tuple</code> 的标志符，接下来更新、删除、查找这条 <code>Tuple</code> 都要依靠 <code>Rid</code>。</p>
+<p><strong>更新 Tuple</strong></p>
+<p>使用<code>memmove</code> 来将原来的 <code>TablePage::Data</code> 中要被更新的 <code>Tuple::Data</code> 移动到<code>TablePage::Data</code>后面。</p>
+<p>重新设置<code>TablePage::Data</code> 中的 <code>Tuple::Data</code>的偏移量。</p>
+<p><strong>删除 Tuple</strong></p>
+<h5 id="MarkDelete"><a href="#MarkDelete" class="headerlink" title="MarkDelete"></a>MarkDelete</h5><p>只是标记为被删除，实际 <code>TupleCount</code> 和 <code>free_space_pointer</code> 都没有被改变，之后可以通过 <code>TablePage::RollbackDelete(const RID &amp;rid,...)</code> 来恢复。</p>
+<h5 id="ApplyDelete"><a href="#ApplyDelete" class="headerlink" title="ApplyDelete"></a>ApplyDelete</h5><p>使用 <code>memmove</code> 将内容移除，不可恢复，删除后同样需要设置 <code>TablePage::Data</code> 中的 <code>Tuple::Data</code>的偏移量。</p>
+<h5 id="Tuple-class"><a href="#Tuple-class" class="headerlink" title="Tuple (class)"></a>Tuple (class)</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">bool</span> allocated_;  <span class="hljs-comment">// 是否被分配了内存</span><br><span class="hljs-type">uint32_t</span> size_;   <span class="hljs-comment">// 被分配内存的大小</span><br><span class="hljs-type">char</span> *data_;      <span class="hljs-comment">// 被分配的内存（数据）</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/Lab3/tuple_format.png" srcset="/img/loading.gif" lazyload alt="format"></p>
+<h5 id="Rid-class"><a href="#Rid-class" class="headerlink" title="Rid (class)"></a>Rid (class)</h5><p>通过 <code>Rid</code> 就能快速找到 <code>TablePage</code> 中的 <code>Tuple</code> 。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">page_id_t</span> page_id_&#123;INVALID_PAGE_ID&#125;;  <span class="hljs-comment">// 这个 `Tuple` 在哪页上</span><br><span class="hljs-type">uint32_t</span> slot_num_&#123;<span class="hljs-number">0</span>&#125;;                <span class="hljs-comment">// `TablePage` 中的偏移量</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="TableIterator-class"><a href="#TableIterator-class" class="headerlink" title="TableIterator (class)"></a>TableIterator (class)</h4><p>为 sequential scan TableHeap 提供的迭代器。</p>
+<p><code>*TableIterator</code> 会返回一个 <code>Tuple</code> </p>
+<p><code>TableIterator</code> 只会向前迭代，每次都是迭代一张表（而不是一张 <code>Page</code>，一张表可能有多个 <code>Page</code> 组成 ）。</p>
+<h3 id="TableMetadata-class"><a href="#TableMetadata-class" class="headerlink" title="TableMetadata (class)"></a>TableMetadata (class)</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp">Schema schema_;<br>std::string name_;<br>std::unique_ptr&lt;TableHeap&gt; table_;<br><span class="hljs-type">table_oid_t</span> oid_;<br></code></pre></td></tr></table></figure>
+
+<p>将 <code>TableHeap</code> 与 <code>Schema</code> 封装起来组成完整的表，同时加入表名称 <code>name</code> 和表的标示号 <code>oid_</code> 来帮助 <code>Catalog</code> 管理多个表。</p>
+<h3 id="IndexInfo-class"><a href="#IndexInfo-class" class="headerlink" title="IndexInfo (class)"></a>IndexInfo (class)</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp">Schema key_schema_;<br>std::string name_;<br>std::unique_ptr&lt;Index&gt; index_;<br><span class="hljs-type">index_oid_t</span> index_oid_;<br>std::string table_name_;<br><span class="hljs-type">const</span> <span class="hljs-type">size_t</span> key_size_;<br></code></pre></td></tr></table></figure>
+
+<p>观察上面的  <code>TableMetadata</code>  会发现少了索引，<code>IndexInfo</code>  就表示了这个索引，而 <code>Catalog</code> 的作用就是实现 <code>TableMetadata</code> 与 <code>IndexInfo</code> 关联起来，真正实现完整的表。</p>
+<h3 id="Catalog-class"><a href="#Catalog-class" class="headerlink" title="Catalog (class)"></a>Catalog (class)</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/** tables_ : table identifiers -&gt; table metadata. Note that tables_ owns all table metadata. */</span><br>std::unordered_map&lt;<span class="hljs-type">table_oid_t</span>, std::unique_ptr&lt;TableMetadata&gt;&gt; tables_;<br><span class="hljs-comment">/** names_ : table names -&gt; table identifiers */</span><br>std::unordered_map&lt;std::string, <span class="hljs-type">table_oid_t</span>&gt; names_;<br><span class="hljs-comment">/** The next table identifier to be used. */</span><br>std::atomic&lt;<span class="hljs-type">table_oid_t</span>&gt; next_table_oid_&#123;<span class="hljs-number">0</span>&#125;;<br><span class="hljs-comment">/** indexes_: index identifiers -&gt; index metadata. Note that indexes_ owns all index metadata */</span><br>std::unordered_map&lt;<span class="hljs-type">index_oid_t</span>, std::unique_ptr&lt;IndexInfo&gt;&gt; indexes_;<br><span class="hljs-comment">/** index_names_: table name -&gt; index names -&gt; index identifiers */</span><br>std::unordered_map&lt;std::string, std::unordered_map&lt;std::string, <span class="hljs-type">index_oid_t</span>&gt;&gt; index_names_;<br><span class="hljs-comment">/** The next index identifier to be used */</span><br>std::atomic&lt;<span class="hljs-type">index_oid_t</span>&gt; next_index_oid_&#123;<span class="hljs-number">0</span>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>通过给定的类成员就能够推断出 <code>Catalog</code> 是如何关联 <code>TableMetadata</code> 和 <code>IndexInfo</code>  以及使用表名称/索引表名称关联 <code>TableMetadata</code>/<code>IndexInfo</code>。  </p>
+<h2 id="Task2-Executors"><a href="#Task2-Executors" class="headerlink" title="Task2 - Executors"></a>Task2 - Executors</h2><h3 id="火山模型"><a href="#火山模型" class="headerlink" title="火山模型"></a>火山模型</h3>
                 
               </div>
             
@@ -299,9 +344,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Lab/">#Lab</a>
-      
         <a href="/tags/CMU15-445/">#CMU15-445</a>
+      
+        <a href="/tags/Lab/">#Lab</a>
       
         <a href="/tags/%E7%81%AB%E5%B1%B1%E6%A8%A1%E5%9E%8B/">#火山模型</a>
       
