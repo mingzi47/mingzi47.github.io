@@ -44,6 +44,11 @@ More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
 npm install hexo-generator-sitemap --save
 npm install hexo-generator-baidu-sitemap --save
 ```
+
+### 评论 Waline
+
+[Waline Docs](https://waline.js.org/guide/get-started/)
+
 ## 文件结构
 
 ```yml

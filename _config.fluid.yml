@@ -729,7 +729,7 @@ post:
     # 指定的插件，需要同时设置对应插件的必要参数
     # The specified plugin needs to set the necessary parameters at the same time
     # Options: utterances | disqus | gitalk | valine | waline | changyan | livere | remark42 | twikoo | cusdis | giscus
-    type: waline
+    type: valine
 
 
 #---------------------------
@@ -793,7 +793,7 @@ valine:
   appId: CfclTS8vPc5zgmPs2YgVE7pJ-MdYXbMMI
   appKey: QplCeEcLiXLZiGQR9V94CIrs
   path: window.location.pathname
-  placeholder:
+  placeholder: 写一条评论
   avatar: 'retro'
   meta: ['nick', 'mail', 'link']
   requiredFields: []
@@ -801,17 +801,17 @@ valine:
   lang: 'zh-CN'
   highlight: true
   recordIP: false
-  serverURLs: 'https://cfclts8v.api.lncldglobal.com'
+  serverURLs:
   emojiCDN:
   emojiMaps:
-  enableQQ: false
+  enableQQ: true
 
 # Waline
 # 从 Valine 衍生而来，额外增加了服务端和多种功能
 # Derived from Valine, with self-hosted service and new features
 # See: https://waline.js.org/
 waline:
-  serverURL: 'https://cfclts8v.api.lncldglobal.com'
+  serverURL:
   path: window.location.pathname
   meta: ['nick', 'mail', 'link']
   requiredMeta: ['nick']
