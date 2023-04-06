@@ -29,8 +29,8 @@
 <meta property="article:published_time" content="2023-02-26T07:45:14.000Z">
 <meta property="article:modified_time" content="2023-04-06T03:05:36.881Z">
 <meta property="article:author" content="mingzi">
-<meta property="article:tag" content="Lab">
 <meta property="article:tag" content="CMU15-445">
+<meta property="article:tag" content="Lab">
 <meta property="article:tag" content="B+树">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/BPlusTree.png">
@@ -388,9 +388,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Lab/">#Lab</a>
-      
         <a href="/tags/CMU15-445/">#CMU15-445</a>
+      
+        <a href="/tags/Lab/">#Lab</a>
       
         <a href="/tags/B-%E6%A0%91/">#B+树</a>
       
@@ -475,19 +475,24 @@
   
     <article id="comments" lazyload>
       
-  <div id="gitalk-container"></div>
+  <div id="waline"></div>
   <script type="text/javascript">
-    Fluid.utils.loadComments('#gitalk-container', function() {
-      Fluid.utils.createCssLink('/css/gitalk.css')
-      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.14.1/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.14.1/waline.min.js', function() {
         var options = Object.assign(
-          {"clientID":"71f84c8b505977d25168","clientSecret":"91b5a7bd468ab04ecc9141d736e7c05613fa0071","repo":"mingzi47.github.io","owner":"mingzi47","admin":["name"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {"serverURL":"https://cfclts8v.api.lncldglobal.com","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
           {
-            id: 'd4cb3eae8ac93e100872738eeb49bcfd'
+            el: '#waline',
+            path: window.location.pathname
           }
         )
-        var gitalk = new Gitalk(options);
-        gitalk.render('gitalk-container');
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
       });
     });
   </script>
