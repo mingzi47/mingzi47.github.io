@@ -1,0 +1,801 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/apple-touch-icon.png">
+  <link rel="icon" href="/images/favicon-192x192.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingzi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="跳表的实现 在计算机科学中，跳跃列表是一种数据结构。它使得包含 n 个元素的有序序列的查找和插入操作的平均时间复杂度都是$O(\log n)$，优于数组的 $O(n)$ 复杂度。  什么是跳表 跳表是对有序链表的改进, 在有序链表的基础上增加了 分层 的概念。首先，跳表的每一层都是一个有序链表，特别地，最底层是初始的有序链表。每个位于第 i 层的节点有 p 的概率出现在第 i+1 层，p 为常数(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="跳表的实现">
+<meta property="og:url" content="https://mingzi47.github.io/2023/06/15/%E8%B7%B3%E8%A1%A8%E7%9A%84%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="跳表的实现 在计算机科学中，跳跃列表是一种数据结构。它使得包含 n 个元素的有序序列的查找和插入操作的平均时间复杂度都是$O(\log n)$，优于数组的 $O(n)$ 复杂度。  什么是跳表 跳表是对有序链表的改进, 在有序链表的基础上增加了 分层 的概念。首先，跳表的每一层都是一个有序链表，特别地，最底层是初始的有序链表。每个位于第 i 层的节点有 p 的概率出现在第 i+1 层，p 为常数(">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/SkipList/SkipList.png">
+<meta property="article:published_time" content="2023-06-15T07:45:14.000Z">
+<meta property="article:modified_time" content="2023-06-16T09:55:55.335Z">
+<meta property="article:author" content="mingzi">
+<meta property="article:tag" content="跳表">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="cpp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/SkipList/SkipList.png">
+  
+  
+  
+  <title>跳表的实现 - Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mingzi47.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 90vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/banner/post.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="跳表的实现"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-15 15:45" pubdate>
+          2023年6月15日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          50 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+        <div class="scroll-down-bar">
+          <i class="iconfont icon-arrowdown"></i>
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">跳表的实现</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="跳表的实现"><a href="#跳表的实现" class="headerlink" title="跳表的实现"></a>跳表的实现</h1><blockquote>
+<p>在计算机科学中，跳跃列表是一种数据结构。它使得包含 n 个元素的有序序列的查找和插入操作的平均时间复杂度都是$O(\log n)$，优于数组的 $O(n)$ 复杂度。</p>
+</blockquote>
+<h2 id="什么是跳表"><a href="#什么是跳表" class="headerlink" title="什么是跳表"></a>什么是跳表</h2><blockquote>
+<p>跳表是对有序链表的改进, 在有序链表的基础上增加了 <strong>分层</strong> 的概念。首先，跳表的每一层都是一个有序链表，特别地，最底层是初始的有序链表。每个位于第 <code>i</code> 层的节点有 p 的概率出现在第 <code>i+1</code> 层，p 为常数(通常为 $\frac{1}{2}$ 或 $\frac{1}{4}$)。</p>
+</blockquote>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/SkipList/SkipList.png" srcset="/img/loading.gif" lazyload alt="跳表"></p>
+<ul>
+<li><p>跳表是是分层的链表</p>
+</li>
+<li><p>跳表的每一层都是有序链表</p>
+</li>
+<li><p>跳表的最底层是完整的有序链表</p>
+</li>
+</ul>
+<p>跳表的结构看起来像个树, 查询、插入和删除的复杂度也是 $O(\log{n})$ (最坏复杂度是 $O(n)$, 每层有哪些节点是通过概率得到的，因此最坏可能每一层都是一个完整的链表)。</p>
+<h2 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h2><h3 id="节点的设计"><a href="#节点的设计" class="headerlink" title="节点的设计"></a>节点的设计</h3><p>一个节点要存储这个节点所在的每一层的下个节点的指针，使用一个数组来存储 <code>forward(Node **)</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Node</span> &#123;<br>  K key;<br>  V value;<br>  Node **forward; <span class="hljs-comment">// Node*[] 存储每层的下一个节点</span><br>  <span class="hljs-type">int</span> level;<br>  <span class="hljs-built_in">Node</span>(K key, V value, <span class="hljs-type">int</span> level) : <span class="hljs-built_in">key</span>(key), <span class="hljs-built_in">value</span>(value), <span class="hljs-built_in">level</span>(level) &#123;<br>    forward = <span class="hljs-keyword">new</span> Node *[level + <span class="hljs-number">1</span>];<br>  &#125;<br>  ~<span class="hljs-built_in">Node</span>() &#123; <span class="hljs-keyword">delete</span>[] forward; &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h3 id="获取节点的最大层数"><a href="#获取节点的最大层数" class="headerlink" title="获取节点的最大层数"></a>获取节点的最大层数</h3><blockquote>
+<p>每个位于第 i 层的节点有 p 的概率出现在第 i+1 层</p>
+</blockquote>
+<p>模拟这个过程即可</p>
+<p>这里使用到了 <a target="_blank" rel="noopener" href="https://zh.cppreference.com/w/cpp/numeric/random/rand"><code>rand()</code></a> 这个随机函数, 为了保证随机性，同时也要使用设置 <code>srand(time(0))</code> 来保证随机性, 更推荐用 C++11 的<a target="_blank" rel="noopener" href="https://zh.cppreference.com/w/cpp/numeric/random">随机数生成设施</a>替换 rand() 。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> MAX_LV = <span class="hljs-number">32</span>;<br><span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> P = <span class="hljs-number">4</span>;<br><span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> S = <span class="hljs-number">0xFFFF</span>;<br><span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> PS = S / P;<br><br><span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">random_level</span><span class="hljs-params">()</span> -&gt; <span class="hljs-type">int</span> </span>&#123;<br>  <span class="hljs-type">int</span> lv = <span class="hljs-number">0</span>;<br>  <span class="hljs-keyword">while</span> ((<span class="hljs-built_in">rand</span>() &amp; S) &lt; PS)<br>    ++lv;<br>  <span class="hljs-keyword">return</span> MAX_LV &gt; lv ? lv : MAX_LV;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h3><blockquote>
+<p>在跳表中查找，就是从第 $L(n)$ 层开始，水平地逐个比较直至当前节点的下一个节点大于等于目标节点，然后移动至下一层。重复这个过程直至到达第一层且无法继续进行操作。此时，若下一个节点是目标节点，则成功查找；反之，则元素不存在。这样一来，查找的过程中会跳过一些没有必要的比较，所以相比于有序链表的查询，跳表的查询更快。</p>
+</blockquote>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/SkipList/find0.png" srcset="/img/loading.gif" lazyload alt="跳表结构"></p>
+<p>在这个 1-8 的跳表中查找 5 (这里演示的比较是严格小于)</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/SkipList/find1.gif" srcset="/img/loading.gif" lazyload alt="查找 5"></p>
+<ul>
+<li>开始是在第 3 层的 head 处，与他指向的下一个节点的值做比较 ($1 &lt; 5$), 现在移动到了第 3 层的 1 节点处</li>
+<li>1 节点第 3 层的下一个节点不存在，现在移动到 1 节点的第 2 层</li>
+<li>与 1 节点第 2 层的下一个节点的值做比较 ($4 &lt; 5$), 移动到 4 节点的第 2 层</li>
+<li>与 4 节点第 2 层的下一个节点的值做比较 ($6 &gt; 5$), 移动到 4 节点的第 1 层</li>
+<li>与 4 节点第 1 层的下一个节点的值做比较 ($6 &gt; 5$), 移动到 4 节点的第 0 层</li>
+<li>与 4 节点第 0 层的下一个节点的值做比较 ($5 = 5$), 下一个节点就是我们要找的值，这里使用了严格小于的比较方式，最后获得的是正确结果的前一个节点。</li>
+</ul>
+<p>答案就是查找到的下一个节点。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">find</span><span class="hljs-params">(K key)</span> -&gt; V </span>&#123;<br>  <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>)<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>  Node *tmp = head;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = level; i &gt;= <span class="hljs-number">0</span>; --i) &#123;<br>    <span class="hljs-keyword">while</span> (tmp-&gt;forward[i] != <span class="hljs-literal">nullptr</span> &amp;&amp; <span class="hljs-built_in">cmp</span>(tmp-&gt;forward[i]-&gt;key, key))<br>      tmp = tmp-&gt;forward[i];<br>  &#125;<br>  <span class="hljs-keyword">if</span> (tmp-&gt;forward[<span class="hljs-number">0</span>] != <span class="hljs-literal">nullptr</span> &amp;&amp; tmp-&gt;forward[<span class="hljs-number">0</span>]-&gt;key == key)<br>    <span class="hljs-keyword">return</span> tmp-&gt;value;<br>  <span class="hljs-keyword">return</span> V&#123;&#125;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>插入与查找的过程类似，不同的是需要记录每一层要插入哪个节点的后面(使用 <code>update</code> 记录)。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs cpp">Node **update&#123;<span class="hljs-keyword">new</span> Node *[MAX_LV + <span class="hljs-number">1</span>]&#125;;<br><br><span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">insert</span><span class="hljs-params">(K key, V value)</span> -&gt; <span class="hljs-type">void</span> </span>&#123;<br>  Node *tmp = head;<br>  <span class="hljs-comment">// 查找并记录每一层要插入到哪个节点的后面</span><br>  <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = level; i &gt;= <span class="hljs-number">0</span>; --i) &#123;<br>    <span class="hljs-keyword">while</span> (tmp-&gt;forward[i] != <span class="hljs-literal">nullptr</span> &amp;&amp; <span class="hljs-built_in">cmp</span>(tmp-&gt;forward[i]-&gt;key, key)) &#123;<br>      tmp = tmp-&gt;forward[i];<br>    &#125;<br>    update[i] = tmp;<br>  &#125;<br>  <span class="hljs-comment">// 如果这个 key 已经存在了， 修改它的值</span><br>  <span class="hljs-keyword">if</span> (tmp-&gt;forward[<span class="hljs-number">0</span>] != <span class="hljs-literal">nullptr</span> &amp;&amp; tmp-&gt;forward[<span class="hljs-number">0</span>]-&gt;key == key) &#123;<br>    tmp-&gt;forward[<span class="hljs-number">0</span>]-&gt;value = value;<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br>  <span class="hljs-comment">// 这个节点的最大层数，这个节点会在 [0, lv] 层存在</span><br>  <span class="hljs-keyword">auto</span> lv = [&amp;]() &#123;<br>    <span class="hljs-type">int</span> t = <span class="hljs-built_in">random_level</span>();<br>    <span class="hljs-keyword">if</span> (level &lt; t) &#123;<br>      t = ++level;<br>      update[level] = head;<br>    &#125;<br>    <span class="hljs-keyword">return</span> t;<br>  &#125;();<br>  <span class="hljs-comment">// 将新节点一次加入到 [0, lv] 中每层的有序链表中</span><br>  Node *new_node = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Node</span>(key, value, lv);<br>  <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = lv; i &gt;= <span class="hljs-number">0</span>; --i) &#123;<br>    new_node-&gt;forward[i] = update[i]-&gt;forward[i];<br>    update[i]-&gt;forward[i] = new_node;<br>  &#125;<br>  ++size;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>删除操作与插入操作相同，同样要记录这个节点在每一层的前一个节点。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">erase</span><span class="hljs-params">(K key)</span> -&gt; <span class="hljs-type">void</span> </span>&#123;<br>  Node *tmp = head;<br>  <span class="hljs-comment">// 查找并记录这个节点在每一层的前一个节点</span><br>  <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = level; i &gt;= <span class="hljs-number">0</span>; --i) &#123;<br>    <span class="hljs-keyword">while</span> (tmp-&gt;forward[i] != <span class="hljs-literal">nullptr</span> &amp;&amp; <span class="hljs-built_in">cmp</span>(tmp-&gt;forward[i]-&gt;key, key))<br>      tmp = tmp-&gt;forward[i];<br>    update[i] = tmp;<br>  &#125;<br>  <span class="hljs-comment">// 这个节点不存在的话</span><br>  <span class="hljs-keyword">if</span> (tmp-&gt;forward[<span class="hljs-number">0</span>] == <span class="hljs-literal">nullptr</span> || tmp-&gt;forward[<span class="hljs-number">0</span>]-&gt;key != key) &#123;<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br><br>  <span class="hljs-comment">// 从最底层向上层依次删除这个节点。</span><br>  <span class="hljs-keyword">auto</span> p = update[<span class="hljs-number">0</span>]-&gt;forward[<span class="hljs-number">0</span>];<br><br>  <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt;= level; ++i) &#123;<br>    <span class="hljs-keyword">if</span> (update[i]-&gt;forward[i] != p) &#123;<br>      <span class="hljs-keyword">break</span>;<br>    &#125;<br>    update[i]-&gt;forward[i] = p-&gt;forward[i];<br>  &#125;<br>  <span class="hljs-keyword">delete</span> p;<br>  <span class="hljs-comment">// 删除节点可能会使层数降低 (例如：最上面一层只有 head 节点和要被删除的节点，删除节点后只剩 head 节点了，此时这一层也可以被删除)</span><br>  <span class="hljs-keyword">while</span> (level &gt; <span class="hljs-number">0</span> &amp;&amp; head-&gt;forward[level] == <span class="hljs-literal">nullptr</span>)<br>    --level;<br>  --size;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> MAX_LV = <span class="hljs-number">32</span>;<br><span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> P = <span class="hljs-number">4</span>;<br><span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> S = <span class="hljs-number">0xFFFF</span>;<br><span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> PS = S / P;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> K, <span class="hljs-keyword">typename</span> V, <span class="hljs-keyword">typename</span> CMP = std::less&lt;K&gt;&gt; <span class="hljs-keyword">struct</span> SkipList &#123;<br><br>  <span class="hljs-keyword">struct</span> Node &#123;<br>    K key;<br>    V value;<br>    Node **forward;<br>    <span class="hljs-type">int</span> level;<br>    <span class="hljs-built_in">Node</span>(K key, V value, <span class="hljs-type">int</span> level) : <span class="hljs-built_in">key</span>(key), <span class="hljs-built_in">value</span>(value), <span class="hljs-built_in">level</span>(level) &#123;<br>      forward = <span class="hljs-keyword">new</span> Node *[level + <span class="hljs-number">1</span>];<br>    &#125;<br>    ~<span class="hljs-built_in">Node</span>() &#123; <span class="hljs-keyword">delete</span>[] forward; &#125;<br>  &#125;;<br><br><span class="hljs-keyword">private</span>:<br>  Node *head&#123;<span class="hljs-keyword">new</span> <span class="hljs-built_in">Node</span>(K&#123;&#125;, V&#123;&#125;, MAX_LV)&#125;;<br>  Node **update&#123;<span class="hljs-keyword">new</span> Node *[MAX_LV + <span class="hljs-number">1</span>]&#125;;<br>  CMP cmp;<br>  <span class="hljs-type">int</span> size&#123;<span class="hljs-number">0</span>&#125;;<br>  <span class="hljs-type">int</span> level&#123;<span class="hljs-number">0</span>&#125;;<br><br><span class="hljs-keyword">public</span>:<br>  <span class="hljs-built_in">SkipList</span>() &#123; <span class="hljs-built_in">srand</span>(<span class="hljs-built_in">time</span>(<span class="hljs-number">0</span>)); &#125;<br><br>  ~<span class="hljs-built_in">SkipList</span>() &#123;<br>    <span class="hljs-keyword">delete</span>[] update;<br>    <span class="hljs-keyword">for</span> (Node *tmp = head; tmp != <span class="hljs-literal">nullptr</span>;) &#123;<br>      head = head-&gt;forward[<span class="hljs-number">0</span>];<br>      <span class="hljs-keyword">delete</span> tmp;<br>      tmp = head;<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">random_level</span><span class="hljs-params">()</span> -&gt; <span class="hljs-type">int</span> </span>&#123;<br>    <span class="hljs-type">int</span> lv = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">while</span> ((<span class="hljs-built_in">rand</span>() &amp; S) &lt; PS)<br>      ++lv;<br>    <span class="hljs-keyword">return</span> MAX_LV &gt; lv ? lv : MAX_LV;<br>  &#125;<br><br>  <span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">find</span><span class="hljs-params">(K key)</span> -&gt; V </span>&#123;<br>    <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>)<br>      <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    Node *tmp = head;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = level; i &gt;= <span class="hljs-number">0</span>; --i) &#123;<br>      <span class="hljs-keyword">while</span> (tmp-&gt;forward[i] != <span class="hljs-literal">nullptr</span> &amp;&amp; <span class="hljs-built_in">cmp</span>(tmp-&gt;forward[i]-&gt;key, key))<br>        tmp = tmp-&gt;forward[i];<br>    &#125;<br>    <span class="hljs-keyword">if</span> (tmp-&gt;forward[<span class="hljs-number">0</span>] != <span class="hljs-literal">nullptr</span> &amp;&amp; tmp-&gt;forward[<span class="hljs-number">0</span>]-&gt;key == key)<br>      <span class="hljs-keyword">return</span> tmp-&gt;value;<br>    <span class="hljs-keyword">return</span> V&#123;&#125;;<br>  &#125;<br><br>  <span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">insert</span><span class="hljs-params">(K key, V value)</span> -&gt; <span class="hljs-type">void</span> </span>&#123;<br>    Node *tmp = head;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = level; i &gt;= <span class="hljs-number">0</span>; --i) &#123;<br>      <span class="hljs-keyword">while</span> (tmp-&gt;forward[i] != <span class="hljs-literal">nullptr</span> &amp;&amp; <span class="hljs-built_in">cmp</span>(tmp-&gt;forward[i]-&gt;key, key)) &#123;<br>        tmp = tmp-&gt;forward[i];<br>      &#125;<br>      update[i] = tmp;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (tmp-&gt;forward[<span class="hljs-number">0</span>] != <span class="hljs-literal">nullptr</span> &amp;&amp; tmp-&gt;forward[<span class="hljs-number">0</span>]-&gt;key == key) &#123;<br>      tmp-&gt;forward[<span class="hljs-number">0</span>]-&gt;value = value;<br>      <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">auto</span> lv = [&amp;]() &#123;<br>      <span class="hljs-type">int</span> t = <span class="hljs-built_in">random_level</span>();<br>      <span class="hljs-keyword">if</span> (level &lt; t) &#123;<br>        t = ++level;<br>        update[level] = head;<br>      &#125;<br>      <span class="hljs-keyword">return</span> t;<br>    &#125;();<br><br>    Node *new_node = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Node</span>(key, value, lv);<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = lv; i &gt;= <span class="hljs-number">0</span>; --i) &#123;<br>      new_node-&gt;forward[i] = update[i]-&gt;forward[i];<br>      update[i]-&gt;forward[i] = new_node;<br>    &#125;<br>    ++size;<br>  &#125;<br><br>  <span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">erase</span><span class="hljs-params">(K key)</span> -&gt; <span class="hljs-type">void</span> </span>&#123;<br>    Node *tmp = head;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = level; i &gt;= <span class="hljs-number">0</span>; --i) &#123;<br>      <span class="hljs-keyword">while</span> (tmp-&gt;forward[i] != <span class="hljs-literal">nullptr</span> &amp;&amp; <span class="hljs-built_in">cmp</span>(tmp-&gt;forward[i]-&gt;key, key))<br>        tmp = tmp-&gt;forward[i];<br>      update[i] = tmp;<br>    &#125;<br>    <span class="hljs-comment">// key is not exist;</span><br>    <span class="hljs-keyword">if</span> (tmp-&gt;forward[<span class="hljs-number">0</span>] == <span class="hljs-literal">nullptr</span> || tmp-&gt;forward[<span class="hljs-number">0</span>]-&gt;key != key) &#123;<br>      <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">auto</span> p = update[<span class="hljs-number">0</span>]-&gt;forward[<span class="hljs-number">0</span>];<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt;= level; ++i) &#123;<br>      <span class="hljs-keyword">if</span> (update[i]-&gt;forward[i] != p) &#123;<br>        <span class="hljs-keyword">break</span>;<br>      &#125;<br>      update[i]-&gt;forward[i] = p-&gt;forward[i];<br>    &#125;<br>    <span class="hljs-keyword">delete</span> p;<br>    <span class="hljs-keyword">while</span> (level &gt; <span class="hljs-number">0</span> &amp;&amp; head-&gt;forward[level] == <span class="hljs-literal">nullptr</span>)<br>      --level;<br>    --size;<br>  &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p><a target="_blank" rel="noopener" href="https://oi-wiki.org/ds/skiplist/">OI-WIKI 跳表</a></p>
+<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Skip_list">维基百科 跳跃列表</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="category-chain-item">数据库</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%B7%B3%E8%A1%A8/">#跳表</a>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">#数据结构</a>
+      
+        <a href="/tags/cpp/">#cpp</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>跳表的实现</div>
+      <div>https://mingzi47.github.io/2023/06/15/跳表的实现/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingzi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/01/CMU15-445%20Lab3/" title="CMU15-445 Lab3 : 执行器实现">
+                        <span class="hidden-mobile">CMU15-445 Lab3 : 执行器实现</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.14.1/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.14.1/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://waline-o3hv.vercel.app/","path":"window.location.pathname","meta":[],"requiredMeta":[],"lang":["zh-CN","en"],"emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":2000,"pageSize":10,"placeholder":"可以随便发评论"},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('mermaid' in window) {
+        mermaid.init();
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
