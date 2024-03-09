@@ -5,5 +5,5 @@ package.json
 .deploy_git/
 themes/
 .npmignore
-.DS_Store/
+.DS_Store
 Temp/

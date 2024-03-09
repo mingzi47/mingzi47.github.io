@@ -103,10 +103,3 @@ theme: cactus
 # 自动生成sitemap
 sitemap:
   path: sitemap.xml
-
-# Deployment
-## Docs: https://hexo.io/docs/one-command-deployment
-deploy:
-  type: 'git'
-  repo: git@github.com:mingzi47/mingzi47.github.io
-  branch: main
