@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="在使用指针时，我们有时会忘记 delete&#x2F;free 而导致内存泄漏，或者在复杂的逻辑中将指针重复释放等。 在现代 C++ 中，我们有了很好的方法来解决这些问题。 RAIIRAII，全称资源获取即初始化（Resource Acquisition Is Initialization)  将指针封装在一个类中，在类的构造函数中为指针分配资源，在类的析构函数中为释放掉资源。 类在离开它的生命周期后会自动">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAII 与 智能指针">
+<meta property="og:url" content="https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="在使用指针时，我们有时会忘记 delete&#x2F;free 而导致内存泄漏，或者在复杂的逻辑中将指针重复释放等。 在现代 C++ 中，我们有了很好的方法来解决这些问题。 RAIIRAII，全称资源获取即初始化（Resource Acquisition Is Initialization)  将指针封装在一个类中，在类的构造函数中为指针分配资源，在类的析构函数中为释放掉资源。 类在离开它的生命周期后会自动">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-17T07:45:14.000Z">
+<meta property="article:modified_time" content="2023-04-03T08:06:32.974Z">
+<meta property="article:author" content="mingzi">
+<meta property="article:tag" content="Cpp">
+<meta property="article:tag" content="RAII">
+<meta property="article:tag" content="智能指针">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>RAII 与 智能指针</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Blog" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/tags/">标签</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2023/02/22/CMU15-445%20Lab1/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&text=RAII 与 智能指针"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&title=RAII 与 智能指针"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&is_video=false&description=RAII 与 智能指针"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=RAII 与 智能指针&body=Check out this article: https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&title=RAII 与 智能指针"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&title=RAII 与 智能指针"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&title=RAII 与 智能指针"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&title=RAII 与 智能指针"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&name=RAII 与 智能指针&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&t=RAII 与 智能指针"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RAII"><span class="toc-number">1.</span> <span class="toc-text">RAII</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="toc-number">2.</span> <span class="toc-text">智能指针</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#unique-ptr"><span class="toc-number">2.1.</span> <span class="toc-text">unique_ptr</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shared-ptr-%E4%B8%8E-weak-ptr"><span class="toc-number">2.2.</span> <span class="toc-text">shared_ptr 与 weak_ptr</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        RAII 与 智能指针
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">mingzi</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-02-17T07:45:14.000Z" itemprop="datePublished">2023-02-17</time>
+        
+        (Updated: <time datetime="2023-04-03T08:06:32.974Z" itemprop="dateModified">2023-04-03</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Cpp/">Cpp</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/Cpp/" rel="tag">Cpp</a>, <a class="tag-link-link" href="/tags/RAII/" rel="tag">RAII</a>, <a class="tag-link-link" href="/tags/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" rel="tag">智能指针</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>在使用指针时，我们有时会忘记 <code>delete/free</code> 而导致内存泄漏，或者在复杂的逻辑中将指针重复释放等。</p>
+<p>在现代 C++ 中，我们有了很好的方法来解决这些问题。</p>
+<h2 id="RAII"><a href="#RAII" class="headerlink" title="RAII"></a>RAII</h2><pre><code>RAII，全称资源获取即初始化（Resource Acquisition Is Initialization)
+</code></pre>
+<p>将指针封装在一个类中，在类的构造函数中为指针分配资源，在类的析构函数中为释放掉资源。</p>
+<p>类在离开它的生命周期后会自动调用析构函数，利用这一点，我们可以不用在担心忘记释放掉资源。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">A</span> &#123;<br>  <span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">A</span>() &#123;<br>      std::cout &lt;&lt; <span class="hljs-string">&quot;A()\n&quot;</span>;<br>    &#125;<br>    ~<span class="hljs-built_in">A</span>() &#123;<br>      std::cout &lt;&lt; <span class="hljs-string">&quot;~A()\n&quot;</span>;<br>    &#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>  std::cout &lt;&lt; <span class="hljs-string">&quot;&#123;\n&quot;</span>;<br>  &#123;<br>    A a&#123;&#125;;<br>  &#125;<br>  std::cout &lt;&lt; <span class="hljs-string">&quot;&#125;\n&quot;</span>;<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>运行结果如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&#123;<br>A()<br>~A()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>通过这段代码可以清晰的看到类的构造与析构过程。</p>
+<p>RAII 机制让我们更轻松的使用指针。</p>
+<p>如果我们把指针封装在一个类中，我们需要注意它的拷贝构造与拷贝赋值函数。如果我们把的拷贝仅是拷贝一个指针，<br>那么就会导致有多个对象在离开其作用域时释放指针，这是会造成悬垂引用或重复释放。</p>
+<p>当然，我们可以借助 RAII 机制来封装一个可以拷贝指针的并且保证安全的指针（<code>std::shared_ptr</code>）。</p>
+<p>RAII 就是广义上的智能指针。</p>
+<h2 id="智能指针"><a href="#智能指针" class="headerlink" title="智能指针"></a>智能指针</h2><p>我们可以使用 RAII 来帮助我们封装一个更易用且安全的指针。标准库中已经为我们实现了<code>std::unique_ptr</code>, <code>std::shared_ptr</code>, <code>std::weak_ptr</code>。</p>
+<p>这些指针也是线程安全的。</p>
+<h3 id="unique-ptr"><a href="#unique-ptr" class="headerlink" title="unique_ptr"></a><code>unique_ptr</code></h3><p>这是一个不可复制的指针。它的拷贝构造函数与拷贝赋值函数都被删除掉了。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">unique_ptr</span> &#123;<br>    ...<br>  <span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">unique_ptr</span>(unique_ptr &amp;other) = <span class="hljs-keyword">delete</span><br>    unique_ptr &amp;<span class="hljs-keyword">operator</span>=(unique_ptr &amp;other) = <span class="hljs-keyword">delete</span><br><br>    <span class="hljs-built_in">unique_ptr</span>(unique_ptr &amp;&amp;other) <span class="hljs-keyword">noexcept</span>;<br>    unique_ptr &amp;<span class="hljs-keyword">operator</span>=(unique_ptr &amp;&amp;other) <span class="hljs-keyword">noexcept</span>;<br>    ...<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>但是我们实现了它的移动构造与移动赋值函数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp">unique_ptr&lt;<span class="hljs-type">int</span>[]&gt; a = std::<span class="hljs-built_in">make_unique</span>&lt;<span class="hljs-type">int</span>[]&gt;(<span class="hljs-number">10</span>);<br><span class="hljs-keyword">auto</span> cp = a; <span class="hljs-comment">// 报错, 拷贝构造函数已经被删除。</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp">unique_ptr&lt;<span class="hljs-type">int</span>[]&gt; a = std::<span class="hljs-built_in">make_unique</span>&lt;<span class="hljs-type">int</span>[]&gt;(<span class="hljs-number">10</span>);<br>a[<span class="hljs-number">1</span>] = a[<span class="hljs-number">2</span>] = a[<span class="hljs-number">3</span>] = <span class="hljs-number">100</span>;<br><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">3</span>; i++) &#123;<br>  cout &lt;&lt; a[i] &lt;&lt; <span class="hljs-string">&quot; \n&quot;</span>[i==<span class="hljs-number">3</span>];    <span class="hljs-comment">// 正确</span><br>&#125;<br><span class="hljs-keyword">auto</span> cp = std::<span class="hljs-built_in">move</span>(a);<br><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">3</span>; i++) &#123;<br>  cout &lt;&lt; a[i] &lt;&lt; <span class="hljs-string">&quot; \n&quot;</span>[i==<span class="hljs-number">3</span>];    <span class="hljs-comment">// 报错 段错误</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>unique_ptr</code> 确保了我们只会存在一个对象拥有这个数组的指针的所有权，也只有一个对象可以释放这个指针。</p>
+<p><code>unique_ptr</code> 几乎是零开销的，因此我们可以在保证安全的同时实现高性能。</p>
+<h3 id="shared-ptr-与-weak-ptr"><a href="#shared-ptr-与-weak-ptr" class="headerlink" title="shared_ptr 与 weak_ptr"></a><code>shared_ptr</code> 与 <code>weak_ptr</code></h3><p><code>shared_ptr</code> 是可以被复制的，通过使用计数的方式来确定现在有多少个<code>shared_ptr</code>拥有这个指针的所有权。</p>
+<p>当计数为 0 时才会释放这个指针，这样就避免了重复释放已及提早释放造成的悬垂指针问题。</p>
+<p><strong>但这里还存在一个严重的问题</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">B</span>;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">A</span> &#123;<br>  <span class="hljs-keyword">public</span>:<br>    shared_ptr&lt;B&gt; ptr&#123;&#125;;<br>    ~<span class="hljs-built_in">A</span>() &#123;cout &lt;&lt; <span class="hljs-string">&quot;~A()\n&quot;</span>;&#125;<br>&#125;;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">B</span> &#123;<br>  <span class="hljs-keyword">public</span>:<br>    shared_ptr&lt;A&gt; ptr&#123;&#125;;<br>    ~<span class="hljs-built_in">B</span>() &#123;cout &lt;&lt; <span class="hljs-string">&quot;~B()\n&quot;</span>;&#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>  <span class="hljs-function">shared_ptr&lt;A&gt; <span class="hljs-title">a</span><span class="hljs-params">(<span class="hljs-keyword">new</span> A())</span></span>;<br>  <span class="hljs-function">shared_ptr&lt;B&gt; <span class="hljs-title">b</span><span class="hljs-params">(<span class="hljs-keyword">new</span> B())</span></span>;<br>  a-&gt;ptr = b;<br>  b-&gt;ptr = a;<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>运行之后我们没有得到任何结果，<code>a</code> 和 <code>b</code> 并没有被释放。</p>
+<p>A 的内部有指向 B , B 的内部又指向了 A， 对于 A 需要在 B 析构后才能析构， 对于 B 需要在 A 析构后才能析构，这时谁都无法析构，出现了<strong>循环引用的问题</strong>。</p>
+<p>为了解决这个问题，我们引入了 <code>weak_ptr</code> 它可以与 <code>shared_ptr</code> 指向同一个资源，但是不会增加<code>shared_ptr</code> 的计数，并且也不会释放资源。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">B</span>;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">A</span> &#123;<br>  <span class="hljs-keyword">public</span>:<br>    weak_ptr&lt;B&gt; ptr&#123;&#125;;<br>    ~<span class="hljs-built_in">A</span>() &#123;cout &lt;&lt; <span class="hljs-string">&quot;~A()\n&quot;</span>;&#125;<br>&#125;;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">B</span> &#123;<br>  <span class="hljs-keyword">public</span>:<br>    shared_ptr&lt;A&gt; ptr&#123;&#125;;<br>    ~<span class="hljs-built_in">B</span>() &#123;cout &lt;&lt; <span class="hljs-string">&quot;~B()\n&quot;</span>;&#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>  <span class="hljs-function">shared_ptr&lt;A&gt; <span class="hljs-title">a</span><span class="hljs-params">(<span class="hljs-keyword">new</span> A())</span></span>;<br>  <span class="hljs-function">shared_ptr&lt;B&gt; <span class="hljs-title">b</span><span class="hljs-params">(<span class="hljs-keyword">new</span> B())</span></span>;<br>  a-&gt;ptr = b;<br>  b-&gt;ptr = a;<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>我们将 A 中的 <code>shared_ptr</code> 换成 <code>weak_ptr</code> ，此时两个对象都可以正确释放。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">~B()<br>~A()<br></code></pre></td></tr></table></figure>
+<p>在这段代码中，a 的计数为 2，b 的计数为 1，可以使用 <code>shared_ptr::use_count()</code> 方法来查看计数，</p>
+<p><code>shared_ptr</code> 会造成些许性能损失，但保障了安全。</p>
+<p>如果可以使用智能指针的话，还是尽量使用智能指针。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li>
+         
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RAII"><span class="toc-number">1.</span> <span class="toc-text">RAII</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="toc-number">2.</span> <span class="toc-text">智能指针</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#unique-ptr"><span class="toc-number">2.1.</span> <span class="toc-text">unique_ptr</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shared-ptr-%E4%B8%8E-weak-ptr"><span class="toc-number">2.2.</span> <span class="toc-text">shared_ptr 与 weak_ptr</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&text=RAII 与 智能指针"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&title=RAII 与 智能指针"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&is_video=false&description=RAII 与 智能指针"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=RAII 与 智能指针&body=Check out this article: https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&title=RAII 与 智能指针"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&title=RAII 与 智能指针"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&title=RAII 与 智能指针"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&title=RAII 与 智能指针"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&name=RAII 与 智能指针&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://mingzi47.github.io/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/&t=RAII 与 智能指针"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    mingzi
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/tags/">标签</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

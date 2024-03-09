@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="性质 节点是红色或者黑色 所有叶子都是黑色的（叶子节点是 Nil） 不存在两个相邻的节点都为红色 （红色节点的子节点和父节点都是黑色的） 从根节点到任何叶子节点的路径上的黑色节点数量都是相等的 （每条路径上的红色节点是少于黑色节点的，保证了最长路径不会超过最短路径的两倍） 根是黑色  插入插入的节点最初是红色, 插入的步骤：  根据二叉搜索树的规则，把节点插入到对应的位置 插入节点后，开始调整树">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于 C++ 的红黑树">
+<meta property="og:url" content="https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="性质 节点是红色或者黑色 所有叶子都是黑色的（叶子节点是 Nil） 不存在两个相邻的节点都为红色 （红色节点的子节点和父节点都是黑色的） 从根节点到任何叶子节点的路径上的黑色节点数量都是相等的 （每条路径上的红色节点是少于黑色节点的，保证了最长路径不会超过最短路径的两倍） 根是黑色  插入插入的节点最初是红色, 插入的步骤：  根据二叉搜索树的规则，把节点插入到对应的位置 插入节点后，开始调整树">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/my_rbt.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/insert_case4.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/insert_case5.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/remove_case1.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/remove_case2.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/remove_case3.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/remove_case4.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/remove_case5.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/debug1.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/release1.png">
+<meta property="article:published_time" content="2023-09-13T07:45:14.000Z">
+<meta property="article:modified_time" content="2023-09-17T12:23:42.969Z">
+<meta property="article:author" content="mingzi">
+<meta property="article:tag" content="Cpp">
+<meta property="article:tag" content="红黑树">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mingzi47.github.io/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/my_rbt.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>基于 C++ 的红黑树</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Blog" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/tags/">标签</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/08/29/%E5%9F%BA%E4%BA%8E%20C++%20%E7%9A%84%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&text=基于 C++ 的红黑树"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&title=基于 C++ 的红黑树"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&is_video=false&description=基于 C++ 的红黑树"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=基于 C++ 的红黑树&body=Check out this article: https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&title=基于 C++ 的红黑树"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&title=基于 C++ 的红黑树"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&title=基于 C++ 的红黑树"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&title=基于 C++ 的红黑树"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&name=基于 C++ 的红黑树&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&t=基于 C++ 的红黑树"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%B4%A8"><span class="toc-number">1.</span> <span class="toc-text">性质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E5%85%A5"><span class="toc-number">2.</span> <span class="toc-text">插入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Case-1"><span class="toc-number">2.1.</span> <span class="toc-text">Case 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Case-2"><span class="toc-number">2.2.</span> <span class="toc-text">Case 2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Case-3"><span class="toc-number">2.3.</span> <span class="toc-text">Case 3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Case-4"><span class="toc-number">2.4.</span> <span class="toc-text">Case 4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Case-5"><span class="toc-number">2.5.</span> <span class="toc-text">Case 5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E5%88%86%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.6.</span> <span class="toc-text">部分实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A0%E9%99%A4"><span class="toc-number">3.</span> <span class="toc-text">删除</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E7%BA%A2%E8%89%B2%E8%8A%82%E7%82%B9"><span class="toc-number">3.1.</span> <span class="toc-text">删除红色节点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%A2%E8%89%B2%E5%8F%B6%E5%AD%90%E8%8A%82%E7%82%B9"><span class="toc-number">3.1.1.</span> <span class="toc-text">红色叶子节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AA%E6%9C%89%E4%B8%80%E4%B8%AA%E5%AD%90%E8%8A%82%E7%82%B9"><span class="toc-number">3.1.2.</span> <span class="toc-text">只有一个子节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E4%B8%A4%E4%B8%AA%E5%AD%90%E8%8A%82%E7%82%B9"><span class="toc-number">3.1.3.</span> <span class="toc-text">有两个子节点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E9%BB%91%E8%89%B2%E8%8A%82%E7%82%B9"><span class="toc-number">3.2.</span> <span class="toc-text">删除黑色节点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Case-1-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">Case 1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Case-2-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">Case 2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Case-3-1"><span class="toc-number">3.2.3.</span> <span class="toc-text">Case 3</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Case-4-1"><span class="toc-number">3.2.4.</span> <span class="toc-text">Case 4</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Case-5-1"><span class="toc-number">3.2.5.</span> <span class="toc-text">Case 5</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E5%88%86%E5%AE%9E%E7%8E%B0-1"><span class="toc-number">3.3.</span> <span class="toc-text">部分实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%92%8C%E8%B0%83%E8%AF%95"><span class="toc-number">4.</span> <span class="toc-text">性能和调试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.</span> <span class="toc-text">完整实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">6.</span> <span class="toc-text">其他</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        基于 C++ 的红黑树
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">mingzi</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-09-13T07:45:14.000Z" itemprop="datePublished">2023-09-13</time>
+        
+        (Updated: <time datetime="2023-09-17T12:23:42.969Z" itemprop="dateModified">2023-09-17</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Cpp/">Cpp</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/Cpp/" rel="tag">Cpp</a>, <a class="tag-link-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a>, <a class="tag-link-link" href="/tags/%E7%BA%A2%E9%BB%91%E6%A0%91/" rel="tag">红黑树</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><img src="/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/my_rbt.png" alt="red black tree"></p>
+<h2 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h2><ol>
+<li>节点是红色或者黑色</li>
+<li>所有叶子都是黑色的（叶子节点是 Nil）</li>
+<li>不存在两个相邻的节点都为红色 （红色节点的子节点和父节点都是黑色的）</li>
+<li>从根节点到任何叶子节点的路径上的黑色节点数量都是相等的 （每条路径上的红色节点是少于黑色节点的，保证了最长路径不会超过最短路径的两倍）</li>
+<li>根是黑色</li>
+</ol>
+<h2 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h2><p>插入的节点最初是红色, 插入的步骤：</p>
+<ul>
+<li>根据二叉搜索树的规则，把节点插入到对应的位置</li>
+<li>插入节点后，开始调整树</li>
+</ul>
+<h3 id="Case-1"><a href="#Case-1" class="headerlink" title="Case 1"></a>Case 1</h3><p>插入节点为第一个节点，这个节点在插入后为跟节点，将这个节点染为黑色。</p>
+<h3 id="Case-2"><a href="#Case-2" class="headerlink" title="Case 2"></a>Case 2</h3><p>插入节点后的父节点为黑色, 此时不做修改仍然满足红黑树的性质。（新节点为红色，新插入的节点的孩子是叶子节点，它的相邻的节点都不是红色，红色节点不会影响性质 4）</p>
+<p>（注：二叉搜索树新插入的节点是叶子节点）</p>
+<h3 id="Case-3"><a href="#Case-3" class="headerlink" title="Case 3"></a>Case 3</h3><p>插入节点后的父节点为红色, 叔父节点也为红色, 把它们变为黑色，同时将祖父节点变为红色，如果祖父节点是根节点，不满足性质 5，如果<br>祖父节点不是根节点，可能不满足性质 3, 这时将祖父节点作为先插入的一个节点重新去考虑。</p>
+<h3 id="Case-4"><a href="#Case-4" class="headerlink" title="Case 4"></a>Case 4</h3><p>插入节点 N 后，节点 N 与 父节点 P 的方向相同 （例如：N 节点是 左孩子，P 节点是左孩子），而且节点 N 的叔父节点为黑色或者是一个 Nil 节点。在没有插入节点 N 时，树一定是满足所有性质的，我们可以旋转在染色的方法来使树合法。</p>
+<ul>
+<li>如果 N 为左子节点则右旋转祖父节点 G，否则左旋转祖父节点 G，P - N 这条路径会少一个黑色节点。</li>
+<li>将节点 N 染为黑色，节点 G 染为红色，此时每条路径的黑色节点与插入节点 N 前一样。</li>
+</ul>
+<p><img src="/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/insert_case4.png" alt="case4"></p>
+<h3 id="Case-5"><a href="#Case-5" class="headerlink" title="Case 5"></a>Case 5</h3><p>插入节点 N 后，节点 N 与 父节点 P 的方向不同 （例如：N 节点是 左孩子，P 节点是右孩子），而且节点 N 的叔父节点为黑色或者是一个 Nil 节点，这种情况可以通过对节点 P 左旋转来将其转化为 Case 4 的情况。</p>
+<p><img src="/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/insert_case5.png" alt="case5"></p>
+<h3 id="部分实现"><a href="#部分实现" class="headerlink" title="部分实现"></a>部分实现</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">TEMPLATE_RBT_M_FUNC <span class="hljs-title">switch_insert</span><span class="hljs-params">(details::RBPtr&lt;K, V&gt; &amp;node)</span>-&gt;<span class="hljs-type">void</span> </span>&#123;<br>  <span class="hljs-keyword">auto</span> uncle = <span class="hljs-built_in">get_uncle</span>(node);<br>  <span class="hljs-keyword">auto</span> father = <span class="hljs-built_in">get_father</span>(node);<br>  <span class="hljs-keyword">auto</span> grandfather = <span class="hljs-built_in">get_grandfather</span>(node);<br>  <span class="hljs-type">const</span> <span class="hljs-type">bool</span> case1 = (father == <span class="hljs-literal">nullptr</span>);<br>  <span class="hljs-type">const</span> <span class="hljs-type">bool</span> case2 =<br>      (father != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> father-&gt;color == details::Color::BLACK);<br><br>  <span class="hljs-type">const</span> <span class="hljs-type">bool</span> case3 =<br>      ((father != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> father-&gt;color == details::Color::RED) <span class="hljs-built_in">and</span><br>       (uncle != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> uncle-&gt;color == details::Color::RED));<br>  <span class="hljs-type">const</span> <span class="hljs-type">bool</span> tmp =<br>      ((uncle == <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">or</span> uncle-&gt;color == details::Color::BLACK) <span class="hljs-built_in">and</span><br>       (father != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> father-&gt;color == details::Color::RED));<br>  <span class="hljs-type">const</span> <span class="hljs-type">bool</span> case4 = (tmp <span class="hljs-keyword">and</span> node-&gt;attribute == father-&gt;attribute);<br>  <span class="hljs-type">const</span> <span class="hljs-type">bool</span> case5 = (tmp <span class="hljs-keyword">and</span> node-&gt;attribute != father-&gt;attribute);<br><br>  <span class="hljs-keyword">if</span> (case1) &#123;<br>    node-&gt;color = details::Color::BLACK;<br>    <span class="hljs-keyword">return</span>;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (case2) &#123;<br>    <span class="hljs-keyword">return</span>;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (case3) &#123;<br>    father-&gt;color = details::Color::BLACK;<br>    uncle-&gt;color = details::Color::BLACK;<br>    grandfather-&gt;color = details::Color::RED;<br>    switch_insert(grandfather);<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (case4) &#123;<br>    <span class="hljs-keyword">switch</span> (node-&gt;attribute) &#123;<br>    <span class="hljs-comment">// clang-format off</span><br>    <span class="hljs-comment">//        G(B)             N(B)</span><br>    <span class="hljs-comment">//       /  \   right(G)  /  \</span><br><span class="hljs-comment">    //      N(R) U(B)  ===&gt;  P(R) G(R)</span><br>    <span class="hljs-comment">//     /                        \</span><br><span class="hljs-comment">    //    P(R)                       U(B)</span><br>    <span class="hljs-comment">// clang-format on</span><br>    <span class="hljs-keyword">case</span> details::Attribute::LEFT_CHILD:<br>      <span class="hljs-built_in">rotate_right</span>(grandfather);<br>      <span class="hljs-keyword">break</span>;<br>    <span class="hljs-comment">// clang-format off</span><br>    <span class="hljs-comment">//        G(B)             N(B)</span><br>    <span class="hljs-comment">//       /  \    left(G)  /  \</span><br><span class="hljs-comment">    //      U(B) N(R)  ===&gt;  G(R) P(R)</span><br>    <span class="hljs-comment">//             \        /</span><br>    <span class="hljs-comment">//              P(R)   U(B)</span><br>    <span class="hljs-comment">// clang-format on</span><br>    <span class="hljs-keyword">case</span> details::Attribute::RIGHT_CHILD:<br>      <span class="hljs-built_in">rotate_left</span>(grandfather);<br>      <span class="hljs-keyword">break</span>;<br>    &#125;<br>    grandfather-&gt;color = details::Color::RED;<br>    father-&gt;color = details::Color::BLACK;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (case5) &#123;<br>    <span class="hljs-keyword">switch</span> (node-&gt;attribute) &#123;<br>    <span class="hljs-comment">// clang-format off</span><br>    <span class="hljs-comment">//        G(B)              G(B)</span><br>    <span class="hljs-comment">//       /  \    right(P)   /  \</span><br><span class="hljs-comment">    //      U(B) P(R)  ====&gt;  U(B) N(R)</span><br>    <span class="hljs-comment">//          /                    \</span><br><span class="hljs-comment">    //         N(R)                   P(R)</span><br>    <span class="hljs-comment">// clang-format on</span><br>    <span class="hljs-keyword">case</span> details::Attribute::LEFT_CHILD:<br>      <span class="hljs-built_in">rotate_right</span>(father);<br>      <span class="hljs-keyword">break</span>;<br>    <span class="hljs-comment">// clang-format off</span><br>    <span class="hljs-comment">//        G(B)                G(B)</span><br>    <span class="hljs-comment">//       /   \    left(P)     /  \</span><br><span class="hljs-comment">    //      P(R)  U(B)  ====&gt;   N(R) U(B)</span><br>    <span class="hljs-comment">//       \                 /</span><br>    <span class="hljs-comment">//        N(R)            P(R)</span><br>    <span class="hljs-comment">// clang-format on</span><br>    <span class="hljs-keyword">case</span> details::Attribute::RIGHT_CHILD:<br>      <span class="hljs-built_in">rotate_left</span>(father);<br>      <span class="hljs-keyword">break</span>;<br>    &#125;<br>    <span class="hljs-comment">// 最下面的点</span><br>    switch_insert(father);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><h3 id="删除红色节点"><a href="#删除红色节点" class="headerlink" title="删除红色节点"></a>删除红色节点</h3><h4 id="红色叶子节点"><a href="#红色叶子节点" class="headerlink" title="红色叶子节点"></a>红色叶子节点</h4><p>红色节点可以直接删除，删除红色节点不会影响每条路径上黑色节点的数量，红色节点的父节点和子节点都是黑色的，因此删除红色节点后不存在两个红色节点是相邻的。</p>
+<h4 id="只有一个子节点"><a href="#只有一个子节点" class="headerlink" title="只有一个子节点"></a>只有一个子节点</h4><p>同样可以直接删除。<a href="####%E7%BA%A2%E8%89%B2%E5%8F%B6%E5%AD%90%E8%8A%82%E7%82%B9">同上（红色叶子节点的情况）</a></p>
+<h4 id="有两个子节点"><a href="#有两个子节点" class="headerlink" title="有两个子节点"></a>有两个子节点</h4><p>找到要被删除节点的前驱节点和后继节点，如果这两个节点有红色节点，将被删除的节点可以与这个红色节点换一下位置，这时就变成了 只有一个叶子节点 or 叶子节点的情况 (平衡树中前驱和后继节点不可能存在两个子节点), 直接删除就行。</p>
+<p>两个都是黑色节点，仍然是与其中一个节点替换位置，这时就变成了要删除的节点是黑色节点。</p>
+<h3 id="删除黑色节点"><a href="#删除黑色节点" class="headerlink" title="删除黑色节点"></a>删除黑色节点</h3><p>黑色的叶子节点和只有一个子节点的黑色节点，被删除后需要进行调整才能保持性质。</p>
+<p>有两个子节点的黑色节点可以找前驱或后继节点来替换，如果两个之中有红色节点，替换为红色节点，这时要删除的就是红色节点了，直接删出就行，否则，交换之后进行调整。</p>
+<h4 id="Case-1-1"><a href="#Case-1-1" class="headerlink" title="Case 1"></a>Case 1</h4><p>兄弟节点 S 为红色，父节点 P 和侄子节点 C 、D 为黑色 （这种情况下 C、D 必为黑色）。</p>
+<p>删掉 N 会导致有这条路径上少一个黑色节点，但是可以通过旋转从 S 上得到一颗子树这时 S 代替了原来 P 的位置，C 路径上会多一个黑色节点，D 路径上会少一个黑色节点，不过，会发现通过简单的染色就可已将其改为合法的。</p>
+<p><img src="/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/remove_case1.png" alt="要删除的节点是 N "></p>
+<h4 id="Case-2-1"><a href="#Case-2-1" class="headerlink" title="Case 2"></a>Case 2</h4><p>兄弟节点 S 和侄节点 C、D 均为黑色，父节点 P 为红色（N 是存在子树的，局部看虽然未删除前就不合法，但是完整的树可以是合法的）</p>
+<p>这种情况和 Case 1 在旋转完后一摸一样，也是简单的染色就行，N 的子节点会成为 P 的子节点 (如果这是开始调整的初始状态，N 只会有一个节点，否则，会有两个节点，这时先把它交换到前驱或者后继，这样就不是 Case 2 了)</p>
+<p><img src="/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/remove_case2.png" alt="要删除的节点是 N "></p>
+<h4 id="Case-3-1"><a href="#Case-3-1" class="headerlink" title="Case 3"></a>Case 3</h4><p>兄弟节点 S，父节点以及侄节点 C、D 都是黑色。这时就没办法只在局部调整从而使得整颗树合法了。</p>
+<p>先将 S 染色，使得局部满足性质，接着递归 P 节点进行后续维护（将 P 作为要删除的节点）。</p>
+<p><img src="/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/remove_case3.png" alt="要删除的节点是 N "></p>
+<h4 id="Case-4-1"><a href="#Case-4-1" class="headerlink" title="Case 4"></a>Case 4</h4><p>兄弟节点是黑色，且与 N 同向的侄节点 C (close nephew) 为红色，与 N 反向的侄节点（distant nephew）为黑色,，父节点可以是红色也可以是黑色。</p>
+<p>这种情况，旋转旋转将其转换为 Case 5 的初始状态。</p>
+<ul>
+<li><p>旋转兄弟节点 S，N 为左节点右旋，否则左旋，将 close nephew(节点 C) 变为节点 N 的兄弟节点。</p>
+</li>
+<li><p>交换 C 和 S 的颜色，变为了 Case 5 的初始状态</p>
+</li>
+</ul>
+<p><img src="/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/remove_case4.png" alt="要删除的节点是 N "></p>
+<h4 id="Case-5-1"><a href="#Case-5-1" class="headerlink" title="Case 5"></a>Case 5</h4><p>兄弟节点是黑色，父节点可以是黑色也可以是红色，与 N 相反的节点为红色。</p>
+<ul>
+<li><p>旋转 P，N 为左子节点，左旋，否则右旋。</p>
+</li>
+<li><p>交换 P 和 S 的颜色, 满足性质 4，(可能使 S 和 D 都为红色)。</p>
+</li>
+<li><p>将节点 D 染为黑色，此时满足所有性质。</p>
+</li>
+</ul>
+<p><img src="/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/remove_case5.png" alt="要删除的节点是 N "></p>
+<h3 id="部分实现-1"><a href="#部分实现-1" class="headerlink" title="部分实现"></a>部分实现</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">EMPLATE_RBT_M_FUNC <span class="hljs-title">switch_remove</span><span class="hljs-params">(details::RBPtr&lt;K, V&gt; &amp;node, <span class="hljs-type">bool</span> op)</span>-&gt;<span class="hljs-type">void</span> </span>&#123;<br>  <span class="hljs-comment">// Case 3</span><br>  <span class="hljs-comment">// 中，我们会递归向上来调整，但是这时我们以经不在需要删除点了，但是还要递归</span><br>  <span class="hljs-comment">// switch_remove 这个函数，使用一个 op 来记录调用这次函数时，是否要执行</span><br>  <span class="hljs-comment">// remove_node() 函数</span><br>  <span class="hljs-keyword">auto</span> father = <span class="hljs-built_in">get_father</span>(node);<br>  <span class="hljs-keyword">if</span> (node-&gt;attribute == details::Attribute::ROOT <span class="hljs-keyword">and</span><br>      node-&gt;r_node == <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> node-&gt;r_node) &#123;<br>    root_node = <span class="hljs-literal">nullptr</span>;<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br><br>  <span class="hljs-comment">//</span><br>  <span class="hljs-keyword">auto</span> change_node = [&amp;](details::RBPtr&lt;K, V&gt; &amp;f, details::RBPtr&lt;K, V&gt; &amp;c,<br>                         details::Attribute attr) -&gt; details::RBPtr&lt;K, V&gt; &#123;<br>    <span class="hljs-keyword">if</span> (c == <span class="hljs-literal">nullptr</span>)<br>      <span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>    c-&gt;f_node = f;<br>    c-&gt;attribute = attr;<br>    <span class="hljs-keyword">return</span> c;<br>  &#125;;<br><br>  <span class="hljs-comment">// 红色的叶子节点与只有一个节点的红色节点</span><br>  <span class="hljs-keyword">if</span> (node-&gt;color == details::Color::RED <span class="hljs-built_in">and</span><br>      (node-&gt;r_node == <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">or</span> node-&gt;l_node == <span class="hljs-literal">nullptr</span>)) &#123;<br>    <span class="hljs-keyword">switch</span> (node-&gt;attribute) &#123;<br>    <span class="hljs-keyword">case</span> details::Attribute::LEFT_CHILD: &#123;<br>      father-&gt;l_node = <span class="hljs-built_in">change_node</span>(<br>          father, (node-&gt;r_node != <span class="hljs-literal">nullptr</span> ? node-&gt;r_node : node-&gt;l_node),<br>          details::Attribute::LEFT_CHILD);<br>      <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-keyword">case</span> details::Attribute::RIGHT_CHILD: &#123;<br>      father-&gt;r_node = <span class="hljs-built_in">change_node</span>(<br>          father, (node-&gt;r_node != <span class="hljs-literal">nullptr</span> ? node-&gt;r_node : node-&gt;l_node),<br>          details::Attribute::RIGHT_CHILD);<br>      <span class="hljs-keyword">return</span>;<br>    &#125;<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-comment">// 有两个子节点, 会先尝试替换前驱和后继，在判断是否需要调整</span><br>  <span class="hljs-keyword">if</span> (node-&gt;r_node != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> node-&gt;l_node != <span class="hljs-literal">nullptr</span>) &#123;<br>    <span class="hljs-keyword">auto</span> prev_node = [&amp;]() -&gt; details::RBPtr&lt;K, V&gt; &#123;<br>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> i = node-&gt;l_node; i != <span class="hljs-literal">nullptr</span>; i = i-&gt;r_node) &#123;<br>        <span class="hljs-keyword">if</span> (i-&gt;r_node == <span class="hljs-literal">nullptr</span>)<br>          <span class="hljs-keyword">return</span> i;<br>      &#125;<br>      <span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>    &#125;();<br>    <span class="hljs-keyword">auto</span> suf_node = [&amp;]() -&gt; details::RBPtr&lt;K, V&gt; &#123;<br>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> i = node-&gt;r_node; i != <span class="hljs-literal">nullptr</span>; i = i-&gt;l_node) &#123;<br>        <span class="hljs-keyword">if</span> (i-&gt;l_node == <span class="hljs-literal">nullptr</span>)<br>          <span class="hljs-keyword">return</span> i;<br>      &#125;<br>      <span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>    &#125;();<br><br>    <span class="hljs-keyword">auto</span> swap_node = [&amp;](details::RBPtr&lt;K, V&gt; &amp;left,<br>                         details::RBPtr&lt;K, V&gt; &amp;right) &#123;<br>      left.<span class="hljs-built_in">swap</span>(right);<br>      <span class="hljs-built_in">swap_color</span>(left, right);<br>      <span class="hljs-keyword">if</span> (left-&gt;r_node != <span class="hljs-literal">nullptr</span>)<br>        left-&gt;r_node-&gt;f_node = left;<br>      <span class="hljs-keyword">if</span> (left-&gt;l_node != <span class="hljs-literal">nullptr</span>)<br>        left-&gt;l_node-&gt;f_node = left;<br>      <span class="hljs-keyword">if</span> (right-&gt;r_node != <span class="hljs-literal">nullptr</span>)<br>        right-&gt;r_node-&gt;f_node = right;<br>      <span class="hljs-keyword">if</span> (right-&gt;l_node != <span class="hljs-literal">nullptr</span>)<br>        right-&gt;l_node-&gt;f_node = right;<br>    &#125;;<br>    <span class="hljs-comment">// 被删除的节点是红色</span><br>    <span class="hljs-keyword">if</span> ((prev_node-&gt;color == details::Color::RED <span class="hljs-keyword">or</span><br>         suf_node-&gt;color == details::Color::RED) <span class="hljs-keyword">and</span><br>        node-&gt;color == details::Color::RED) &#123;<br>      <span class="hljs-built_in">swap_node</span>(node, (prev_node-&gt;color == details::Color::RED ? prev_node<br>                                                               : suf_node));<br>      switch_remove(node);<br>    &#125;<br><br>    <span class="hljs-comment">// 需要调整的情况</span><br>    <span class="hljs-built_in">swap_node</span>(node, prev_node);<br>  &#125;<br><br>  <span class="hljs-comment">// 下面是调整的步骤</span><br>  <span class="hljs-keyword">auto</span> sibling = <span class="hljs-built_in">get_sibling</span>(node);<br>  <span class="hljs-keyword">auto</span> close_nephew = <span class="hljs-built_in">get_close_nephew</span>(node);<br>  <span class="hljs-keyword">auto</span> distant_nephw = <span class="hljs-built_in">get_distant_nephew</span>(node);<br>  father = <span class="hljs-built_in">get_father</span>(node);<br><br>  <span class="hljs-type">bool</span> all_exist = (father != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> sibling != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span><br>                    close_nephew != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> distant_nephw != <span class="hljs-literal">nullptr</span>);<br><br>  <span class="hljs-keyword">auto</span> remove_node = [&amp;](details::RBPtr&lt;K, V&gt; &amp;d_node) &#123;<br>    <span class="hljs-built_in">assert</span>(d_node-&gt;l_node == <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">or</span> d_node-&gt;r_node == <span class="hljs-literal">nullptr</span>);<br>    <span class="hljs-built_in">assert</span>(d_node-&gt;f_node.<span class="hljs-built_in">lock</span>() != <span class="hljs-literal">nullptr</span>);<br>    <span class="hljs-keyword">auto</span> father = d_node-&gt;f_node.<span class="hljs-built_in">lock</span>();<br>    <span class="hljs-keyword">switch</span> (d_node-&gt;attribute) &#123;<br>    <span class="hljs-keyword">case</span> details::Attribute::LEFT_CHILD: &#123;<br>      father-&gt;l_node = <span class="hljs-built_in">change_node</span>(<br>          father, (d_node-&gt;r_node == <span class="hljs-literal">nullptr</span> ? d_node-&gt;l_node : d_node-&gt;r_node),<br>          details::Attribute::LEFT_CHILD);<br>      <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-keyword">case</span> details::Attribute::RIGHT_CHILD: &#123;<br>      father-&gt;r_node = <span class="hljs-built_in">change_node</span>(<br>          father, (d_node-&gt;r_node == <span class="hljs-literal">nullptr</span> ? d_node-&gt;l_node : d_node-&gt;r_node),<br>          details::Attribute::RIGHT_CHILD);<br>      <span class="hljs-keyword">return</span>;<br>    &#125;<br>    &#125;<br>  &#125;;<br>  <span class="hljs-comment">// Case 1</span><br>  <span class="hljs-keyword">if</span> (all_exist <span class="hljs-keyword">and</span><br>      <span class="hljs-built_in">equal_color</span>(details::Color::BLACK, father, close_nephew,<br>                  distant_nephw) <span class="hljs-keyword">and</span><br>      <span class="hljs-built_in">equal_color</span>(details::Color::RED, sibling)) &#123;<br>    <span class="hljs-built_in">swap_color</span>(sibling, father);<br>    <span class="hljs-keyword">switch</span> (node-&gt;attribute) &#123;<br>    <span class="hljs-keyword">case</span> details::Attribute::LEFT_CHILD: &#123;<br>      <span class="hljs-built_in">rotate_left</span>(father);<br>      <span class="hljs-keyword">break</span>;<br>    &#125;<br>    <span class="hljs-keyword">case</span> details::Attribute::RIGHT_CHILD: &#123;<br>      <span class="hljs-built_in">rotate_right</span>(father);<br>      <span class="hljs-keyword">break</span>;<br>    &#125;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (op)<br>      <span class="hljs-built_in">remove_node</span>(node);<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br><br>  <span class="hljs-comment">// Case 2</span><br>  <span class="hljs-keyword">if</span> (all_exist <span class="hljs-keyword">and</span><br>      <span class="hljs-built_in">equal_color</span>(details::Color::BLACK, sibling, close_nephew,<br>                  distant_nephw) <span class="hljs-keyword">and</span><br>      <span class="hljs-built_in">equal_color</span>(details::Color::RED, father)) &#123;<br>    <span class="hljs-built_in">swap_color</span>(sibling, father);<br>    <span class="hljs-keyword">if</span> (op)<br>      <span class="hljs-built_in">remove_node</span>(node);<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br><br>  <span class="hljs-comment">// Case 3 并不需要所有节点都存在，侄子节点如果是黑色的，可以是空节点。</span><br>  <span class="hljs-type">const</span> <span class="hljs-type">bool</span> case3_node_exist = (father != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> sibling != <span class="hljs-literal">nullptr</span>);<br>  <span class="hljs-type">const</span> <span class="hljs-type">bool</span> case3_nephew =<br>      ((close_nephew == <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span><br>        distant_nephw == <span class="hljs-literal">nullptr</span>) <span class="hljs-keyword">or</span> <span class="hljs-comment">// 两个侄子节点都不存在, 也是为黑色</span><br>       (close_nephew != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> distant_nephw == <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span><br>        close_nephew-&gt;color == details::Color::BLACK) <span class="hljs-built_in">or</span><br>       (close_nephew == <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> distant_nephw != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span><br>        distant_nephw-&gt;color == details::Color::BLACK) <span class="hljs-built_in">or</span><br>       (all_exist <span class="hljs-keyword">and</span><br>        <span class="hljs-built_in">equal_color</span>(details::Color::BLACK, close_nephew, distant_nephw)));<br>  ;<br>  <span class="hljs-keyword">if</span> (case3_node_exist <span class="hljs-keyword">and</span><br>      <span class="hljs-built_in">equal_color</span>(details::Color::BLACK, father, sibling) <span class="hljs-keyword">and</span> case3_nephew) &#123;<br>    sibling-&gt;color = details::Color::RED;<br>    <span class="hljs-keyword">if</span> (op)<br>      <span class="hljs-built_in">remove_node</span>(node);<br>    switch_remove(father, <span class="hljs-literal">false</span>);<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br><br>  <span class="hljs-comment">// Case 4</span><br>  <span class="hljs-keyword">if</span> (all_exist <span class="hljs-keyword">and</span><br>      <span class="hljs-built_in">equal_color</span>(details::Color::BLACK, sibling, distant_nephw) <span class="hljs-keyword">and</span><br>      <span class="hljs-built_in">equal_color</span>(details::Color::RED, close_nephew)) &#123;<br>    <span class="hljs-keyword">switch</span> (node-&gt;attribute) &#123;<br>    <span class="hljs-keyword">case</span> details::Attribute::LEFT_CHILD:<br>      <span class="hljs-built_in">rotate_right</span>(sibling);<br>    <span class="hljs-keyword">case</span> details::Attribute::RIGHT_CHILD:<br>      <span class="hljs-built_in">rotate_left</span>(sibling);<br>    &#125;<br>    <span class="hljs-built_in">swap_color</span>(sibling, close_nephew);<br>  &#125;<br><br>  <span class="hljs-comment">// Case 5</span><br>  sibling = <span class="hljs-built_in">get_sibling</span>(node);<br>  distant_nephw = <span class="hljs-built_in">get_distant_nephew</span>(node);<br>  father = <span class="hljs-built_in">get_father</span>(node);<br>  <span class="hljs-type">const</span> <span class="hljs-type">bool</span> case5_node_exist =<br>      (father != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> sibling != <span class="hljs-literal">nullptr</span> <span class="hljs-keyword">and</span> distant_nephw != <span class="hljs-literal">nullptr</span>);<br>  <span class="hljs-keyword">if</span> (case5_node_exist <span class="hljs-keyword">and</span> <span class="hljs-built_in">equal_color</span>(details::Color::BLACK, sibling) <span class="hljs-keyword">and</span><br>      <span class="hljs-built_in">equal_color</span>(details::Color::RED, distant_nephw)) &#123;<br>    <span class="hljs-keyword">switch</span> (node-&gt;attribute) &#123;<br>    <span class="hljs-keyword">case</span> details::Attribute::LEFT_CHILD: &#123;<br>      <span class="hljs-built_in">rotate_left</span>(father);<br>      <span class="hljs-keyword">break</span>;<br>    &#125;<br>    <span class="hljs-keyword">case</span> details::Attribute::RIGHT_CHILD: &#123;<br><br>      <span class="hljs-built_in">rotate_right</span>(father);<br>      <span class="hljs-keyword">break</span>;<br>    &#125;<br>    &#125;<br>    <span class="hljs-built_in">swap_color</span>(sibling, father);<br>    distant_nephw-&gt;color = details::Color::BLACK;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="性能和调试"><a href="#性能和调试" class="headerlink" title="性能和调试"></a>性能和调试</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">cpu : 12th Gen Intel i7-12650H (16) @ 2.687GHz<br>gcc : 13.2.1<br></code></pre></td></tr></table></figure>
+
+<p><strong>性能与 <code>std::map</code> 还有很大 3 ~ 4 倍的差距，插入的性能会更差些。</strong></p>
+<p>测试</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> N = <span class="hljs-number">1e6</span>;<br><span class="hljs-meta">#<span class="hljs-keyword">define</span> CLAC_TIME(start)                                                       \</span><br><span class="hljs-meta">  std::chrono::duration_cast<span class="hljs-string">&lt;std::chrono::milliseconds&gt;</span>(                       \</span><br><span class="hljs-meta">      std::chrono::steady_clock::now() - start)                                \</span><br><span class="hljs-meta">      .count()</span><br><br><span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">test_map</span><span class="hljs-params">()</span> -&gt; <span class="hljs-type">void</span> </span>&#123;<br>  std::map&lt;<span class="hljs-type">int</span>, <span class="hljs-type">int</span>&gt; map;<br>  <span class="hljs-keyword">auto</span> start = std::chrono::steady_clock::<span class="hljs-built_in">now</span>();<br>  <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt;= N; ++i) &#123;<br>    map.<span class="hljs-built_in">insert</span>(&#123;i, i&#125;);<br>  &#125;<br>  std::cout &lt;&lt; std::format(<span class="hljs-string">&quot;map insert : &#123;&#125; ms\n&quot;</span>, <span class="hljs-built_in">CLAC_TIME</span>(start));<br>  start = std::chrono::steady_clock::<span class="hljs-built_in">now</span>();<br>  <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt;= N; ++i) &#123;<br>    <span class="hljs-keyword">if</span> (i &amp; <span class="hljs-number">1</span>) &#123;<br>      <span class="hljs-built_in">assert</span>(map[i] == i);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      map.<span class="hljs-built_in">erase</span>(i);<br>    &#125;<br>  &#125;<br>  std::cout &lt;&lt; std::format(<span class="hljs-string">&quot;map remove : &#123;&#125; ms\n&quot;</span>, <span class="hljs-built_in">CLAC_TIME</span>(start));<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">auto</span> <span class="hljs-title">test_rbt</span><span class="hljs-params">()</span> -&gt; <span class="hljs-type">void</span> </span>&#123;<br>  rbt::Rbtree&lt;<span class="hljs-type">int</span>, <span class="hljs-type">int</span>&gt; rbt;<br>  <span class="hljs-keyword">auto</span> start = std::chrono::steady_clock::<span class="hljs-built_in">now</span>();<br>  <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt;= N; ++i) &#123;<br>    rbt.<span class="hljs-built_in">insert</span>(i, i);<br>  &#125;<br>  std::cout &lt;&lt; std::format(<span class="hljs-string">&quot;rbt insert : &#123;&#125; ms\n&quot;</span>, <span class="hljs-built_in">CLAC_TIME</span>(start));<br>  start = std::chrono::steady_clock::<span class="hljs-built_in">now</span>();<br>  <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt;= N; ++i) &#123;<br>    <span class="hljs-keyword">if</span> (i &amp; <span class="hljs-number">1</span>) &#123;<br>      <span class="hljs-built_in">assert</span>(rbt[i] == i);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      rbt.<span class="hljs-built_in">remove</span>(i);<br>    &#125;<br>  &#125;<br>  std::cout &lt;&lt; std::format(<span class="hljs-string">&quot;rbt remove : &#123;&#125; ms\n&quot;</span>, <span class="hljs-built_in">CLAC_TIME</span>(start));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>debug</code> 模式下的性能</p>
+<p><img src="/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/debug1.png" alt="debug"></p>
+<p><code>release</code> 模式下的性能</p>
+<p><img src="/images/Cpp/%E5%9F%BA%E4%BA%8ECpp%E7%9A%84%E7%BA%A2%E9%BB%91%E6%A0%91/release1.png" alt="release"></p>
+<p><code>debug</code> 模式下的插入甚至是 <code>std::map</code> 的 5 倍， 删除也有 3 倍多, 但是 <code>release</code> 模式下只会相差 2 倍。</p>
+<p>使用 dot 绘图，可以更清晰的观察小样例</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp">rbt.<span class="hljs-built_in">draw</span>(<span class="hljs-string">&quot;test.dot&quot;</span>);<br><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">dot -Tpng -o test.png test.dot<br></code></pre></td></tr></table></figure>
+
+<p>查看 test.png 即可</p>
+<h2 id="完整实现"><a href="#完整实现" class="headerlink" title="完整实现"></a>完整实现</h2><p>代码太长了。。。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/mingzi47/CppDemo/tree/main/RedBlackTree">github/mingzi47/CppDemo/RedBlackTree</a></li>
+</ul>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BA%A2%E9%BB%91%E6%A0%91">红黑树 - 维基百科</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://oi-wiki.org/ds/rbtree/">红黑树 - OI Wiki</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.cs.usfca.edu/~galles/visualization/RedBlack.html">红黑树演示</a></p>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li>
+         
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%B4%A8"><span class="toc-number">1.</span> <span class="toc-text">性质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E5%85%A5"><span class="toc-number">2.</span> <span class="toc-text">插入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Case-1"><span class="toc-number">2.1.</span> <span class="toc-text">Case 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Case-2"><span class="toc-number">2.2.</span> <span class="toc-text">Case 2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Case-3"><span class="toc-number">2.3.</span> <span class="toc-text">Case 3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Case-4"><span class="toc-number">2.4.</span> <span class="toc-text">Case 4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Case-5"><span class="toc-number">2.5.</span> <span class="toc-text">Case 5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E5%88%86%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.6.</span> <span class="toc-text">部分实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A0%E9%99%A4"><span class="toc-number">3.</span> <span class="toc-text">删除</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E7%BA%A2%E8%89%B2%E8%8A%82%E7%82%B9"><span class="toc-number">3.1.</span> <span class="toc-text">删除红色节点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%A2%E8%89%B2%E5%8F%B6%E5%AD%90%E8%8A%82%E7%82%B9"><span class="toc-number">3.1.1.</span> <span class="toc-text">红色叶子节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AA%E6%9C%89%E4%B8%80%E4%B8%AA%E5%AD%90%E8%8A%82%E7%82%B9"><span class="toc-number">3.1.2.</span> <span class="toc-text">只有一个子节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E4%B8%A4%E4%B8%AA%E5%AD%90%E8%8A%82%E7%82%B9"><span class="toc-number">3.1.3.</span> <span class="toc-text">有两个子节点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E9%BB%91%E8%89%B2%E8%8A%82%E7%82%B9"><span class="toc-number">3.2.</span> <span class="toc-text">删除黑色节点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Case-1-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">Case 1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Case-2-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">Case 2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Case-3-1"><span class="toc-number">3.2.3.</span> <span class="toc-text">Case 3</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Case-4-1"><span class="toc-number">3.2.4.</span> <span class="toc-text">Case 4</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Case-5-1"><span class="toc-number">3.2.5.</span> <span class="toc-text">Case 5</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E5%88%86%E5%AE%9E%E7%8E%B0-1"><span class="toc-number">3.3.</span> <span class="toc-text">部分实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%92%8C%E8%B0%83%E8%AF%95"><span class="toc-number">4.</span> <span class="toc-text">性能和调试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.</span> <span class="toc-text">完整实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">6.</span> <span class="toc-text">其他</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&text=基于 C++ 的红黑树"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&title=基于 C++ 的红黑树"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&is_video=false&description=基于 C++ 的红黑树"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=基于 C++ 的红黑树&body=Check out this article: https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&title=基于 C++ 的红黑树"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&title=基于 C++ 的红黑树"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&title=基于 C++ 的红黑树"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&title=基于 C++ 的红黑树"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&name=基于 C++ 的红黑树&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://mingzi47.github.io/2023/09/13/%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0/&t=基于 C++ 的红黑树"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    mingzi
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/tags/">标签</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="B+ 树 上图表示的是一颗四阶 B+ 树，四阶表示每个节点最多存四个 K-V 对。 B+ 树的叶子节点分为三类：  根节点 内部节点 叶子节点  根节点可以是内部节点也可使叶子节点。 B+ 树的每个节点不仅有最大容量，也有最小容量(最小容量 &#x3D; 最大容量的一半, 下取整)，低于最小容量的节点会想方法让自己的节点树增加(在 删除 中详细讲解)，根节点没有最小容量限制。 每个节点中的数据是有序的，按照">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CMU15-445 Lab2 : 可高并发的 B+ 树索引">
+<meta property="og:url" content="https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="B+ 树 上图表示的是一颗四阶 B+ 树，四阶表示每个节点最多存四个 K-V 对。 B+ 树的叶子节点分为三类：  根节点 内部节点 叶子节点  根节点可以是内部节点也可使叶子节点。 B+ 树的每个节点不仅有最大容量，也有最小容量(最小容量 &#x3D; 最大容量的一半, 下取整)，低于最小容量的节点会想方法让自己的节点树增加(在 删除 中详细讲解)，根节点没有最小容量限制。 每个节点中的数据是有序的，按照">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/BPlusTree.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert1.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert2.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert2.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase1.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase2.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase3.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase4.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2search1.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2search3.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert1.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert2.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert3.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert4.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/lock-latch.png">
+<meta property="article:published_time" content="2023-02-26T07:45:14.000Z">
+<meta property="article:modified_time" content="2023-04-06T03:05:36.881Z">
+<meta property="article:author" content="mingzi">
+<meta property="article:tag" content="Lab">
+<meta property="article:tag" content="CMU15-445">
+<meta property="article:tag" content="B+树">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mingzi47.github.io/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/BPlusTree.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>CMU15-445 Lab2 : 可高并发的 B+ 树索引</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Blog" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/tags/">标签</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2023/02/27/%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%A4%9A%E6%80%81%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%A4%9A%E6%80%81/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/02/22/CMU15-445%20Lab1/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&text=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&title=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&is_video=false&description=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CMU15-445 Lab2 : 可高并发的 B+ 树索引&body=Check out this article: https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&title=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&title=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&title=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&title=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&name=CMU15-445 Lab2 : 可高并发的 B+ 树索引&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&t=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#B-%E6%A0%91"><span class="toc-number">1.</span> <span class="toc-text">B+ 树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2"><span class="toc-number">1.1.</span> <span class="toc-text">搜索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E5%85%A5"><span class="toc-number">1.2.</span> <span class="toc-text">插入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4"><span class="toc-number">1.3.</span> <span class="toc-text">删除</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91"><span class="toc-number">2.</span> <span class="toc-text">并发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2-1"><span class="toc-number">2.1.</span> <span class="toc-text">搜索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E5%85%A5-1"><span class="toc-number">2.2.</span> <span class="toc-text">插入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4-1"><span class="toc-number">2.3.</span> <span class="toc-text">删除</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bustub-%E4%B8%AD%E7%9A%84-Latch"><span class="toc-number">3.</span> <span class="toc-text">Bustub 中的 Latch</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Lock-%E4%B8%8E-Latch"><span class="toc-number">3.1.</span> <span class="toc-text">Lock 与 Latch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B9%90%E8%A7%82%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.2.</span> <span class="toc-text">乐观的实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">4.</span> <span class="toc-text">其他</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        CMU15-445 Lab2 : 可高并发的 B+ 树索引
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">mingzi</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-02-26T07:45:14.000Z" itemprop="datePublished">2023-02-26</time>
+        
+        (Updated: <time datetime="2023-04-06T03:05:36.881Z" itemprop="dateModified">2023-04-06</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/B-%E6%A0%91/" rel="tag">B+树</a>, <a class="tag-link-link" href="/tags/CMU15-445/" rel="tag">CMU15-445</a>, <a class="tag-link-link" href="/tags/Lab/" rel="tag">Lab</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="B-树"><a href="#B-树" class="headerlink" title="B+ 树"></a>B+ 树</h2><p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/BPlusTree.png" alt="B+ 树"></p>
+<p>上图表示的是一颗四阶 B+ 树，四阶表示每个节点最多存四个 K-V 对。</p>
+<p>B+ 树的叶子节点分为三类：</p>
+<ul>
+<li>根节点</li>
+<li>内部节点</li>
+<li>叶子节点</li>
+</ul>
+<p><strong>根节点</strong>可以是内部节点也可使叶子节点。</p>
+<p>B+ 树的每个节点不仅有最大容量，也有最小容量(最小容量 = 最大容量的一半, 下取整)，低于最小容量的节点会想方法让自己的节点树增加(在 删除 中详细讲解)，<strong>根节点</strong>没有最小容量限制。</p>
+<p>每个节点中的数据是有序的，按照 K 值排序。</p>
+<p><strong>内部节点</strong>是不存储真实数据的，而是存储子树的位置。上图中的 3 号内部节点，他已经存储了 3 个 K-V 对，第一个 K-V 对指向 $K &lt; 4$ 的子树的位置，第二个 K-V 指向 $4 \leq K &lt; 6$ 的子树位置，第三个 K-V 对指向 $ 6 \leq K$ 的子树位置。</p>
+<p>内部节点的 K 实际是一个范围。</p>
+<p><strong>叶子节点</strong>存储了真实的数据(也可以是指向数据的地址)。同时，叶子节点也会指向下一个叶子节点，像链表一样。</p>
+<h3 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h3><p>因为信息存放在叶子节点中，只要找到 <code>key</code> 所在的叶子节点, 递归查找即可。节点中的 <code>key</code> 是有序的，查找下一个节点可以借助二分查找。</p>
+<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>B+ 树的插入是自下而上的。</p>
+<ol>
+<li>根据 <code>key</code> 找到它该插入的叶子节点。</li>
+<li>插入数据到这个叶子节点，判断这个叶子节点是否等于最大容量，若果是的话要进行分裂操作，否则什么也不做(也可以先判断再插入)。</li>
+<li>分裂操作，将这个节点中的一半分到一个新节点，创建了新节点也要向父节点去插入一对 K-V 来确保父节点表示的范围正确, 这对 K-V 是新节点的第一对 K-V, 如果插入后的父节点等于最大容量，同样要进行分裂操作。(如果要分裂的是叶子节点，还需要更新下一个节点)。</li>
+</ol>
+<p>现在考虑在一个 5 阶的 B+ 树上插入一个 (5, V) 。</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert1.png" alt="B+树中的数据小于阶数时"></p>
+<p>插入后这个节点的大小就等于最大容量了，要进行分裂操作。</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert2.png" alt="插入 4 时造成了 `split`, 同时产生了新的根节点"></p>
+<p>分裂之后，我们需要向它的父节点插入一个 K-V。</p>
+<p>自下而上的插入，当还没有分裂时，根节点是一个叶子节点，同时大小为 1 的节点是不表示的，再没有插入 (5, V) 时，节点 3 是不表示的。</p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>删除操作也是自下而上的。</p>
+<ol>
+<li>删除一个 K-V 后，如果这个节点的大小严格小于最小容量，需要进行合并操作。</li>
+<li>优先考虑从同一个父亲节点的兄弟节点中拿走一个 K-V，被拿走的节点大小必须是严格大于节点的最小容量的。</li>
+<li>如果不能进行拿走节点的操作，就要考虑把自己的所有 K-V 插入到周围的节点中，这个节点也就被删除了，对于它的父节点也要删除对应的 K-V, 接着考虑父节点是否需要进行合并操作</li>
+</ol>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/insert2.png" alt="删除前"></p>
+<p>删除 <code>key</code> 值为 2 的 K-V。</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase1.png" alt="删除后"></p>
+<p>这时节点 1 的大小严格小于最小容量，尝试从节点 2 中拿一个节点，刚好 2 号节点的大小是严格大于最小容量的。</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase2.png" alt="因为节点 1 的数据个数小于最小限制，因此需要 `merge`"></p>
+<p>只能拿走 2 号节点的第一个 K-V，因此还需要对父节点中对应的 K-V 进行修改。</p>
+<p>考虑删除 <code>key</code> 值为 3 的 K-V。</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase3.png"></p>
+<p>节点 1 的又需要进行合并操作，这时的 2 号节点不能提供一个 K-V 给 1 号节点了， 尝试将 2 号节点的 K-V 都移动到 1 号节点 (或者 1 移动到 2)。</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/erase4.png"></p>
+<p>2 号节点不存在了，要删除父节点中对应的 K-V。</p>
+<p>父节点 3 只剩一对 K-V 了，如果它可以进行合并操作，就要对他进行这个操作，这里不能进行操作。父节点 3 也没有存在的意义，删除节点 3 只保留节点 1 。</p>
+<h2 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h2><p>最简单的想法是让 插入、删除、搜索 这三个节点共用一把读写锁，这样效率实在太低了。</p>
+<p>采用特殊的加锁方式 “latch crabbing”, 像螃蟹走路一样进行加锁。先锁住父节点，在锁住孩子节点，如果孩子节点，如果孩子节点是安全的，就解开父节点的锁。</p>
+<h3 id="搜索-1"><a href="#搜索-1" class="headerlink" title="搜索"></a>搜索</h3><p>孩子节点一定是安全的，搜索不会改变任何节点的大小。</p>
+<p>搜索 <code>key</code> 值为 12 的 K-V</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2search1.png"></p>
+<p>锁住孩子节点。<br><img src="">/images/数据库/CMU15-445/B+树与高并发/2search2.png)</p>
+<p>释放父节点。</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2search3.png"></p>
+<p>递归进行即可。</p>
+<h3 id="插入-1"><a href="#插入-1" class="headerlink" title="插入"></a>插入</h3><p>插入操作会改变节点的大小，当前节点大小 + 1 等于节点的最大容量，这个节点就是不安全的，如果对这个节点进行插入操作，它的父节点也要进行插入操作，因此不能释放它的父节点的写锁。</p>
+<p>如果在下面遇到了一个安全的节点，之前所有的上锁的节点都可以解锁了，包括之前不安全的节点，因为这个安全的节点保证了上面的节点不会被下面的操作影响。</p>
+<p>插入 (2, V)， 先锁住根节点。</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert1.png"></p>
+<p>再锁住子节点 3，并判断他是否安全。</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert2.png"></p>
+<p>子节点 3 并不安全，不释放节点 5 的锁，继续递归对节点 1 加锁。</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert3.png"></p>
+<p>节点 1 是安全的，释放节点3，5 的锁。</p>
+<p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/2insert4.png"></p>
+<h3 id="删除-1"><a href="#删除-1" class="headerlink" title="删除"></a>删除</h3><p>与插入操作类似，虽然它有可能会更改多个节点，但是锁住父节点就没什么影响了。</p>
+<p>判断节点是否安全的条件为，节点大小严格大于最小容量的节点是安全的，否则是不安全的。</p>
+<h2 id="Bustub-中的-Latch"><a href="#Bustub-中的-Latch" class="headerlink" title="Bustub 中的 Latch"></a>Bustub 中的 Latch</h2><h3 id="Lock-与-Latch"><a href="#Lock-与-Latch" class="headerlink" title="Lock 与 Latch"></a>Lock 与 Latch</h3><p><img src="/images/%E6%95%B0%E6%8D%AE%E5%BA%93/CMU15-445/B+%E6%A0%91%E4%B8%8E%E9%AB%98%E5%B9%B6%E5%8F%91/lock-latch.png" alt="Lock and Latch"></p>
+<h3 id="乐观的实现"><a href="#乐观的实现" class="headerlink" title="乐观的实现"></a>乐观的实现</h3><p><code>insert</code> 与 <code>delete</code> 时, 都会锁住先锁住根节点，这时其他线程不能读也不能写, 根节点的写锁成为了并发的瓶颈。</p>
+<p>很多操作是不需要 <code>split</code> 与 <code>merge</code> 操作的, 也就是说在这些操作中叶子节点不会对父节点造成影响，这种情况下对于内部节点只需要使用读锁就可以，也不需要对是内部节点的子节点进行安全判断，但是需要对是叶子节点的子节点进行安全判断，如果不安全，就要从根节点重新开始上写锁。</p>
+<p>我们假设了大多数的操作是不需要 <code>split</code> 与 <code>merge</code> 的，因此这种乐观的实现方式可以带来更高的效率可以得到很大提升。</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p><a target="_blank" rel="noopener" href="https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html">B+ 树演示网站</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li>
+         
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#B-%E6%A0%91"><span class="toc-number">1.</span> <span class="toc-text">B+ 树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2"><span class="toc-number">1.1.</span> <span class="toc-text">搜索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E5%85%A5"><span class="toc-number">1.2.</span> <span class="toc-text">插入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4"><span class="toc-number">1.3.</span> <span class="toc-text">删除</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91"><span class="toc-number">2.</span> <span class="toc-text">并发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2-1"><span class="toc-number">2.1.</span> <span class="toc-text">搜索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E5%85%A5-1"><span class="toc-number">2.2.</span> <span class="toc-text">插入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4-1"><span class="toc-number">2.3.</span> <span class="toc-text">删除</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bustub-%E4%B8%AD%E7%9A%84-Latch"><span class="toc-number">3.</span> <span class="toc-text">Bustub 中的 Latch</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Lock-%E4%B8%8E-Latch"><span class="toc-number">3.1.</span> <span class="toc-text">Lock 与 Latch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B9%90%E8%A7%82%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.2.</span> <span class="toc-text">乐观的实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">4.</span> <span class="toc-text">其他</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&text=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&title=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&is_video=false&description=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CMU15-445 Lab2 : 可高并发的 B+ 树索引&body=Check out this article: https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&title=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&title=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&title=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&title=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&name=CMU15-445 Lab2 : 可高并发的 B+ 树索引&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://mingzi47.github.io/2023/02/26/CMU15-445%20Lab2/&t=CMU15-445 Lab2 : 可高并发的 B+ 树索引"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    mingzi
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/tags/">标签</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

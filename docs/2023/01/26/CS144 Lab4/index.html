@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="整体设计 TCP FSM接收数据： 如果接收到了带有 RST 标志的段，就要立即进行 unclean_shutdown 如果接收到的段没有 RST 标志，将有 TCPReceiver 来处理这个段的 SYN, payload, FIN 和 seqno 。 若果这个段的 seqno 是无效的，或者 TCPReceiver 接收这个段失败时，要发送一个空的段给对方  发送数据： TCPSender 将">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS144 Lab4 : 组装模块">
+<meta property="og:url" content="https://mingzi47.github.io/2023/01/26/CS144%20Lab4/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="整体设计 TCP FSM接收数据： 如果接收到了带有 RST 标志的段，就要立即进行 unclean_shutdown 如果接收到的段没有 RST 标志，将有 TCPReceiver 来处理这个段的 SYN, payload, FIN 和 seqno 。 若果这个段的 seqno 是无效的，或者 TCPReceiver 接收这个段失败时，要发送一个空的段给对方  发送数据： TCPSender 将">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/%E5%AE%9E%E9%AA%8C%E6%95%B4%E4%BD%93%E8%AE%BE%E8%AE%A1.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/TCP-FSM.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/receiver.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/sender.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90.png">
+<meta property="og:image" content="https://mingzi47.github.io/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96.png">
+<meta property="article:published_time" content="2023-01-26T07:45:14.000Z">
+<meta property="article:modified_time" content="2023-04-06T03:03:05.013Z">
+<meta property="article:author" content="mingzi">
+<meta property="article:tag" content="Lab">
+<meta property="article:tag" content="CS144">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mingzi47.github.io/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/%E5%AE%9E%E9%AA%8C%E6%95%B4%E4%BD%93%E8%AE%BE%E8%AE%A1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>CS144 Lab4 : 组装模块</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Blog" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/tags/">标签</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/01/16/CS144%20Lab3/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&text=CS144 Lab4 : 组装模块"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&title=CS144 Lab4 : 组装模块"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&is_video=false&description=CS144 Lab4 : 组装模块"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CS144 Lab4 : 组装模块&body=Check out this article: https://mingzi47.github.io/2023/01/26/CS144%20Lab4/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&title=CS144 Lab4 : 组装模块"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&title=CS144 Lab4 : 组装模块"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&title=CS144 Lab4 : 组装模块"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&title=CS144 Lab4 : 组装模块"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&name=CS144 Lab4 : 组装模块&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&t=CS144 Lab4 : 组装模块"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.</span> <span class="toc-text">整体设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP-FSM"><span class="toc-number">2.</span> <span class="toc-text">TCP FSM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E6%94%B6%E6%95%B0%E6%8D%AE%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">接收数据：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E9%80%81%E6%95%B0%E6%8D%AE%EF%BC%9A"><span class="toc-number">2.2.</span> <span class="toc-text">发送数据：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unclean-shutdown-%EF%BC%9A"><span class="toc-number">2.3.</span> <span class="toc-text">**unclean_shutdown**：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#clean-shutdown-%EF%BC%9A"><span class="toc-number">2.4.</span> <span class="toc-text">**clean_shutdown**：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP-%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-number">2.5.</span> <span class="toc-text">TCP 有限状态机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Receiver"><span class="toc-number">2.6.</span> <span class="toc-text">Receiver</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sender"><span class="toc-number">2.7.</span> <span class="toc-text">Sender</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="toc-number">3.</span> <span class="toc-text">性能优化</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        CS144 Lab4 : 组装模块
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">mingzi</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-01-26T07:45:14.000Z" itemprop="datePublished">2023-01-26</time>
+        
+        (Updated: <time datetime="2023-04-06T03:03:05.013Z" itemprop="dateModified">2023-04-06</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/CS144/" rel="tag">CS144</a>, <a class="tag-link-link" href="/tags/Lab/" rel="tag">Lab</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="整体设计"><a href="#整体设计" class="headerlink" title="整体设计"></a>整体设计</h2><p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/%E5%AE%9E%E9%AA%8C%E6%95%B4%E4%BD%93%E8%AE%BE%E8%AE%A1.png" alt="实验整体设计"></p>
+<h2 id="TCP-FSM"><a href="#TCP-FSM" class="headerlink" title="TCP FSM"></a>TCP FSM</h2><h3 id="接收数据："><a href="#接收数据：" class="headerlink" title="接收数据："></a><strong>接收数据</strong>：</h3><ul>
+<li>如果接收到了带有 <code>RST</code> 标志的段，就要立即进行 <code>unclean_shutdown</code></li>
+<li>如果接收到的段没有 <code>RST</code> 标志，将有 <code>TCPReceiver</code> 来处理这个段的 <code>SYN</code>, <code>payload</code>, <code>FIN</code> 和 <code>seqno</code> 。</li>
+<li>若果这个段的 <code>seqno</code> 是无效的，或者 <code>TCPReceiver</code> 接收这个段失败时，要发送一个空的段给对方</li>
+</ul>
+<h3 id="发送数据："><a href="#发送数据：" class="headerlink" title="发送数据："></a><strong>发送数据</strong>：</h3><ul>
+<li><code>TCPSender</code> 将段发送到自己的队列时，<code>TCPConnection</code> 就要从 <code>TCPSender</code> 中取出来放到自己的队列中，在这个过程中如果 <code>TCPReceiver</code> 的 <code>ackno</code> 为有效值的话，就要给这些段加上 <code>ACK</code> 标记，自己的<code>ackno</code> 以及 <code>window size</code>。</li>
+<li><code>TCPConnection</code> 通过 <code>tick</code> 函数获得时间，我们要将时间交给 <code>TCPSender</code> 的 <code>tick</code> 函数，让它来进行重传操作。</li>
+<li>重传的次数超过 <code>TCPConfig::MAX_RETX_ATTMPTS</code> 的话就要发送一个 <code>RST</code> 的段。</li>
+<li>如果 <code>TCPConnection</code> 的 <code>active</code> 为真，这时 <code>TCPConnection</code> 析构了，就要立即发送一个 <code>RST</code> 段。</li>
+</ul>
+<h3 id="unclean-shutdown-："><a href="#unclean-shutdown-：" class="headerlink" title="**unclean_shutdown**："></a>**<code>unclean_shutdown</code>**：</h3><ul>
+<li>收到 <code>RST</code> 标志的段，就是 <code>unclear_shutdown</code>.</li>
+</ul>
+<h3 id="clean-shutdown-："><a href="#clean-shutdown-：" class="headerlink" title="**clean_shutdown**："></a>**<code>clean_shutdown</code>**：</h3><p>完成 4 次挥手。</p>
+<ul>
+<li><p>先收到 <code>FIN</code> 的一方，在最后发送完不需要进行等待。</p>
+</li>
+<li><p>先发送 <code>FIN</code> 的一方，最后发送 <code>ACK</code> 后需要等待一定时间。</p>
+</li>
+<li><p>先收到 <code>FIN</code> 的一方，在收到对方对自己 发送的 <code>FIN</code> 的确认 <code>ACK</code> 后，就立刻关闭了，不在发送其他数据。</p>
+</li>
+<li><p>先发送 <code>FIN</code> 的一方通过等待 10 $\times$ 初始超时时间限制 时间来确认对方收到了自己的 <code>ACK</code> , 在这段时间里没有重传就结束。 </p>
+</li>
+</ul>
+<p>感觉代码有些难写，多次测试不能完全保证每次测试都通过。</p>
+<h3 id="TCP-有限状态机"><a href="#TCP-有限状态机" class="headerlink" title="TCP 有限状态机"></a><strong>TCP 有限状态机</strong></h3><p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/TCP-FSM.png" alt="TCP FSM"></p>
+<h3 id="Receiver"><a href="#Receiver" class="headerlink" title="Receiver"></a><strong>Receiver</strong></h3><p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/receiver.png" alt="receiver"></p>
+<h3 id="Sender"><a href="#Sender" class="headerlink" title="Sender"></a><strong>Sender</strong></h3><p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/sender.png" alt="sender"></p>
+<h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2><p>使用 <code>gprof</code> 工具分析性能。</p>
+<p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90.png" alt="优化前"></p>
+<p>可以看到 <code>ByteStream::write</code> , <code>ByteStream::peek_output</code> 和 <code>ByteStream::pop_output</code> 占用了快 90% 的时间，这主要是方法内部实现使用的深拷贝。</p>
+<p>实验在 <code>util</code> 提供了 <code>Buffer</code> , <code>BufferList</code> 和 <code>BufferListView</code> 这样的类。</p>
+<p><code>Buffer</code> 的 <code>remove_prefix</code> 方法是常数级别的删除前 <code>n</code> 个字符。<code>Buffer</code>存放的是智能指针，及 <code>size_t</code> 类型的标记来表示字符的开始位置，删除前 <code>n</code> 个字符只需要变动这个标记即可，智能指针指向的内存会随着 <code>Buffer</code> 的析构而释放，在获得性能的同时保持安全。</p>
+<p>使用 <code>BufferList</code> 重写 <code>ByteStream</code> 后的性能分析。 </p>
+<p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CS144/Lab4/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96.png" alt="优化后"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li>
+         
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.</span> <span class="toc-text">整体设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP-FSM"><span class="toc-number">2.</span> <span class="toc-text">TCP FSM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E6%94%B6%E6%95%B0%E6%8D%AE%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">接收数据：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E9%80%81%E6%95%B0%E6%8D%AE%EF%BC%9A"><span class="toc-number">2.2.</span> <span class="toc-text">发送数据：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unclean-shutdown-%EF%BC%9A"><span class="toc-number">2.3.</span> <span class="toc-text">**unclean_shutdown**：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#clean-shutdown-%EF%BC%9A"><span class="toc-number">2.4.</span> <span class="toc-text">**clean_shutdown**：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP-%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-number">2.5.</span> <span class="toc-text">TCP 有限状态机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Receiver"><span class="toc-number">2.6.</span> <span class="toc-text">Receiver</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sender"><span class="toc-number">2.7.</span> <span class="toc-text">Sender</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="toc-number">3.</span> <span class="toc-text">性能优化</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&text=CS144 Lab4 : 组装模块"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&title=CS144 Lab4 : 组装模块"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&is_video=false&description=CS144 Lab4 : 组装模块"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CS144 Lab4 : 组装模块&body=Check out this article: https://mingzi47.github.io/2023/01/26/CS144%20Lab4/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&title=CS144 Lab4 : 组装模块"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&title=CS144 Lab4 : 组装模块"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&title=CS144 Lab4 : 组装模块"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&title=CS144 Lab4 : 组装模块"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&name=CS144 Lab4 : 组装模块&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://mingzi47.github.io/2023/01/26/CS144%20Lab4/&t=CS144 Lab4 : 组装模块"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    mingzi
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/tags/">标签</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

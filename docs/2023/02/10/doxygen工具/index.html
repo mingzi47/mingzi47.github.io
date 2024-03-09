@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Doxygen生成配置使用 doxygen -g 生成默认配置 或者 使用 doxygen -g &lt;config_file&gt; 通过模板来生成配置。 运行使用 doxygen &lt;config_file&gt; 来运行，也可以与构建工具 CMake 相结合使用。 语法有多种方法可以将注释标记为文档, 具体可以查看官方文档 C++ 风格 1&#x2F;&#x2F;! ...text...  or 1&#x2F;&#x2F;&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文档工具 Doxygen">
+<meta property="og:url" content="https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="Doxygen生成配置使用 doxygen -g 生成默认配置 或者 使用 doxygen -g &lt;config_file&gt; 通过模板来生成配置。 运行使用 doxygen &lt;config_file&gt; 来运行，也可以与构建工具 CMake 相结合使用。 语法有多种方法可以将注释标记为文档, 具体可以查看官方文档 C++ 风格 1&#x2F;&#x2F;! ...text...  or 1&#x2F;&#x2F;&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-10T07:45:14.000Z">
+<meta property="article:modified_time" content="2023-04-03T08:06:32.462Z">
+<meta property="article:author" content="mingzi">
+<meta property="article:tag" content="工具">
+<meta property="article:tag" content="Doxygen">
+<meta property="article:tag" content="CMake">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>文档工具 Doxygen</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="Blog" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/tags/">标签</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2023/02/17/RAII%20%E4%B8%8E%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/01/26/CS144%20Lab4/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&text=文档工具 Doxygen"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&title=文档工具 Doxygen"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&is_video=false&description=文档工具 Doxygen"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=文档工具 Doxygen&body=Check out this article: https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&title=文档工具 Doxygen"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&title=文档工具 Doxygen"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&title=文档工具 Doxygen"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&title=文档工具 Doxygen"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&name=文档工具 Doxygen&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&t=文档工具 Doxygen"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Doxygen"><span class="toc-number">1.</span> <span class="toc-text">Doxygen</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E9%85%8D%E7%BD%AE"><span class="toc-number">1.1.</span> <span class="toc-text">生成配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C"><span class="toc-number">1.2.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">语法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8-CMake-%E4%B8%AD%E4%BD%BF%E7%94%A8-Doxygen"><span class="toc-number">2.</span> <span class="toc-text">在 CMake 中使用 Doxygen</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-number">2.1.</span> <span class="toc-text">文件结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Doxyfile"><span class="toc-number">2.2.</span> <span class="toc-text">Doxyfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#doxygen-cmake"><span class="toc-number">2.3.</span> <span class="toc-text">doxygen.cmake</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        文档工具 Doxygen
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">mingzi</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-02-10T07:45:14.000Z" itemprop="datePublished">2023-02-10</time>
+        
+        (Updated: <time datetime="2023-04-03T08:06:32.462Z" itemprop="dateModified">2023-04-03</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/CMake/" rel="tag">CMake</a>, <a class="tag-link-link" href="/tags/Doxygen/" rel="tag">Doxygen</a>, <a class="tag-link-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="Doxygen"><a href="#Doxygen" class="headerlink" title="Doxygen"></a>Doxygen</h2><h3 id="生成配置"><a href="#生成配置" class="headerlink" title="生成配置"></a>生成配置</h3><p>使用 <code>doxygen -g</code> 生成默认配置 或者 使用 <code>doxygen -g &lt;config_file&gt;</code> 通过模板来生成配置。</p>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>使用 <code>doxygen &lt;config_file&gt;</code> 来运行，也可以与构建工具 <code>CMake</code> 相结合使用。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><p>有多种方法可以将注释标记为文档, 具体可以查看<a target="_blank" rel="noopener" href="https://doxygen.nl/manual/docblocks.html">官方文档</a></p>
+<p>C++ 风格</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">//! ...text...</span><br></code></pre></td></tr></table></figure>
+
+<p>or</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/// ...text...</span><br></code></pre></td></tr></table></figure>
+
+<p>常用指令：<br>|指令|解释|<br>|—|—|<br>|\file |档案的批注说明。|<br>|\author|作者的信息|<br>|\brief|用于class 或function的批注中，后面为class 或function的简易说明。|<br>|\param|格式为\param arg_name 参数说明主要用于函式说明中，后面接参数的名字，然后再接关于该参数的说明。|<br>|\return|后面接函数传回值的说明。用于function的批注中。说明该函数的传回值。|<br>|\retval|格式为\retval value 传回值说明.主要用于函式说明中，说明特定传回值的意义。所以后面要先接一个传回值。然后在放该传回值的说明。|</p>
+<p>更多指令参考<a target="_blank" rel="noopener" href="https://doxygen.nl/manual/commands.html">官方文档</a></p>
+<h2 id="在-CMake-中使用-Doxygen"><a href="#在-CMake-中使用-Doxygen" class="headerlink" title="在 CMake 中使用 Doxygen"></a>在 CMake 中使用 Doxygen</h2><h3 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">project<br>├── CMakeLists.txt<br>└── docs<br>    ├── Doxyfile.in<br>    └── doxyfile.cmake<br></code></pre></td></tr></table></figure>
+
+<h3 id="Doxyfile"><a href="#Doxyfile" class="headerlink" title="Doxyfile"></a>Doxyfile</h3><p>使用 <code>doxygen -g</code> 命令可以在当前位置生成一份 <code>Doxyfile</code> 的默认配置。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/mingzi47/ejson"><code>ejson</code></a> 中的 <code>Doxyfile.in</code> （使用了 <code>graphviz</code>）:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><code class="hljs cpp"># Doxyfile <span class="hljs-number">1.9</span><span class="hljs-number">.6</span><br># 编码<br>DOXYFILE_ENCODING      = UTF<span class="hljs-number">-8</span><br># 项目名<br>PROJECT_NAME           = <span class="hljs-string">&quot;ejson&quot;</span><br># 项目描述<br>PROJECT_BRIEF          = <span class="hljs-string">&quot;A recursive descent-based JSON interpreter and generator implemented using C++17.&quot;</span><br># 版本号<br>PROJECT_NUMBER         = <span class="hljs-number">0.0</span><span class="hljs-number">.1</span><br>PROJECT_LOGO           = <br># 程序文档输入目录<br>INPUT                  = @PROJECT_SOURCE_DIR@<br># 递归遍历当前子目录<br>RECURSIVE              = YES<br># 排除的文档<br>EXCLUDE                = @PROJECT_SOURCE_DIR@/docs @PROJECT_SOURCE_DIR@/build @PROJECT_SOURCE_DIR@/test<br># 文档输出目录<br>OUTPUT_DIRECTORY       = <span class="hljs-string">&quot;@PROJECT_BINARY_DIR@/doc&quot;</span><br># 是否关注大小写名称，注意，如果开启了，那么所有的名称都将被小写。<br>CASE_SENSE_NAMES       = NO<br># 按字母顺序排序, 否则按文件中的顺序<br>SORT_BRIEF_DOCS        = YES<br># 构造函数和析构函数列在最前面。如果设置为 NO，则构造函数将显示在<br># 由SORT_BRIEF_DOCS和SORT_MEMBER_DOCS定义的相应顺序。<br># 注意：如果SORT_BRIEF_DOCS设置为 NO 此选项将忽略以进行排序简报<br># 成员文档。<br># 注意：如果SORT_MEMBER_DOCS设置为 NO 则忽略此选项进行排序<br>SORT_MEMBERS_CTORS_1ST = YES<br># 将 SHOW_NAMESPACES 标记设置为 NO 以禁用命名空间的生成页面。<br>SHOW_NAMESPACES        = NO<br># 如果 USE_MDFILE_AS_MAINPAGE 标记引用 markdown 文档的名称是输入的一部分，其内容将放置在主页上<br>USE_MDFILE_AS_MAINPAGE = @PROJECT_SOURCE_DIR@/README.md<br># 在最后生成的文档中，把所有的源代码包含在其中<br>SOURCE_BROWSER         = YES<br># 如果EXT_LINKS_IN_WINDOW选项设置为 YES，doxygen 将打开指向通过标签文档在单独窗口中导入的外部符号。<br>EXT_LINKS_IN_WINDOW    = YES<br># INCLUDE_PATH 标签可用于指定一个或多个目录<br>INCLUDE_PATH           = @PROJECT_SOURCE_DIR@/ejsonlib<br># 添加外部文档<br># TAGFILES               = <span class="hljs-string">&quot;@PROJECT_SOURCE_DIR@/etc/cppreference-doxygen-web.tag.xml=https://en.cppreference.com/w/&quot;</span><br># TAGFILES              += <span class="hljs-string">&quot;@PROJECT_SOURCE_DIR@/etc/linux-man-doxygen-web.tag.xml=http://man7.org/linux/man-pages/&quot;</span><br># TAGFILES              += <span class="hljs-string">&quot;@PROJECT_SOURCE_DIR@/etc/rfc-doxygen-web.tag.xml=https://tools.ietf.org/html/&quot;</span><br># 那些没有使用doxygen格式描述的文档（函数或类等）就不显示了 （YES 显示， 如果EXTRACT_ALL被启用，那么这个标志其实是被忽略的。）<br>HIDE_UNDOC_RELATIONS   = NO<br># 当 INLINE_GROUPED_CLASSES 标记设置为 YES、类、结构和联合时,显示在包含它们的组中（例如使用 \ingroup）<br>INLINE_GROUPED_CLASSES = YES<br>INLINE_SIMPLE_STRUCTS  = YES<br>HTML_COLORSTYLE_HUE    = <span class="hljs-number">204</span><br>HTML_COLORSTYLE_SAT    = <span class="hljs-number">120</span><br>HTML_COLORSTYLE_GAMMA  = <span class="hljs-number">60</span><br># HTML_EXTRA_STYLESHEET  = <span class="hljs-string">&quot;@PROJECT_SOURCE_DIR@/docs/style.css&quot;</span><br># 是否生成 LaTex 格式文档<br>GENERATE_LATEX         = NO<br>EXAMPLE_PATH           = <span class="hljs-string">&quot;@PROJECT_SOURCE_DIR@/doctests&quot;</span><br><br># 在程序文档中允许以图例形式显示函数调用关系，前提是你已经安装了 graphviz 软件包<br>HAVE_DOT               = @DOXYGEN_DOT_FOUND@<br>CLASS_GRAPH            = YES<br>TEMPLATE_RELATIONS     = YES<br>DOT_IMAGE_FORMAT       = png<br>INTERACTIVE_SVG        = NO<br>COLLABORATION_GRAPH    = NO<br><br># 提取信息，包含类的私有数据成员和静态成员<br>EXTRACT_ALL            = YES<br>EXTRACT_PRIVATE        = YES<br>EXTRACT_STATIC         = YES<br>EXTRACT_ANON_NSPACES   = YES<br><br><span class="hljs-meta"># do u liek eclips</span><br>GENERATE_ECLIPSEHELP   = NO<br></code></pre></td></tr></table></figure>
+<h3 id="doxygen-cmake"><a href="#doxygen-cmake" class="headerlink" title="doxygen.cmake"></a>doxygen.cmake</h3><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">find_package</span> (Doxygen)<br><span class="hljs-keyword">if</span> (DOXYGEN_FOUND)<br>    <span class="hljs-keyword">if</span> (Doxygen_dot_FOUND)<br>        <span class="hljs-keyword">set</span> (DOXYGEN_DOT_FOUND YES)<br>    <span class="hljs-keyword">else</span> (<span class="hljs-keyword">NOT</span> Doxygen_dot_FOUND)<br>        <span class="hljs-keyword">set</span> (DOXYGEN_DOT_FOUND NO)<br>    <span class="hljs-keyword">endif</span> (Doxygen_dot_FOUND)<br>    <span class="hljs-keyword">configure_file</span> (<span class="hljs-string">&quot;$&#123;PROJECT_SOURCE_DIR&#125;/docs/Doxyfile.in&quot;</span> <span class="hljs-string">&quot;$&#123;PROJECT_BINARY_DIR&#125;/Doxyfile&quot;</span> @ONLY)<br>    <span class="hljs-keyword">add_custom_target</span> (doc <span class="hljs-string">&quot;$&#123;DOXYGEN_EXECUTABLE&#125;&quot;</span> <span class="hljs-string">&quot;$&#123;PROJECT_BINARY_DIR&#125;/Doxyfile&quot;</span><br>                           WORKING_DIRECTORY <span class="hljs-string">&quot;$&#123;PROJECT_BINARY_DIR&#125;&quot;</span><br>                           COMMENT <span class="hljs-string">&quot;Generate docs using Doxygen&quot;</span> VERBATIM)<br><span class="hljs-keyword">endif</span> ()<br></code></pre></td></tr></table></figure>
+<p>在更目录的 <code>CMakeLists.txt</code> 中 使用 <code>include(docs/doxygen.cmake)</code> 来引入。</p>
+<p>在 <code>build</code> 文件夹下使用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">cmake ..</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">make doc</span><br></code></pre></td></tr></table></figure>
+
+<p>文档生成在 <code>build/doc</code> 目录下。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li>
+         
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Doxygen"><span class="toc-number">1.</span> <span class="toc-text">Doxygen</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E9%85%8D%E7%BD%AE"><span class="toc-number">1.1.</span> <span class="toc-text">生成配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C"><span class="toc-number">1.2.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">语法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8-CMake-%E4%B8%AD%E4%BD%BF%E7%94%A8-Doxygen"><span class="toc-number">2.</span> <span class="toc-text">在 CMake 中使用 Doxygen</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-number">2.1.</span> <span class="toc-text">文件结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Doxyfile"><span class="toc-number">2.2.</span> <span class="toc-text">Doxyfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#doxygen-cmake"><span class="toc-number">2.3.</span> <span class="toc-text">doxygen.cmake</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&text=文档工具 Doxygen"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&title=文档工具 Doxygen"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&is_video=false&description=文档工具 Doxygen"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=文档工具 Doxygen&body=Check out this article: https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&title=文档工具 Doxygen"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&title=文档工具 Doxygen"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&title=文档工具 Doxygen"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&title=文档工具 Doxygen"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&name=文档工具 Doxygen&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://mingzi47.github.io/2023/02/10/doxygen%E5%B7%A5%E5%85%B7/&t=文档工具 Doxygen"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    mingzi
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/tags/">标签</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/mingzi47">github</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

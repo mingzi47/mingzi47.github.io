@@ -462,7 +462,6 @@ index:
   # 首页 Banner 头图，可以是相对路径或绝对路径，以下相同
   # Path of Banner image, can be a relative path or an absolute path, the same on other pages
   banner_img: /images/banner/home.png
-
   # 头图高度，屏幕百分比
   # Height ratio of banner image
   # Available: 0 - 100
@@ -533,7 +532,7 @@ index:
 # Post Page
 #---------------------------
 post:
-  banner_img: /images/banner/post.png
+  banner_img: /images/banner/home.png
   banner_img_height: 90
   banner_mask_alpha: 0.3
 
@@ -888,7 +887,9 @@ giscus:
 # Archive Page
 #---------------------------
 archive:
-  banner_img: /images/banner/archive.png
+  # banner_img: /images/banner/archive.png
+
+  banner_img: /images/banner/home.png
   banner_img_height: 90
   banner_mask_alpha: 0.3
 
@@ -899,7 +900,9 @@ archive:
 #---------------------------
 category:
   enable: true
-  banner_img: /images/banner/category.png
+  # banner_img: /images/banner/category.png
+
+  banner_img: /images/banner/home.png
   banner_img_height: 90
   banner_mask_alpha: 0.3
 
@@ -928,7 +931,7 @@ category:
 #---------------------------
 tag:
   enable: true
-  banner_img: /images/banner/tags.png
+  banner_img: /images/banner/home.png
   banner_img_height: 90
   banner_mask_alpha: 0.3
   tagcloud:
@@ -945,7 +948,7 @@ tag:
 #---------------------------
 about:
   enable: true
-  banner_img: /images/banner/about.png
+  banner_img: /images/banner/home.png
   banner_img_height: 90
   banner_mask_alpha: 0.3
   avatar: /images/logo.png
@@ -981,7 +984,9 @@ page:
 #---------------------------
 page404:
   enable: true
-  banner_img: /img/default.png
+  # banner_img: /img/default.png
+  banner_img: /images/banner/home.png
+
   banner_img_height: 85
   banner_mask_alpha: 0.3
   # 重定向到首页的延迟(毫秒)
@@ -995,7 +1000,10 @@ page404:
 #---------------------------
 links:
   enable: true
-  banner_img: /images/banner/links.png
+  # banner_img: /images/banner/links.png
+
+  banner_img: /images/banner/home.png
+
   banner_img_height: 90
   banner_mask_alpha: 0.3
   # 友链的成员项
