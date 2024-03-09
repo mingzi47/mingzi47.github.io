@@ -8,4 +8,4 @@ generate : clean
 
 # deploy
 deploy : generate
-  git push
+  git add . && git commit -m "$(date)" && git push
