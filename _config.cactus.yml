@@ -18,8 +18,6 @@ nav:
   tag: /tags/
   category: /categories/
   about: /about/
-  articles: /archives/
-  github: http://github.com/mingzi47
   search: /search/
 
 
@@ -36,7 +34,7 @@ social_links:
 
 # Customize the overview with displaying a tagcloud on the index page.
 # Options: https://hexo.io/docs/helpers.html#tagcloud
-tags_overview: true
+tags_overview: false
 
 # Customize the overview with the most recent blog posts on the index page.
 # Options:
@@ -119,7 +117,7 @@ favicon:
 
 # The color scheme that should be used to highlight codeblocks.
 # See source/css/_highlight for a list of all available color schemes.
-highlight: rainbow
+highlight: school-book
 
 # Set the color scheme.
 # Available color schemes are 'dark', 'light', 'classic' and 'white'.
