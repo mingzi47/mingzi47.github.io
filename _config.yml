@@ -3,9 +3,9 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Blog
-subtitle: ''
-description: ''
+title: mingzi's Blog
+subtitle: '这是一个子标题'
+description: '这是一段描述'
 keywords:
 author: mingzi
 language: zh-CN
